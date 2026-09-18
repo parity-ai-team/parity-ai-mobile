@@ -1,82 +1,89 @@
-# PARITY AI GitHub Collaboration Rules
+# PARITY AI GitHub 협업 규칙
 
-This document defines the shared GitHub workflow for every PARITY AI repository.
+이 문서는 모든 PARITY AI 저장소에서 공통으로 사용하는 GitHub 작업 흐름을 정의한다.
 
-## 1. Protected default branch
+## 1. 기본 브랜치 보호
 
-- Use `main` as the default branch.
-- Do not push directly to `main`.
-- Merge changes through a pull request.
-- Block force pushes and branch deletion on `main`.
+- 기본 브랜치는 `main`을 사용한다.
+- `main`에 직접 푸시하지 않는다.
+- 변경사항은 PR로 병합한다.
+- `main`의 강제 푸시와 브랜치 삭제를 차단한다.
 
-## 2. Branch names
+## 2. 브랜치명
 
-Create one short-lived branch per change.
+변경사항마다 수명이 짧은 브랜치를 하나 만든다.
 
-- `feat/<issue>-<summary>` for features
-- `fix/<issue>-<summary>` for bug fixes
-- `docs/<issue>-<summary>` for documentation
-- `chore/<issue>-<summary>` for maintenance
-- `test/<issue>-<summary>` for test-only changes
+- 기능: `feat/<issue>-<summary>`
+- 버그 수정: `fix/<issue>-<summary>`
+- 문서: `docs/<issue>-<summary>`
+- 유지보수: `chore/<issue>-<summary>`
+- 테스트 전용: `test/<issue>-<summary>`
 
-Use lowercase English words separated by hyphens. Delete the branch after merge.
+브랜치명은 소문자 영어와 하이픈으로 작성하고 병합 후 삭제한다.
 
-## 3. Commits
+## 3. 커밋
 
-Use Conventional Commit prefixes.
+Conventional Commits 접두사를 사용하고 제목은 영어로 작성한다.
 
-- `feat:` new behavior
-- `fix:` defect correction
-- `docs:` documentation only
-- `test:` tests only
-- `refactor:` behavior-preserving code changes
-- `chore:` tooling, dependencies, or repository maintenance
+- `feat:` 새로운 동작
+- `fix:` 결함 수정
+- `docs:` 문서만 변경
+- `test:` 테스트만 변경
+- `refactor:` 동작을 바꾸지 않는 코드 개선
+- `chore:` 도구, 의존성 또는 저장소 유지보수
 
-Keep each commit focused and never commit secrets, personal data, real financial data, generated builds, or local environment files.
+커밋 하나에는 한 가지 목적만 담는다. 비밀값, 개인정보, 실제 금융 데이터, 생성된 빌드 결과물, 로컬 환경 파일은 커밋하지 않는다.
 
-## 4. Pull requests
+## 4. PR
 
-- Send every tracked-file change through a pull request instead of updating `main` directly.
-- Keep one purpose per pull request.
-- Keep the pull-request body compact with only two top-level sections: `변경사항` and `검증`.
-- Put the reason, related issue, screenshots, or API examples under `변경사항` only when relevant.
-- Put commands run, manual checks, results, and anything not run under `검증`.
-- Use squash merge and delete the merged branch.
+- 추적 파일 변경은 `main`을 직접 갱신하지 않고 모두 PR로 전달한다.
+- PR 하나에는 한 가지 목적만 담는다.
+- PR 제목은 간결한 영어로 작성한다.
+- PR 본문은 한국어로 작성하고 최상위 구역은 `변경사항`, `검증` 두 개만 사용한다.
+- 변경 이유, 관련 이슈, 스크린샷, API 예시는 필요한 경우 `변경사항`에 적는다.
+- 실행한 명령, 수동 확인, 결과, 실행하지 못한 검증은 `검증`에 적는다.
+- squash merge를 사용하고 병합된 브랜치는 삭제한다.
 
-Draft pull requests may be used for unfinished work.
+완료되지 않은 작업은 Draft PR로 올릴 수 있다.
 
-## 5. Required quality checks
+## 5. 필수 품질 확인
 
-Run the checks that apply to the repository before opening or merging a pull request:
+PR을 생성하거나 병합하기 전에 저장소에 해당하는 검증을 실행한다.
 
-- formatting and linting
-- static type checking
-- unit and contract tests
-- application build
-- secret and dependency checks
+- 포맷과 린트
+- 정적 타입 검사
+- 단위 테스트와 계약 테스트
+- 애플리케이션 빌드
+- 비밀값과 의존성 검사
 
-Required CI checks must pass before merge. Do not bypass a failing check by weakening or deleting the test without explaining the product decision.
+필수 CI 검사는 병합 전에 통과해야 한다. 제품 결정에 대한 설명 없이 실패한 검사를 통과시키기 위해 테스트를 약화하거나 삭제하지 않는다.
 
-## 6. Frontend and backend contract changes
+## 6. 모바일·백엔드 계약 변경
 
-- Treat the backend OpenAPI specification as the API source of truth.
-- Make additive, backward-compatible changes whenever possible.
-- Coordinate frontend and backend changes with linked issues and pull requests.
-- For a breaking change, add the replacement first, migrate consumers, and remove the old field afterward.
-- Change `api`, `model`, `rules`, or `data` versions when their documented meaning changes.
-- Do not maintain handwritten duplicate API DTOs in the mobile repository when generated types are available.
+- 백엔드 OpenAPI 명세를 API 계약의 기준으로 삼는다.
+- 가능한 경우 기존 사용처와 호환되는 추가 방식으로 변경한다.
+- 모바일과 백엔드 변경은 연결된 이슈와 PR로 조율한다.
+- 호환성을 깨는 변경은 대체 계약 추가, 사용처 이전, 기존 필드 제거 순서로 진행한다.
+- 문서화된 의미가 바뀌면 `api`, `model`, `rules`, `data` 버전을 변경한다.
+- 생성된 타입을 사용할 수 있다면 모바일 저장소에서 중복 API DTO를 직접 관리하지 않는다.
 
-## 7. Data and security
+## 7. 데이터와 보안
 
-- Use synthetic data only in the public codebase and test fixtures.
-- Never commit tokens, credentials, account numbers, transaction originals, pregnancy details, or other identifying data.
-- Keep local `.env` files untracked and document required keys in `.env.example`.
-- Do not send raw financial or pregnancy data to an external LLM.
-- Report a suspected secret or personal-data leak immediately and rotate or remove the exposed value before continuing normal development.
+- 공개 코드와 테스트 데이터에는 합성 데이터만 사용한다.
+- 토큰, 자격 증명, 계좌번호, 원본 거래, 구체적인 임신 정보, 그 밖의 식별 가능 데이터는 커밋하지 않는다.
+- 로컬 `.env` 파일은 추적하지 않고 필요한 키는 `.env.example`에 문서화한다.
+- 원본 금융 데이터나 임신 정보를 외부 LLM으로 보내지 않는다.
+- 비밀값이나 개인정보 유출이 의심되면 즉시 공유하고, 노출된 값을 교체하거나 제거한 뒤 일반 개발을 계속한다.
 
-## 8. Repository hygiene
+## 8. 문서 언어
 
-- Keep README setup instructions current.
-- Do not commit generated build output, dependency folders, editor state, caches, or local databases.
-- Store large demo media outside Git history or use Git LFS only after team agreement.
-- Record important cross-team technical decisions in a decision document instead of leaving them only in chat or pull-request comments.
+- README, 협업 문서, 결정 기록, PR 본문 등 설명은 한국어를 기본으로 한다.
+- 브랜치명, 커밋 메시지, PR 제목은 영어로 작성한다.
+- 코드 식별자, 명령어, 파일명, 표준 기술 용어는 필요한 경우 영어를 유지한다.
+
+## 9. 저장소 정리
+
+- README의 설정 방법을 최신 상태로 유지한다.
+- 생성된 빌드 결과물, 의존성 폴더, 편집기 상태, 캐시, 로컬 데이터베이스를 커밋하지 않는다.
+- 큰 데모 미디어는 Git 기록 밖에 보관하고, Git LFS는 팀 합의 후 사용한다.
+- 중요한 기술 결정은 채팅이나 PR 댓글에만 남기지 말고 결정 문서에 기록한다.

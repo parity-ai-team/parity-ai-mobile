@@ -36,19 +36,18 @@ Keep each commit focused and never commit secrets, personal data, real financial
 
 ## 4. Pull requests
 
+- Send every tracked-file change through a pull request instead of updating `main` directly.
 - Keep one purpose per pull request.
-- Link the related issue and explain the user-visible effect.
-- Include screenshots for UI changes and request/response examples for API changes.
-- Describe tests performed and any known limitation.
-- Require at least one approval when another reviewer is available.
-- Resolve review conversations before merge.
+- Keep the pull-request body compact with only two top-level sections: `변경사항` and `검증`.
+- Put the reason, related issue, screenshots, or API examples under `변경사항` only when relevant.
+- Put commands run, manual checks, results, and anything not run under `검증`.
 - Use squash merge and delete the merged branch.
 
-Draft pull requests are encouraged for work that needs early feedback.
+Draft pull requests may be used for unfinished work.
 
 ## 5. Required quality checks
 
-Run the checks that apply to the repository before requesting review:
+Run the checks that apply to the repository before opening or merging a pull request:
 
 - formatting and linting
 - static type checking

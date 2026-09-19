@@ -1,0 +1,27 @@
+import { StyleSheet } from 'react-native';
+
+import type { Theme } from '@/shared/ui';
+
+export function createStyles(theme: Theme) {
+  return StyleSheet.create({
+    content: {
+      flexGrow: 1,
+      paddingHorizontal: theme.spacing.lg,
+      paddingBottom: theme.spacing.xl,
+      gap: theme.spacing.lg,
+    },
+    title: {
+      ...theme.typography.headingLarge,
+      color: theme.colors.textPrimary,
+    },
+    body: {
+      ...theme.typography.bodyLarge,
+      color: theme.colors.textPrimary,
+      // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.
+    },
+    notice: {
+      ...theme.typography.bodyMedium,
+      color: theme.colors.textSecondary,
+    },
+  });
+}

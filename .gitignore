@@ -18,6 +18,9 @@ coverage/
 .eslintcache
 .turbo/
 
+# Expo generated types (recreated by `expo start`/`expo customize`)
+expo-env.d.ts
+
 # Environment files
 .env
 .env.*

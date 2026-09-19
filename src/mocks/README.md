@@ -15,10 +15,10 @@
 
 ## 규칙
 
-1. **경로 불일치는 `handlers.ts` 한 곳에만.** `docs/integration.md`와
-   `docs/backend-integration.md`가 엔드포인트를 다르게 정의한 부분은
-   `handlers.ts`의 매칭 로직에만 모아둔다. 자세한 내역은
-   `docs/decisions/api-contract-mismatch.md` 참고.
+1. **OpenAPI가 최종 기준.** `docs/integration.md`와
+   `docs/backend-integration.md`는 백엔드 OpenAPI `1.5.0`을 따른다. 기존 계약으로
+   작성된 mock 경로의 이전 상태는 `docs/decisions/api-contract-mismatch.md`에서
+   관리한다.
 2. **합성 데이터만.** 실제 개인정보처럼 보이는 값(실명, 실제 계좌, 실제 지역
    상세 주소 등)을 넣지 않는다. 모든 fixture는 `limitations: ["SYNTHETIC_DATA"]`를 갖는다.
 3. **시나리오마다 결과가 달라야 한다.** 위험월, 원인 코드, 부족액, 안전 적립

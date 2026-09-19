@@ -1,9 +1,10 @@
 # 결정 기록: API 계약 불일치 (`docs/integration.md` vs `docs/backend-integration.md`)
 
-- 상태: 확정
+- 상태: 해결됨 — `docs/backend-integration.md`(OpenAPI 1.5.0)가 기준
 - 작성일: 2026-09-19
 - 확정일: 2026-09-20
-- 관련 PR: `feat/api-client-and-types`(PR #4), `feat/mock-scenarios`(로드맵 PR #5)
+- 반영일: 2026-09-20
+- 관련 PR: `feat/api-client-and-types`(PR #4), `feat/mock-scenarios`(로드맵 PR #5), `feat/api-contract-alignment`(본 PR)
 
 ## 배경
 
@@ -35,5 +36,9 @@
 ## 후속 조치
 
 - [x] 백엔드 실제 구현과 OpenAPI 기준을 문서에 반영한다.
-- [ ] 확정된 계약으로 `realApiRequest.ts`, `endpoints.ts`, `error-codes.ts`를 갱신하는 PR을 만든다.
-- [ ] `src/mocks/handlers.ts`의 경로 분기를 확정된 계약 하나로 정리한다.
+- [x] 확정된 계약으로 `realApiRequest.ts`, `endpoints.ts`를 갱신한다. `error-codes.ts`를 포함한
+      TEMP 수기 타입(`analysis-status`, `cause-codes`, `envelope`, 결과 타입)은 갱신이 아니라
+      `openapi-typescript` 생성 타입으로 전부 교체했다 — `src/shared/types/generated/`.
+- [x] `src/mocks/handlers.ts`의 경로 분기를 확정된 계약 하나로 정리한다. `GET /v1/analyses/{id}/alternatives`
+      mock도 추가했다. `PATCH`/`recalculate`/`evidence`/`DELETE`는 여전히 mock하지 않는다
+      (`src/mocks/README.md` 참고) — 필요해지면 후속 PR에서 추가한다.

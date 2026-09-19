@@ -6,7 +6,7 @@ PARITY AI PoC를 위한 Expo React Native·TypeScript 모바일 애플리케이�
 
 현재 초기 저장소 설정을 진행하고 있다. 백엔드 OpenAPI 명세에서 생성한 타입을 사용하며 mock, 로컬 API, 데모 모드를 지원할 예정이다.
 
-API 계약 요약은 [모바일·백엔드 API 계약](docs/integration.md), 백엔드 실행·OpenAPI 타입 생성·화면별 호출 순서와 오류 처리는 [백엔드 연동 가이드](docs/backend-integration.md)에서 확인한다.
+API 계약의 기준은 `docs/api/openapi-1.5.0.json`(OpenAPI 1.5.0)이다. 백엔드 실행·화면별 호출 순서와 오류 처리는 [백엔드 연동 가이드](docs/backend-integration.md)에서 확인한다. `docs/integration.md`는 초기 계획 문서로 실제 계약과 어긋나는 부분이 있어 더 이상 기준으로 쓰지 않는다 — 자세한 내용은 [결정 기록: API 계약 불일치](docs/decisions/api-contract-mismatch.md) 참고.
 
 ## 시작하기
 

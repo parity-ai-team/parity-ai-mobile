@@ -1,6 +1,6 @@
 import { ApiError } from '@/shared/api/errors';
 import { resolveMockResponse } from '@/mocks/handlers';
-import { firstBirthFixture } from '@/mocks/scenarios/first-birth';
+import { firstBirthAlternativesFixture, firstBirthFixture } from '@/mocks/scenarios/first-birth';
 import { pastMeFixture } from '@/mocks/scenarios/past-me';
 import { singleParentFixture, singleParentStressedFixture } from '@/mocks/scenarios/single-parent';
 
@@ -92,6 +92,31 @@ describe('resolveMockResponse — GET /v1/analyses/{id}', () => {
   it('throws a 404 ApiError for an unknown analysis id', () => {
     try {
       resolveMockResponse({ method: 'GET', path: '/v1/analyses/ana_does_not_exist' });
+      throw new Error('expected resolveMockResponse to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ApiError);
+      expect((error as ApiError).status).toBe(404);
+      expect((error as ApiError).code).toBe('ANALYSIS_NOT_FOUND');
+    }
+  });
+});
+
+describe('resolveMockResponse — GET /v1/analyses/{id}/alternatives', () => {
+  it('returns the matching alternatives-compare fixture', () => {
+    const resolved = resolveMockResponse({
+      method: 'GET',
+      path: `/v1/analyses/${firstBirthFixture.analysis_id}/alternatives`,
+    });
+
+    expect(resolved?.data).toBe(firstBirthAlternativesFixture);
+  });
+
+  it('throws a 404 ApiError for an unknown analysis id', () => {
+    try {
+      resolveMockResponse({
+        method: 'GET',
+        path: '/v1/analyses/ana_does_not_exist/alternatives',
+      });
       throw new Error('expected resolveMockResponse to throw');
     } catch (error) {
       expect(error).toBeInstanceOf(ApiError);

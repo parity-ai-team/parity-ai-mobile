@@ -104,7 +104,7 @@ describe('realApiRequest', () => {
 
     await realApiRequest({
       method: 'PATCH',
-      path: '/v1/analyses/ana_1/inputs',
+      path: '/v1/analyses/ana_1',
       ifMatchRevision: 1,
       body: {},
     });
@@ -115,6 +115,17 @@ describe('realApiRequest', () => {
     expect(headers.get(IDEMPOTENCY_KEY_HEADER)).toBeNull();
   });
 
+  it('rejects a PATCH without ifMatchRevision before calling fetch (avoids a guaranteed 428)', async () => {
+    const fetchSpy = jest.fn();
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    await expect(
+      realApiRequest({ method: 'PATCH', path: '/v1/analyses/ana_1', body: {} }),
+    ).rejects.toThrow(/If-Match/);
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
   it('resolves with no body for a 204 DELETE response', async () => {
     mockFetchOnce(new Response(null, { status: 204 }));
 
@@ -123,7 +134,9 @@ describe('realApiRequest', () => {
     expect(data).toBeUndefined();
   });
 
-  it('throws ApiError with the parsed error envelope on failure', async () => {
+  // docs/decisions/api-contract-mismatch.md: revision 충돌은 412, 멱등성 키
+  // 충돌은 409, If-Match 누락은 428 — 기존 계획(409 VERSION_CONFLICT)과 다르다.
+  it('throws ApiError with the parsed error envelope on a 412 version conflict', async () => {
     const errorBody = {
       request_id: 'req_err',
       error: {
@@ -132,14 +145,54 @@ describe('realApiRequest', () => {
         retryable: true,
       },
     };
-    mockFetchOnce(new Response(JSON.stringify(errorBody), { status: 409 }));
+    mockFetchOnce(new Response(JSON.stringify(errorBody), { status: 412 }));
 
     await expect(
       realApiRequest({ method: 'GET', path: '/v1/analyses/ana_1' }),
     ).rejects.toMatchObject({
-      status: 409,
+      status: 412,
       code: 'VERSION_CONFLICT',
       retryable: true,
+    });
+  });
+
+  it('throws ApiError with the parsed error envelope on a 409 idempotency conflict', async () => {
+    const errorBody = {
+      request_id: 'req_err',
+      error: {
+        code: 'IDEMPOTENCY_CONFLICT',
+        message: '같은 Idempotency-Key로 다른 요청 본문이 왔어요.',
+        retryable: false,
+      },
+    };
+    mockFetchOnce(new Response(JSON.stringify(errorBody), { status: 409 }));
+
+    await expect(
+      realApiRequest({ method: 'POST', path: '/v1/analyses', body: {} }),
+    ).rejects.toMatchObject({
+      status: 409,
+      code: 'IDEMPOTENCY_CONFLICT',
+      retryable: false,
+    });
+  });
+
+  it('throws ApiError with the parsed error envelope on a 428 precondition-required response', async () => {
+    const errorBody = {
+      request_id: 'req_err',
+      error: {
+        code: 'PRECONDITION_REQUIRED',
+        message: 'If-Match 헤더가 필요해요.',
+        retryable: false,
+      },
+    };
+    mockFetchOnce(new Response(JSON.stringify(errorBody), { status: 428 }));
+
+    await expect(
+      realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1', ifMatchRevision: 1 }),
+    ).rejects.toMatchObject({
+      status: 428,
+      code: 'PRECONDITION_REQUIRED',
+      retryable: false,
     });
   });
 

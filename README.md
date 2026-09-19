@@ -32,7 +32,12 @@ npm start
 
 - 생성기: [`openapi-typescript`](https://openapi-ts.dev/). 런타임 의존성 없이 `.d.ts` 타입만 만들어서, 이 저장소가 이미 자체 `fetch` 계층(`src/shared/api`)을 직접 관리하는 구조에 맞는다.
 - 입력: `docs/api/openapi-1.5.0.json`(팀 공용 계약 파일, 저장소에 커밋되어 있다).
-- 출력: `src/shared/types/generated/backend.d.ts`. 생성 파일이라 커밋하지 않는다(`.gitignore` 참고) — `npm install` 후, 그리고 `docs/api/openapi-1.5.0.json`이 바뀔 때마다 아래 명령으로 다시 만든다.
+- 출력: `src/shared/types/generated/backend.d.ts`. 생성 파일이라 커밋하지 않는다(`.gitignore` 참고).
+
+타입은 자동 생성된다 — `npm run typecheck`/`npm run lint`/`npm test` 실행 전에
+매번 `pretypecheck`/`prelint`/`pretest`가 `generate:api-types`를 먼저 돌려서,
+클론 직후에도 `backend.d.ts`가 없다는 이유로 실패하지 않는다. 수동으로
+다시 만들고 싶으면 아래 명령을 쓴다.
 
 ```bash
 npm run generate:api-types

@@ -24,6 +24,21 @@ npm start
 | `npm run format` / `npm run format:check` | Prettier 포맷 적용 / 확인 (`.ts`, `.tsx`, `.js`, `.json`) |
 | `npm run typecheck` | TypeScript strict 모드 타입 검사 |
 | `npm test` | Jest 유닛/컴포넌트 테스트 |
+| `npm run generate:api-types` | `docs/api/openapi-1.5.0.json`에서 `src/shared/types/generated/backend.d.ts` 재생성 |
+
+## API 타입 생성
+
+`src/shared/types` 아래 API 관련 타입은 손으로 작성하지 않고 백엔드 OpenAPI 명세에서 생성한다.
+
+- 생성기: [`openapi-typescript`](https://openapi-ts.dev/). 런타임 의존성 없이 `.d.ts` 타입만 만들어서, 이 저장소가 이미 자체 `fetch` 계층(`src/shared/api`)을 직접 관리하는 구조에 맞는다.
+- 입력: `docs/api/openapi-1.5.0.json`(팀 공용 계약 파일, 저장소에 커밋되어 있다).
+- 출력: `src/shared/types/generated/backend.d.ts`. 생성 파일이라 커밋하지 않는다(`.gitignore` 참고) — `npm install` 후, 그리고 `docs/api/openapi-1.5.0.json`이 바뀔 때마다 아래 명령으로 다시 만든다.
+
+```bash
+npm run generate:api-types
+```
+
+`src/shared/types/generated/backend.d.ts`를 직접 수정하지 않는다. 의미 있는 이름으로 다시 내보내거나 헬퍼를 추가할 때는 `src/shared/types/generated/index.ts`와 `src/shared/types/index.ts`를 고친다.
 
 ## 폴더 구조
 

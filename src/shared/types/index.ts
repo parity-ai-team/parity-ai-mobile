@@ -1,10 +1,61 @@
-export type { AlternativeSummary } from './alternative-summary';
-export type { AnalysisResult } from './analysis-result';
-export type { AnalysisStatus } from './analysis-status';
-export type { ApiVersions } from './api-versions';
-export type { CashFlowPoint } from './cashflow-point';
-export type { CauseCode } from './cause-codes';
-export type { ErrorCode } from './error-codes';
-export type { ErrorDetail, ErrorEnvelope, FieldError, SuccessEnvelope } from './envelope';
-export type { RiskEvent } from './risk-event';
-export type { SafeContribution } from './safe-contribution';
+// docs/api/openapi-1.5.0.json(백엔드 확정 계약, docs/decisions/api-contract-mismatch.md)
+// 기준 생성 타입 재노출. 추측으로 작성했던 TEMP 수기 타입(analysis-status,
+// error-codes, cause-codes, envelope, 결과 타입)은 전부 지우고 생성 타입으로
+// 교체했다 — 계속 손으로 관리하는 파일은 result-usable.ts뿐이다.
+export type {
+  ActionBurden,
+  AlternativeActionDetail,
+  AlternativeActionType,
+  AlternativeComparisonResponse,
+  AlternativeDetail,
+  AlternativeKind,
+  AlternativeOutcome,
+  AlternativePreferencesInput,
+  AlternativePreferencesUpdate,
+  AlternativeSummary,
+  AnalysisCreateRequest,
+  AnalysisResponse,
+  AnalysisResult,
+  AnalysisStatus,
+  AnalysisUpdateRequest,
+  CashflowPoint,
+  CauseCode,
+  ConfidenceLevel,
+  ContractVersions,
+  DataMode,
+  DataSource,
+  DemoScenarioListResponse,
+  DemoScenarioSummary,
+  EmploymentPlanInput,
+  EmploymentPlanUpdate,
+  ErrorCode,
+  ErrorDetail,
+  ErrorEnvelope,
+  EvidenceExplanation,
+  EvidenceInputFact,
+  EvidenceOutputFact,
+  EvidenceResponse,
+  EvidenceResultType,
+  EvidenceRuleFact,
+  EvidenceTrace,
+  ExplanationFallbackReason,
+  ExplanationSource,
+  FieldError,
+  FinancialInput,
+  FinancialUpdate,
+  HouseholdInput,
+  HouseholdType,
+  HouseholdUpdate,
+  HTTPValidationError,
+  LimitationCode,
+  RiskItem,
+  RiskSeverity,
+  SafeContributionResult,
+  ScenarioCoverage,
+  ScenarioRoute,
+  StressInput,
+  StressUpdate,
+  ValidationError,
+} from './generated';
+
+export { isResultUsable } from './result-usable';

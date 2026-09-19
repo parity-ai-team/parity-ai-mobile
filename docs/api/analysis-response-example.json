@@ -1,0 +1,412 @@
+{
+  "_http": {
+    "status": 201,
+    "etag": "\"ana_15a96c4de5a34449b7a5af30cf645a00:1\"",
+    "location": "/v1/analyses/ana_15a96c4de5a34449b7a5af30cf645a00",
+    "x_api_version": "1.5.0"
+  },
+  "body": {
+    "request_id": "req_mobile_handoff",
+    "analysis_id": "ana_15a96c4de5a34449b7a5af30cf645a00",
+    "status": "limited",
+    "revision": 1,
+    "versions": {
+      "api": "1.5.0",
+      "data": "synthetic-1.0.0",
+      "rules": "kr-daegu-2026-09",
+      "model": "cashflow-1.4.0"
+    },
+    "result": {
+      "cashflow": [
+        {
+          "period": "2026-12",
+          "confirmed_cash_krw": 5230000,
+          "p20_krw": 6812222,
+          "p50_krw": 7073535,
+          "p80_krw": 7354786,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_624e4771836dd64838d1"
+          ]
+        },
+        {
+          "period": "2027-01",
+          "confirmed_cash_krw": 1960000,
+          "p20_krw": 5285776,
+          "p50_krw": 5658687,
+          "p80_krw": 6068315,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_bbba9f1efb3db88ed4da"
+          ]
+        },
+        {
+          "period": "2027-02",
+          "confirmed_cash_krw": -1310000,
+          "p20_krw": 2253636,
+          "p50_krw": 2779100,
+          "p80_krw": 3326386,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_6ad716bf83d1df53455d"
+          ]
+        },
+        {
+          "period": "2027-03",
+          "confirmed_cash_krw": -4580000,
+          "p20_krw": -357208,
+          "p50_krw": 270005,
+          "p80_krw": 932869,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_c02cf90ae0f6cfbbe394"
+          ]
+        },
+        {
+          "period": "2027-04",
+          "confirmed_cash_krw": -7850000,
+          "p20_krw": -1831798,
+          "p50_krw": -1124184,
+          "p80_krw": -420505,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_531f719d9b5b57f4a991"
+          ]
+        },
+        {
+          "period": "2027-05",
+          "confirmed_cash_krw": -11120000,
+          "p20_krw": -1165915,
+          "p50_krw": -389615,
+          "p80_krw": 415910,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_ef45c0d2d17d3577c38b"
+          ]
+        },
+        {
+          "period": "2027-06",
+          "confirmed_cash_krw": -14390000,
+          "p20_krw": -4742840,
+          "p50_krw": -3965061,
+          "p80_krw": -3156472,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_dc6b82932307cfb8fed9"
+          ]
+        },
+        {
+          "period": "2027-07",
+          "confirmed_cash_krw": -17660000,
+          "p20_krw": -6195744,
+          "p50_krw": -5363051,
+          "p80_krw": -4492906,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_f79ada406764b5d3c5a5"
+          ]
+        },
+        {
+          "period": "2027-08",
+          "confirmed_cash_krw": -20930000,
+          "p20_krw": -5529898,
+          "p50_krw": -4600651,
+          "p80_krw": -3657323,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_45086838b4b5bea9765a"
+          ]
+        },
+        {
+          "period": "2027-09",
+          "confirmed_cash_krw": -24200000,
+          "p20_krw": -9091386,
+          "p50_krw": -8176205,
+          "p80_krw": -7229498,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_35625bc2c1290fec6000"
+          ]
+        },
+        {
+          "period": "2027-10",
+          "confirmed_cash_krw": -27470000,
+          "p20_krw": -9184795,
+          "p50_krw": -8131015,
+          "p80_krw": -7080109,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_2c6a34d1ac042a14a339"
+          ]
+        },
+        {
+          "period": "2027-11",
+          "confirmed_cash_krw": -30740000,
+          "p20_krw": -9244581,
+          "p50_krw": -8137328,
+          "p80_krw": -6977065,
+          "emergency_floor_krw": 6000000,
+          "trace_ids": [
+            "trc_b451a584d1215d3b5543"
+          ]
+        }
+      ],
+      "risks": [
+        {
+          "period": "2027-01",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -516511,
+          "probability": 0.7576,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_590c47ea76adca3e8ac8"
+          ]
+        },
+        {
+          "period": "2027-02",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INCOME_DROP",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -3205192,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_a17649acb2d4ec33e0c0"
+          ]
+        },
+        {
+          "period": "2027-03",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INCOME_DROP",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -5713929,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_2f6359846c5b1b11b219"
+          ]
+        },
+        {
+          "period": "2027-04",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -7123117,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_97a1746f7d92530191a6"
+          ]
+        },
+        {
+          "period": "2027-05",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -8532372,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_09a1efa84114289077d0"
+          ]
+        },
+        {
+          "period": "2027-06",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -9940250,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_6c458f1fd559ab2e3754"
+          ]
+        },
+        {
+          "period": "2027-07",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -11347554,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_95ec50b71fe05ce682fa"
+          ]
+        },
+        {
+          "period": "2027-08",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -12748772,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_c99ce8c3686d784e297d"
+          ]
+        },
+        {
+          "period": "2027-09",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -14159180,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_f958bf5c165758c69bc5"
+          ]
+        },
+        {
+          "period": "2027-10",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -14131281,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_4e18cd6bc90c31fae47a"
+          ]
+        },
+        {
+          "period": "2027-11",
+          "severity": "critical",
+          "cause_codes": [
+            "BELOW_EMERGENCY_FLOOR",
+            "CARD_DUE_COLLISION",
+            "INSURANCE_DUE",
+            "LOAN_DUE",
+            "SHORTAGE_RISK_HIGH"
+          ],
+          "expected_gap_krw": -14103848,
+          "probability": 1.0,
+          "confidence": "medium",
+          "source": "derived",
+          "trace_ids": [
+            "trc_f6673c4bdaa0e9a2c70f"
+          ]
+        }
+      ],
+      "alternatives": [
+        {
+          "alternative_id": "alt_4c2ddaf9d2242972",
+          "kind": "liquidity_protection",
+          "immediate_cash_change_krw": 1500000,
+          "future_cost_krw": 0,
+          "recovery_period_months": 0,
+          "action_burden": "medium",
+          "trace_ids": [
+            "trc_2e7d39c3d9d4858b3866"
+          ]
+        },
+        {
+          "alternative_id": "alt_f37e645732b268b8",
+          "kind": "cost_minimization",
+          "immediate_cash_change_krw": 1500000,
+          "future_cost_krw": 0,
+          "recovery_period_months": 0,
+          "action_burden": "medium",
+          "trace_ids": [
+            "trc_7046ed9b5db25de94f20"
+          ]
+        },
+        {
+          "alternative_id": "alt_237111dcac8a6616",
+          "kind": "minimum_change",
+          "immediate_cash_change_krw": 0,
+          "future_cost_krw": 0,
+          "recovery_period_months": 0,
+          "action_burden": "low",
+          "trace_ids": [
+            "trc_f06b03000ef00c5e35d5"
+          ]
+        }
+      ],
+      "safe_contribution": {
+        "eligible": false,
+        "monthly_amount_krw": 0,
+        "reason_codes": [
+          "BELOW_EMERGENCY_FLOOR",
+          "MANDATORY_PAYMENT_UNMET"
+        ],
+        "valid_until": "2026-12",
+        "trace_ids": [
+          "trc_e1b84a6f91b8141dc71b"
+        ]
+      }
+    },
+    "limitations": [
+      "SYNTHETIC_DATA",
+      "ASSUMED_INPUT"
+    ],
+    "input_hash": "sha256:ed8a66d30dfb5e20648a9599a76d7e88a0fcdde4bb6a5d0d8d2dc2f68bceea62",
+    "result_hash": "sha256:4eaed3c67253c69ca02efc2e790ac0edca0621381da63a31233f46c5bc94fe5b",
+    "random_seed": 16261000856561953031,
+    "generated_at": "2026-09-19T14:58:11.201007Z"
+  }
+}

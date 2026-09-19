@@ -28,6 +28,17 @@ export function createStyles(theme: Theme) {
     },
     chartArea: {
       width: '100%',
+      position: 'relative',
+    },
+    hitOverlay: {
+      position: 'absolute',
+      left: 0,
+      right: 0,
+    },
+    hitArea: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
     },
     toggleRow: {
       alignItems: 'flex-start',

@@ -1,84 +1,21 @@
-// TEMP: OpenAPI 명세 확정 전 임시 수기 클라이언트. docs/integration.md "공통 헤더",
-// "오류·재시도·동시성" 기준. 결과 바디 타입은 아직 unknown이며, 폴링(500ms→1s→최대10s,
-// 30초 초과 시 백그라운드 전환)은 이 PR 범위 밖이다 — analysis 결과 화면 PR에서 구현한다.
-import { getApiBaseUrl } from './config';
-import {
-  buildRequestHeaders,
-  generateIdempotencyKey,
-  generateRequestId,
-  readResponseMeta,
-} from './headers';
-import type { ErrorEnvelope, SuccessEnvelope } from '../types';
+// EXPO_PUBLIC_APP_MODE에 따라 실제 fetch 구현(realApiRequest)과 mock 구현
+// (mockApiRequest) 중 하나로 위임하는 단일 진입점. 화면·훅은 이 함수의 시그니처만
+// 알면 되고, 지금 어떤 모드로 떠 있는지는 몰라도 된다 — 모드 전환은 이 파일과
+// config.ts의 getAppMode()만 바뀌면 된다.
+import { getAppMode } from './config';
+import type { AppMode } from './config';
+import { mockApiRequest } from './modes/mockApiRequest';
+import { realApiRequest } from './modes/realApiRequest';
+import type { ApiResult, RequestOptions } from './request';
 
-export class ApiError extends Error {
-  readonly status: number;
-  readonly envelope: ErrorEnvelope;
-
-  constructor(envelope: ErrorEnvelope, status: number) {
-    super(envelope.error.message);
-    this.name = 'ApiError';
-    this.status = status;
-    this.envelope = envelope;
-  }
-
-  get code() {
-    return this.envelope.error.code;
-  }
-
-  get retryable() {
-    return this.envelope.error.retryable;
-  }
-}
-
-type HttpMethod = 'GET' | 'POST' | 'PATCH' | 'DELETE';
-
-export interface RequestOptions {
-  method: HttpMethod;
-  path: string;
-  body?: unknown;
-  authToken?: string;
-  /** 지정하지 않으면 변경 요청에서만 자동 생성한다. */
-  requestId?: string;
-  /** PATCH 요청에서만 사용하는 analysis revision. */
-  ifMatchRevision?: number;
-  /** POST 요청에서만 사용. 지정하지 않으면 자동 생성한다. */
-  idempotencyKey?: string;
-}
-
-const MUTATING_METHODS: ReadonlySet<HttpMethod> = new Set(['POST', 'PATCH', 'DELETE']);
-
+// mode 인자는 테스트 전용이다(config.ts의 getAppMode() 주석 참고). 화면·훅은
+// apiRequest(options)만 호출하면 되고 모드를 몰라도 된다.
 export async function apiRequest<TResult = unknown>(
   options: RequestOptions,
-): Promise<{ data: SuccessEnvelope<TResult>; meta: ReturnType<typeof readResponseMeta> }> {
-  const { method, path, body, authToken, ifMatchRevision } = options;
-  const isMutating = MUTATING_METHODS.has(method);
-
-  const headers = buildRequestHeaders({
-    authToken,
-    requestId: options.requestId ?? (isMutating ? generateRequestId() : undefined),
-    idempotencyKey:
-      method === 'POST' ? (options.idempotencyKey ?? generateIdempotencyKey()) : undefined,
-    ifMatchRevision,
-  });
-
-  const response = await fetch(`${getApiBaseUrl()}${path}`, {
-    method,
-    headers,
-    body: body !== undefined ? JSON.stringify(body) : undefined,
-  });
-
-  const meta = readResponseMeta(response);
-
-  // DELETE 성공은 204 No Content(docs/integration.md "오류·재시도·동시성")라 바디가 없다.
-  if (response.status === 204) {
-    return { data: undefined as unknown as SuccessEnvelope<TResult>, meta };
+  mode: AppMode = getAppMode(),
+): Promise<ApiResult<TResult>> {
+  if (mode === 'mock') {
+    return mockApiRequest<TResult>(options);
   }
-
-  const json = await response.json();
-
-  if (!response.ok) {
-    throw new ApiError(json as ErrorEnvelope, response.status);
-  }
-
-  return { data: json as SuccessEnvelope<TResult>, meta };
+  return realApiRequest<TResult>(options);
 }

@@ -1,5 +1,8 @@
-export { getApiBaseUrl } from './config';
+export { apiRequest } from './client';
+export type { AppMode } from './config';
+export { getApiBaseUrl, getAppMode } from './config';
 export { endpoints } from './endpoints';
+export { ApiError } from './errors';
 export {
   API_VERSION_HEADER,
   AUTHORIZATION_HEADER,
@@ -13,5 +16,4 @@ export {
   REQUEST_ID_HEADER,
 } from './headers';
 export type { RequestHeaderOptions, ResponseMeta } from './headers';
-export { ApiError, apiRequest } from './client';
-export type { RequestOptions } from './client';
+export type { ApiResult, HttpMethod, RequestOptions } from './request';

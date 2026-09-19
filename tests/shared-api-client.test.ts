@@ -1,5 +1,6 @@
-import { apiRequest, ApiError } from '@/shared/api/client';
+import { ApiError } from '@/shared/api/errors';
 import { IDEMPOTENCY_KEY_HEADER, IF_MATCH_HEADER, REQUEST_ID_HEADER } from '@/shared/api/headers';
+import { realApiRequest } from '@/shared/api/modes/realApiRequest';
 
 // jest.mock 호출은 babel-plugin-jest-hoist가 파일 최상단으로 끌어올리므로
 // import 아래에 있어도 실제 모듈 로딩보다 먼저 적용된다.
@@ -13,7 +14,7 @@ function mockFetchOnce(response: Response) {
   globalThis.fetch = jest.fn().mockResolvedValue(response) as unknown as typeof fetch;
 }
 
-describe('apiRequest', () => {
+describe('realApiRequest', () => {
   afterEach(() => {
     jest.restoreAllMocks();
   });
@@ -36,7 +37,7 @@ describe('apiRequest', () => {
     };
     mockFetchOnce(new Response(JSON.stringify(body), { status: 200 }));
 
-    const { data } = await apiRequest({ method: 'GET', path: '/v1/analyses/ana_1' });
+    const { data } = await realApiRequest({ method: 'GET', path: '/v1/analyses/ana_1' });
 
     expect(data).toEqual(body);
     const [, init] = (globalThis.fetch as jest.Mock).mock.calls[0];
@@ -67,7 +68,7 @@ describe('apiRequest', () => {
       ),
     );
 
-    await apiRequest({
+    await realApiRequest({
       method: 'POST',
       path: '/v1/analyses',
       body: { scenario_id: 'first_birth' },
@@ -101,7 +102,7 @@ describe('apiRequest', () => {
       ),
     );
 
-    await apiRequest({
+    await realApiRequest({
       method: 'PATCH',
       path: '/v1/analyses/ana_1/inputs',
       ifMatchRevision: 1,
@@ -117,7 +118,7 @@ describe('apiRequest', () => {
   it('resolves with no body for a 204 DELETE response', async () => {
     mockFetchOnce(new Response(null, { status: 204 }));
 
-    const { data } = await apiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1' });
+    const { data } = await realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1' });
 
     expect(data).toBeUndefined();
   });
@@ -133,7 +134,9 @@ describe('apiRequest', () => {
     };
     mockFetchOnce(new Response(JSON.stringify(errorBody), { status: 409 }));
 
-    await expect(apiRequest({ method: 'GET', path: '/v1/analyses/ana_1' })).rejects.toMatchObject({
+    await expect(
+      realApiRequest({ method: 'GET', path: '/v1/analyses/ana_1' }),
+    ).rejects.toMatchObject({
       status: 409,
       code: 'VERSION_CONFLICT',
       retryable: true,
@@ -152,7 +155,7 @@ describe('apiRequest', () => {
     );
 
     await expect(
-      apiRequest({ method: 'GET', path: '/v1/analyses/missing' }),
+      realApiRequest({ method: 'GET', path: '/v1/analyses/missing' }),
     ).rejects.toBeInstanceOf(ApiError);
   });
 });

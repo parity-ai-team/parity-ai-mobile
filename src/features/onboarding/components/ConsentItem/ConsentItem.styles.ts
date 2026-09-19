@@ -1,0 +1,46 @@
+import { StyleSheet } from 'react-native';
+
+import type { Theme } from '@/shared/ui';
+
+export function createStyles(theme: Theme) {
+  return StyleSheet.create({
+    container: {
+      gap: theme.spacing.xs,
+    },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      minHeight: theme.accessibility.minTouchTarget,
+      gap: theme.spacing.sm,
+    },
+    box: {
+      width: 24,
+      height: 24,
+      borderRadius: theme.radii.sm,
+      borderWidth: 1,
+      borderColor: theme.colors.border,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    boxChecked: {
+      backgroundColor: theme.colors.brand,
+      borderColor: theme.colors.brand,
+    },
+    checkMark: {
+      color: theme.colors.textInverse,
+      fontSize: 14,
+      fontWeight: '700',
+    },
+    label: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.textPrimary,
+      flexShrink: 1,
+      // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.
+    },
+    description: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+      paddingLeft: 24 + theme.spacing.sm,
+    },
+  });
+}

@@ -1,49 +1,57 @@
 // mock 모드에서 요청을 가로채 fixture 응답을 반환하는 단일 진입점.
 //
-// docs/integration.md와 docs/backend-integration.md(신규 백엔드 연동 가이드)가
-// 서로 다르게 정의한 엔드포인트 경로·상태 코드는 전부 이 파일에서만 분기하게
-// 모아둔다 — 백엔드 담당자 확인 결과가 오면 이 파일의 매칭 규칙만 바꾸면 된다.
-// 불일치 내역은 docs/decisions/api-contract-mismatch.md 참고.
-//
-// 지금은 docs/integration.md 경로 기준(POST /v1/analyses, GET /v1/analyses/{id})만
-// 지원한다. demo-scenarios 목록은 두 문서 모두 응답 필드 예시가 없어서 이번
-// PR에서는 mock하지 않는다. PATCH/recalculate/alternatives/evidence/delete도
-// 아직 없다 — 필요해지면 이 파일에 handler를 추가한다.
+// docs/decisions/api-contract-mismatch.md에서 확정한 대로 docs/backend-integration.md
+// (OpenAPI 1.5.0)만 기준으로 삼는다. 지금 지원하는 것은 POST /v1/analyses,
+// GET /v1/analyses/{id}, GET /v1/analyses/{id}/alternatives 세 가지다.
+// PATCH/recalculate/evidence/DELETE mock은 아직 없다 — 필요해지면 이 파일에
+// handler를 추가한다.
 import { ApiError } from '@/shared/api/errors';
 import type { ResponseMeta } from '@/shared/api/headers';
 import type { RequestOptions } from '@/shared/api/request';
-import type { AnalysisResult, SuccessEnvelope } from '@/shared/types';
+import type { AlternativeComparisonResponse, StressInput } from '@/shared/types';
 
-import { firstBirthFixture } from './scenarios/first-birth';
-import { pastMeFixture } from './scenarios/past-me';
-import { singleParentFixture, singleParentStressedFixture } from './scenarios/single-parent';
+import { firstBirthAlternativesFixture, firstBirthFixture } from './scenarios/first-birth';
+import { pastMeAlternativesFixture, pastMeFixture } from './scenarios/past-me';
+import type { MockAnalysisResponse } from './scenarios/shared';
+import {
+  singleParentAlternativesFixture,
+  singleParentFixture,
+  singleParentStressedAlternativesFixture,
+  singleParentStressedFixture,
+} from './scenarios/single-parent';
 
 export interface MockResolution<TResult = unknown> {
-  data: SuccessEnvelope<TResult>;
+  data: TResult;
   meta: ResponseMeta;
 }
 
 interface CreateAnalysisRequestBody {
   scenario_id?: string;
-  stress?: { income_delay_weeks?: number; child_support_missed?: boolean };
+  stress?: Partial<StressInput>;
 }
 
-const ALL_FIXTURES = [
-  firstBirthFixture,
-  pastMeFixture,
-  singleParentFixture,
-  singleParentStressedFixture,
-];
+const ALL_FIXTURES = [firstBirthFixture, pastMeFixture, singleParentFixture, singleParentStressedFixture];
 
 const FIXTURES_BY_ANALYSIS_ID = new Map(
   ALL_FIXTURES.map((fixture) => [fixture.analysis_id, fixture]),
 );
 
-// docs/integration.md 예시의 scenario_id 이름을 그대로 쓴다(first_birth_dual_income
-// 은 문서 예시 원문, 나머지 둘은 docs/backend.md "라우팅 규칙"의 경로 이름을 따랐다).
+const ALL_ALTERNATIVES_FIXTURES = [
+  firstBirthAlternativesFixture,
+  pastMeAlternativesFixture,
+  singleParentAlternativesFixture,
+  singleParentStressedAlternativesFixture,
+];
+
+const ALTERNATIVES_FIXTURES_BY_ANALYSIS_ID = new Map(
+  ALL_ALTERNATIVES_FIXTURES.map((fixture) => [fixture.analysis_id, fixture]),
+);
+
+// docs/api/openapi-1.5.0.json AnalysisCreateRequest.scenario_id 예시의 이름을
+// 그대로 쓴다.
 function pickFixtureForCreate(
   body: CreateAnalysisRequestBody | undefined,
-): SuccessEnvelope<AnalysisResult> | undefined {
+): MockAnalysisResponse | undefined {
   switch (body?.scenario_id) {
     case 'first_birth_dual_income':
       return firstBirthFixture;
@@ -59,11 +67,19 @@ function pickFixtureForCreate(
   }
 }
 
-function metaFor(envelope: SuccessEnvelope<unknown>): ResponseMeta {
+function metaFor(envelope: { request_id: string; revision: number; versions: { api: string } }): ResponseMeta {
   return {
     requestId: envelope.request_id,
     revision: String(envelope.revision),
     apiVersion: envelope.versions.api,
+  };
+}
+
+function alternativesMetaFor(response: AlternativeComparisonResponse): ResponseMeta {
+  return {
+    requestId: response.request_id,
+    revision: String(response.revision),
+    apiVersion: null,
   };
 }
 
@@ -98,6 +114,9 @@ function analysisNotFoundError(): ApiError {
   );
 }
 
+// GET /v1/analyses/{id}/alternatives 매칭용. 먼저 검사하므로 아래
+// ANALYSIS_PATH_PATTERN([^/]+ 하나만 허용)과 겹치지 않는다.
+const ALTERNATIVES_PATH_PATTERN = /^\/v1\/analyses\/([^/]+)\/alternatives$/;
 // GET /v1/analyses/{id} 매칭용.
 const ANALYSIS_PATH_PATTERN = /^\/v1\/analyses\/([^/]+)$/;
 
@@ -118,6 +137,15 @@ export function resolveMockResponse(options: RequestOptions): MockResolution | u
   }
 
   if (method === 'GET') {
+    const alternativesMatch = path.match(ALTERNATIVES_PATH_PATTERN);
+    if (alternativesMatch) {
+      const fixture = ALTERNATIVES_FIXTURES_BY_ANALYSIS_ID.get(alternativesMatch[1]);
+      if (!fixture) {
+        throw analysisNotFoundError();
+      }
+      return { data: fixture, meta: alternativesMetaFor(fixture) };
+    }
+
     const analysisMatch = path.match(ANALYSIS_PATH_PATTERN);
     if (analysisMatch) {
       const fixture = FIXTURES_BY_ANALYSIS_ID.get(analysisMatch[1]);

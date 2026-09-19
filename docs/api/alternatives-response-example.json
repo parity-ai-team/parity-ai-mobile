@@ -1,0 +1,211 @@
+{
+  "_http": {
+    "status": 200,
+    "etag": "\"ana_15a96c4de5a34449b7a5af30cf645a00:1\"",
+    "x_api_version": "1.5.0"
+  },
+  "body": {
+    "request_id": "req_mobile_alternatives",
+    "analysis_id": "ana_15a96c4de5a34449b7a5af30cf645a00",
+    "revision": 1,
+    "current_state": {
+      "minimum_cash_krw": -8172500,
+      "closing_cash_krw": -8112500,
+      "floor_breach_days": 312
+    },
+    "alternatives": [
+      {
+        "alternative_id": "alt_4c2ddaf9d2242972",
+        "kind": "liquidity_protection",
+        "immediate_cash_change_krw": 1500000,
+        "future_cost_krw": 0,
+        "recovery_period_months": 0,
+        "action_burden": "medium",
+        "trace_ids": [
+          "trc_2e7d39c3d9d4858b3866"
+        ],
+        "actions": [
+          {
+            "action_type": "reduce_discretionary",
+            "amount_krw": 1800000,
+            "affected_event_ids": [
+              "discretionary:2026-12",
+              "discretionary:2027-01",
+              "discretionary:2027-02",
+              "discretionary:2027-03",
+              "discretionary:2027-04",
+              "discretionary:2027-05",
+              "discretionary:2027-06",
+              "discretionary:2027-07",
+              "discretionary:2027-08",
+              "discretionary:2027-09",
+              "discretionary:2027-10",
+              "discretionary:2027-11"
+            ],
+            "affected_periods": [
+              "2026-12",
+              "2027-01",
+              "2027-02",
+              "2027-03",
+              "2027-04",
+              "2027-05",
+              "2027-06",
+              "2027-07",
+              "2027-08",
+              "2027-09",
+              "2027-10",
+              "2027-11"
+            ],
+            "shift_days": 0,
+            "shift_months": 0
+          },
+          {
+            "action_type": "move_flexible_payment",
+            "amount_krw": 27600000,
+            "affected_event_ids": [
+              "sch_card:2026-12-14",
+              "sch_card:2027-01-14",
+              "sch_card:2027-02-14",
+              "sch_card:2027-03-14",
+              "sch_card:2027-04-14",
+              "sch_card:2027-05-14",
+              "sch_card:2027-06-14",
+              "sch_card:2027-07-14",
+              "sch_card:2027-08-14",
+              "sch_card:2027-09-14",
+              "sch_card:2027-10-14",
+              "sch_card:2027-11-14"
+            ],
+            "affected_periods": [
+              "2026-12",
+              "2027-01",
+              "2027-02",
+              "2027-03",
+              "2027-04",
+              "2027-05",
+              "2027-06",
+              "2027-07",
+              "2027-08",
+              "2027-09",
+              "2027-10",
+              "2027-11"
+            ],
+            "shift_days": 3,
+            "shift_months": 0
+          }
+        ],
+        "outcome": {
+          "minimum_cash_krw": -6672500,
+          "closing_cash_krw": -6312500,
+          "floor_breach_days": 301
+        }
+      },
+      {
+        "alternative_id": "alt_f37e645732b268b8",
+        "kind": "cost_minimization",
+        "immediate_cash_change_krw": 1500000,
+        "future_cost_krw": 0,
+        "recovery_period_months": 0,
+        "action_burden": "medium",
+        "trace_ids": [
+          "trc_7046ed9b5db25de94f20"
+        ],
+        "actions": [
+          {
+            "action_type": "reduce_discretionary",
+            "amount_krw": 1800000,
+            "affected_event_ids": [
+              "discretionary:2026-12",
+              "discretionary:2027-01",
+              "discretionary:2027-02",
+              "discretionary:2027-03",
+              "discretionary:2027-04",
+              "discretionary:2027-05",
+              "discretionary:2027-06",
+              "discretionary:2027-07",
+              "discretionary:2027-08",
+              "discretionary:2027-09",
+              "discretionary:2027-10",
+              "discretionary:2027-11"
+            ],
+            "affected_periods": [
+              "2026-12",
+              "2027-01",
+              "2027-02",
+              "2027-03",
+              "2027-04",
+              "2027-05",
+              "2027-06",
+              "2027-07",
+              "2027-08",
+              "2027-09",
+              "2027-10",
+              "2027-11"
+            ],
+            "shift_days": 0,
+            "shift_months": 0
+          }
+        ],
+        "outcome": {
+          "minimum_cash_krw": -6672500,
+          "closing_cash_krw": -6312500,
+          "floor_breach_days": 302
+        }
+      },
+      {
+        "alternative_id": "alt_237111dcac8a6616",
+        "kind": "minimum_change",
+        "immediate_cash_change_krw": 0,
+        "future_cost_krw": 0,
+        "recovery_period_months": 0,
+        "action_burden": "low",
+        "trace_ids": [
+          "trc_f06b03000ef00c5e35d5"
+        ],
+        "actions": [
+          {
+            "action_type": "move_flexible_payment",
+            "amount_krw": 27600000,
+            "affected_event_ids": [
+              "sch_card:2026-12-14",
+              "sch_card:2027-01-14",
+              "sch_card:2027-02-14",
+              "sch_card:2027-03-14",
+              "sch_card:2027-04-14",
+              "sch_card:2027-05-14",
+              "sch_card:2027-06-14",
+              "sch_card:2027-07-14",
+              "sch_card:2027-08-14",
+              "sch_card:2027-09-14",
+              "sch_card:2027-10-14",
+              "sch_card:2027-11-14"
+            ],
+            "affected_periods": [
+              "2026-12",
+              "2027-01",
+              "2027-02",
+              "2027-03",
+              "2027-04",
+              "2027-05",
+              "2027-06",
+              "2027-07",
+              "2027-08",
+              "2027-09",
+              "2027-10",
+              "2027-11"
+            ],
+            "shift_days": 3,
+            "shift_months": 0
+          }
+        ],
+        "outcome": {
+          "minimum_cash_krw": -8172500,
+          "closing_cash_krw": -8112500,
+          "floor_breach_days": 309
+        }
+      }
+    ],
+    "model_version": "cashflow-1.4.0",
+    "generated_at": "2026-09-19T14:58:11.201007Z"
+  }
+}

@@ -32,14 +32,15 @@ export default function ScenarioScreen() {
 
       {DEMO_SCENARIOS.map((scenario) => (
         <ScenarioCard
-          key={scenario.id}
+          key={scenario.scenario_id}
           title={scenario.title}
           description={scenario.description}
           selected={
-            scenarioSelection?.type === 'demo' && scenarioSelection.scenarioId === scenario.id
+            scenarioSelection?.type === 'demo' &&
+            scenarioSelection.scenarioId === scenario.scenario_id
           }
-          onPress={() => selectScenario({ type: 'demo', scenarioId: scenario.id })}
-          testID={`scenario-card-demo-${scenario.id}`}
+          onPress={() => selectScenario({ type: 'demo', scenarioId: scenario.scenario_id })}
+          testID={`scenario-card-demo-${scenario.scenario_id}`}
         />
       ))}
     </ScrollView>

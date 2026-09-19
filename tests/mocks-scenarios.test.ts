@@ -1,13 +1,25 @@
 import { buildCashflow, generateMonths } from '@/mocks/scenarios/build-cashflow';
-import { firstBirthFixture } from '@/mocks/scenarios/first-birth';
-import { pastMeFixture } from '@/mocks/scenarios/past-me';
-import { singleParentFixture, singleParentStressedFixture } from '@/mocks/scenarios/single-parent';
+import { firstBirthAlternativesFixture, firstBirthFixture } from '@/mocks/scenarios/first-birth';
+import { pastMeAlternativesFixture, pastMeFixture } from '@/mocks/scenarios/past-me';
+import {
+  singleParentAlternativesFixture,
+  singleParentFixture,
+  singleParentStressedAlternativesFixture,
+  singleParentStressedFixture,
+} from '@/mocks/scenarios/single-parent';
 
 const ALL_FIXTURES = [
   firstBirthFixture,
   pastMeFixture,
   singleParentFixture,
   singleParentStressedFixture,
+];
+
+const ALL_ALTERNATIVES_FIXTURES = [
+  firstBirthAlternativesFixture,
+  pastMeAlternativesFixture,
+  singleParentAlternativesFixture,
+  singleParentStressedAlternativesFixture,
 ];
 
 describe('generateMonths', () => {
@@ -33,6 +45,7 @@ describe('buildCashflow', () => {
   it('fills every month with the baseline unless overridden', () => {
     const points = buildCashflow(
       '2027-01',
+      'test',
       { confirmed_cash_krw: 1, p20_krw: 1, p50_krw: 1, p80_krw: 1, emergency_floor_krw: 1 },
       [{ period: '2027-03', confirmed_cash_krw: 999 }],
     );
@@ -42,6 +55,18 @@ describe('buildCashflow', () => {
     expect(points[2].period).toBe('2027-03');
     expect(points[2].confirmed_cash_krw).toBe(999);
     expect(points[2].p50_krw).toBe(1); // 오버라이드하지 않은 필드는 baseline 유지
+  });
+
+  it('fills a trace id for every point unless overridden', () => {
+    const points = buildCashflow(
+      '2027-01',
+      'test',
+      { confirmed_cash_krw: 1, p20_krw: 1, p50_krw: 1, p80_krw: 1, emergency_floor_krw: 1 },
+      [{ period: '2027-03', trace_ids: ['trc_custom'] }],
+    );
+
+    expect(points[0].trace_ids).toEqual(['trc_mock_test_cashflow_2027-01']);
+    expect(points[2].trace_ids).toEqual(['trc_custom']);
   });
 });
 
@@ -89,5 +114,39 @@ describe('scenario differentiation', () => {
   it('gives every fixture a distinct analysis_id for round-trip lookup', () => {
     const ids = ALL_FIXTURES.map((fixture) => fixture.analysis_id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+describe('real contract fields (docs/api/analysis-response-example.json)', () => {
+  it.each(ALL_FIXTURES.map((fixture) => [fixture.analysis_id, fixture] as const))(
+    '%s fills CashflowPoint.trace_ids and RiskItem.probability/confidence/source on every entry',
+    (_id, fixture) => {
+      for (const point of fixture.result.cashflow) {
+        expect(point.trace_ids?.length).toBeGreaterThan(0);
+      }
+      for (const risk of fixture.result.risks) {
+        expect(typeof risk.probability).toBe('number');
+        expect(risk.confidence).toBeTruthy();
+        expect(risk.source).toBeTruthy();
+      }
+    },
+  );
+
+  it.each(ALL_FIXTURES.map((fixture) => [fixture.analysis_id, fixture] as const))(
+    '%s caps result.alternatives at 3 summaries',
+    (_id, fixture) => {
+      expect(fixture.result.alternatives?.length).toBeLessThanOrEqual(3);
+    },
+  );
+
+  it.each(
+    ALL_ALTERNATIVES_FIXTURES.map((fixture) => [fixture.analysis_id, fixture] as const),
+  )('%s alternatives-compare fixture shares alternative_ids with the analysis result summary', (id, alternativesFixture) => {
+    const analysisFixture = ALL_FIXTURES.find((fixture) => fixture.analysis_id === id);
+    expect(analysisFixture).toBeDefined();
+
+    const summaryIds = analysisFixture?.result.alternatives?.map((item) => item.alternative_id);
+    const detailIds = alternativesFixture.alternatives.map((item) => item.alternative_id);
+    expect(detailIds).toEqual(summaryIds);
   });
 });

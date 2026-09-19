@@ -1,5 +1,6 @@
 import { apiRequest } from '@/shared/api/client';
 import { getAppMode } from '@/shared/api/config';
+import type { AnalysisResponse } from '@/shared/types';
 
 // getAppMode()/apiRequest()는 인자를 생략하면 process.env.EXPO_PUBLIC_*를 읽는다.
 // babel-preset-expo의 inline-env-vars 플러그인이 이 값을 빌드 시점에 리터럴로
@@ -28,7 +29,7 @@ describe('apiRequest mode dispatch', () => {
     const fetchSpy = jest.fn();
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    const { data } = await apiRequest(
+    const { data } = await apiRequest<AnalysisResponse>(
       { method: 'POST', path: '/v1/analyses', body: { scenario_id: 'first_birth_dual_income' } },
       'mock',
     );

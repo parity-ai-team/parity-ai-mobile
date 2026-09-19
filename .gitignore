@@ -21,6 +21,9 @@ coverage/
 # Expo generated types (recreated by `expo start`/`expo customize`)
 expo-env.d.ts
 
+# OpenAPI codegen output (recreated by `npm run generate:api-types`)
+src/shared/types/generated/backend.d.ts
+
 # Environment files
 .env
 .env.*

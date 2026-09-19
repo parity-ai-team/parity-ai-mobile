@@ -1,1 +1,1 @@
-export { ResultPlaceholderScreen as default } from '@/features/analysis';
+export { ResultScreen as default } from '@/features/analysis';

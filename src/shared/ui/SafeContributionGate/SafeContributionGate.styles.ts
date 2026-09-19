@@ -12,38 +12,25 @@ export function createStyles(theme: Theme) {
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.sm,
     },
-    cardSelected: {
-      borderColor: theme.colors.brand,
-      borderWidth: 2,
-    },
-    headerRow: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      gap: theme.spacing.sm,
-    },
-    period: {
+    title: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
-    severityChip: {
-      paddingHorizontal: theme.spacing.sm,
-      paddingVertical: theme.spacing.xs,
-      borderRadius: theme.radii.full,
+    amount: {
+      ...theme.typography.headingSmall,
+      color: theme.colors.success,
     },
-    severityInfo: { backgroundColor: theme.colors.severityInfo },
-    severityWarning: { backgroundColor: theme.colors.severityWarning },
-    severityCritical: { backgroundColor: theme.colors.severityCritical },
-    severityLabel: {
-      ...theme.typography.bodySmall,
-      color: theme.colors.textInverse,
+    body: {
+      ...theme.typography.bodyMedium,
+      color: theme.colors.textSecondary,
+      // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.
     },
-    causeRow: {
+    reasonRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
       gap: theme.spacing.xs,
     },
-    causeChip: {
+    reasonChip: {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.sm,
@@ -51,17 +38,9 @@ export function createStyles(theme: Theme) {
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.background,
     },
-    causeLabel: {
+    reasonLabel: {
       ...theme.typography.bodySmall,
       color: theme.colors.textPrimary,
-    },
-    gap: {
-      ...theme.typography.bodyLarge,
-      color: theme.colors.textPrimary,
-    },
-    probability: {
-      ...theme.typography.bodySmall,
-      color: theme.colors.textSecondary,
     },
     evidenceRow: {
       flexDirection: 'row',

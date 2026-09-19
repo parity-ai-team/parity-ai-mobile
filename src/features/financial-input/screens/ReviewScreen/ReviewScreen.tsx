@@ -24,9 +24,10 @@ const HOUSEHOLD_TYPE_LABEL: Record<string, string> = {
 };
 
 // S07 검토 화면. docs/frontend.md "화면별 행동 규칙"에 맞춰 값을 다시
-// 계산하지 않고 입력값을 그대로 보여준 뒤, mock 모드의 POST /v1/analyses까지만
-// 호출한다. 성공하면 응답을 세션에 보관하고 /analysis/result 자리표시
-// 화면으로 이동한다 — 실제 결과 표시는 이후 PR 범위다.
+// 계산하지 않고 입력값을 그대로 보여준 뒤 mock 모드의 POST /v1/analyses를
+// 호출한다. 성공하면 응답을 세션에 보관하고 S08 게이트(/analysis)로 이동한다
+// — 백엔드가 동기 응답이라 이미 응답을 들고 있지만, S08이 "분석 중" 표시와
+// 상태 확인을 한 번 거친 뒤 /analysis/result로 넘긴다.
 export default function ReviewScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -76,7 +77,9 @@ export default function ReviewScreen() {
         body,
       });
       setAnalysisResponse(data);
-      router.push('/analysis/result');
+      // 타입 라우트가 중첩 index 라우트를 "/analysis"가 아니라 파일 경로
+      // 그대로("/analysis/index")로만 인식한다 — 실제 이동 경로는 동일하게 /analysis다.
+      router.push('/analysis/index');
     } catch (error) {
       if (error instanceof ApiError) {
         setGeneralError(error.message);

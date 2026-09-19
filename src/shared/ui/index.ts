@@ -16,8 +16,12 @@ export { CONFIDENCE_LEVEL_LABEL, ConfidenceTag, DATA_SOURCE_LABEL } from './Conf
 export type { ConfidenceTagProps } from './ConfidenceTag';
 export { DataModeBadge } from './DataModeBadge';
 export type { DataMode, DataModeBadgeProps } from './DataModeBadge';
+export { getLimitationLabel, LIMITATION_LABEL, LimitationsNotice } from './LimitationsNotice';
+export type { LimitationsNoticeProps } from './LimitationsNotice';
 export { CAUSE_CODE_LABEL, getCauseCodeLabel, RiskCauseCard } from './RiskCauseCard';
 export type { RiskCauseCardProps } from './RiskCauseCard';
+export { SafeContributionGate } from './SafeContributionGate';
+export type { SafeContributionGateProps } from './SafeContributionGate';
 export { TextField } from './TextField';
 export type { TextFieldProps } from './TextField';
 export * from './theme';

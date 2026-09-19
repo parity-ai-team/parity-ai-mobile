@@ -63,7 +63,7 @@ describe('ReviewScreen — 분석 시작', () => {
     jest.clearAllMocks();
   });
 
-  it('성공하면 응답을 세션에 보관하고 결과 자리표시 화면으로 이동한다', async () => {
+  it('성공하면 응답을 세션에 보관하고 S08 게이트(/analysis)로 이동한다', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({
       data: { analysis_id: 'ana_test', status: 'ready' },
       meta: { requestId: 'req_test', revision: '1', apiVersion: '1.5.0' },
@@ -72,7 +72,7 @@ describe('ReviewScreen — 분석 시작', () => {
     await renderReviewScreenWithDemo();
     await fireEvent.press(screen.getByRole('button', { name: '분석 시작' }));
 
-    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/analysis/result'));
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/analysis/index'));
     expect(apiRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'POST',
@@ -103,6 +103,6 @@ describe('ReviewScreen — 분석 시작', () => {
 
     await waitFor(() => expect(screen.getByText('오류: greater_than_equal')).toBeTruthy());
     expect(screen.getByText('오류: 확인할 입력이 있어요.')).toBeTruthy();
-    expect(router.push).not.toHaveBeenCalledWith('/analysis/result');
+    expect(router.push).not.toHaveBeenCalledWith('/analysis/index');
   });
 });

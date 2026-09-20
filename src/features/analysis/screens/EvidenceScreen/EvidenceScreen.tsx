@@ -1,12 +1,12 @@
 import { Page } from '@/shared/ui/Page/Page';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
 import type { EvidenceResponse, EvidenceTrace, ExplanationSource } from '@/shared/types';
-import { Button, ConfidenceTag, useTheme } from '@/shared/ui';
+import { LoadingCards, Card, Button, ConfidenceTag, useTheme } from '@/shared/ui';
 
 import { createStyles } from './EvidenceScreen.styles';
 
@@ -85,7 +85,7 @@ export default function EvidenceScreen() {
   if (loading) {
     return (
       <Page contentContainerStyle={styles.content}>
-        <ActivityIndicator size="large" color={theme.colors.brand} testID="evidence-loading" />
+        <LoadingCards testID="evidence-loading" />
         <Text style={styles.body}>근거를 불러오는 중이에요…</Text>
       </Page>
     );
@@ -106,45 +106,58 @@ export default function EvidenceScreen() {
       <Text style={styles.title}>근거</Text>
       <Text style={styles.subtitle}>{`추적 ID: ${evidence.trace_id}`}</Text>
 
-      <Text style={styles.sectionTitle}>입력</Text>
-      <View style={styles.factList}>
-        {evidence.inputs.map((input) => (
-          <View key={input.name} style={styles.row} testID={`evidence-input-${input.name}`}>
-            <Text style={styles.rowLabel}>{input.name}</Text>
-            <Text style={styles.rowValue}>{input.value}</Text>
-            <ConfidenceTag source={input.source} />
+      <View style={styles.timelineStep}>
+        <Text style={styles.timelineNumber}>01</Text>
+        <Card style={styles.timelineCard}>
+          <Text style={styles.sectionTitle}>입력</Text>
+          <View style={styles.factList}>
+            {evidence.inputs.map((input) => (
+              <View key={input.name} style={styles.row} testID={`evidence-input-${input.name}`}>
+                <Text style={styles.rowLabel}>{input.name}</Text>
+                <Text style={styles.rowValue}>{input.value}</Text>
+                <ConfidenceTag source={input.source} />
+              </View>
+            ))}
           </View>
-        ))}
+        </Card>
       </View>
-
-      <Text style={styles.sectionTitle}>규칙</Text>
-      <View style={styles.factList}>
-        {evidence.rules.map((rule) => (
-          <View key={rule.rule_id} style={styles.row}>
-            <Text style={styles.rowLabel}>{rule.description}</Text>
-            <Text style={styles.rowValue}>{`${rule.rule_id} · v${rule.version}`}</Text>
+      <View style={styles.timelineStep}>
+        <Text style={styles.timelineNumber}>02</Text>
+        <Card style={styles.timelineCard}>
+          <Text style={styles.sectionTitle}>규칙</Text>
+          <View style={styles.factList}>
+            {evidence.rules.map((rule) => (
+              <View key={rule.rule_id} style={styles.row}>
+                <Text style={styles.rowLabel}>{rule.description}</Text>
+                <Text style={styles.rowValue}>{`${rule.rule_id} · v${rule.version}`}</Text>
+              </View>
+            ))}
           </View>
-        ))}
+        </Card>
       </View>
-
-      <Text style={styles.sectionTitle}>산출</Text>
-      <View style={styles.factList}>
-        {evidence.outputs.map((output) => (
-          <View key={output.name} style={styles.row}>
-            <Text style={styles.rowLabel}>{output.name}</Text>
-            <Text style={styles.rowValue}>
-              {output.unit ? `${output.value}${output.unit}` : output.value}
-            </Text>
+      <View style={styles.timelineStep}>
+        <Text style={styles.timelineNumber}>03</Text>
+        <Card style={styles.timelineCard}>
+          <Text style={styles.sectionTitle}>산출</Text>
+          <View style={styles.factList}>
+            {evidence.outputs.map((output) => (
+              <View key={output.name} style={styles.row}>
+                <Text style={styles.rowLabel}>{output.name}</Text>
+                <Text style={styles.rowValue}>
+                  {output.unit ? `${output.value}${output.unit}` : output.value}
+                </Text>
+              </View>
+            ))}
           </View>
-        ))}
+        </Card>
       </View>
-
-      <Text style={styles.sectionTitle}>설명</Text>
-      <Text style={styles.body}>{evidence.explanation.text}</Text>
-      <Text style={styles.explanationSource}>
-        {EXPLANATION_SOURCE_LABEL[evidence.explanation.source]}
-      </Text>
-
+      <Card>
+        <Text style={styles.sectionTitle}>설명</Text>
+        <Text style={styles.body}>{evidence.explanation.text}</Text>
+        <Text style={styles.explanationSource}>
+          {EXPLANATION_SOURCE_LABEL[evidence.explanation.source]}
+        </Text>
+      </Card>
       <Button
         label="결과 화면으로"
         variant="secondary"

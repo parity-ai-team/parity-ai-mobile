@@ -1,14 +1,23 @@
 import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
 import { formatKrw } from '@/shared/format';
 import { isResultUsable } from '@/shared/types';
 import type { AlternativeComparisonResponse } from '@/shared/types';
-import { Button, DataModeBadge, useTheme } from '@/shared/ui';
+import {
+  Card,
+  Columns,
+  Column,
+  CashFlowChart,
+  LoadingCards,
+  Button,
+  DataModeBadge,
+  useTheme,
+} from '@/shared/ui';
 
 import { AlternativeCard } from './AlternativeCard';
 import { createStyles } from './AlternativesScreen.styles';
@@ -90,7 +99,7 @@ export default function AlternativesScreen() {
   if (loading) {
     return (
       <Page contentContainerStyle={styles.content}>
-        <ActivityIndicator size="large" color={theme.colors.brand} testID="alternatives-loading" />
+        <LoadingCards testID="alternatives-loading" />
         <Text style={styles.body}>대안을 불러오는 중이에요…</Text>
       </Page>
     );
@@ -109,7 +118,12 @@ export default function AlternativesScreen() {
   const { current_state: baseline, alternatives } = comparison;
 
   return (
-    <Page contentContainerStyle={styles.content} testID="alternatives-screen">
+    <Page
+      wide
+      stickyHeaderIndices={[theme.layout.baselineStickyIndex]}
+      contentContainerStyle={styles.content}
+      testID="alternatives-screen"
+    >
       <DataModeBadge mode="synthetic" dataVersion={analysisResponse.versions.data} />
 
       <Text style={styles.title}>대안 비교</Text>
@@ -133,18 +147,30 @@ export default function AlternativesScreen() {
         </View>
       </View>
 
-      <View style={styles.cardList}>
-        {alternatives.map((detail) => (
-          <AlternativeCard
-            key={detail.alternative_id}
-            detail={detail}
-            baseline={baseline}
-            onPressEvidence={goToEvidence}
-            testID={`alternatives-card-${detail.alternative_id}`}
-          />
-        ))}
-      </View>
-
+      <Columns>
+        <Column>
+          <Card>
+            <Text style={styles.cardTitle}>현재 상태의 현금흐름</Text>
+            <Text style={styles.body}>
+              현재 상태의 12개월 흐름과 대안별 지표를 함께 살펴보세요.
+            </Text>
+            <CashFlowChart points={analysisResponse.result?.cashflow ?? []} />
+          </Card>
+        </Column>
+        <Column>
+          <View style={styles.cardList}>
+            {alternatives.map((detail) => (
+              <AlternativeCard
+                key={detail.alternative_id}
+                detail={detail}
+                baseline={baseline}
+                onPressEvidence={goToEvidence}
+                testID={`alternatives-card-${detail.alternative_id}`}
+              />
+            ))}
+          </View>
+        </Column>
+      </Columns>
       <Button
         label="결과 화면으로"
         variant="secondary"

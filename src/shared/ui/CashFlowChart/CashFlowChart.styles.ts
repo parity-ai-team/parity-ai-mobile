@@ -26,6 +26,7 @@ export function createStyles(theme: Theme) {
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,
     },
+    chartScroll: { flexGrow: theme.layout.flex },
     chartArea: {
       width: theme.layout.full,
       position: 'relative',
@@ -44,6 +45,7 @@ export function createStyles(theme: Theme) {
       alignItems: 'flex-start',
     },
     table: {
+      minWidth: theme.layout.tableMinWidth,
       borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       borderRadius: theme.radii.md,
@@ -56,6 +58,8 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.sm,
     },
     tableRow: {
+      minHeight: theme.accessibility.minTouchTarget,
+      alignItems: 'center',
       flexDirection: 'row',
       paddingVertical: theme.spacing.xs,
       paddingHorizontal: theme.spacing.sm,
@@ -66,11 +70,14 @@ export function createStyles(theme: Theme) {
       backgroundColor: theme.colors.surface,
     },
     tableCell: {
+      ...theme.typography.numeric,
+      padding: theme.spacing.xs,
       flex: theme.layout.flex,
       ...theme.typography.bodySmall,
       color: theme.colors.textPrimary,
     },
     tableHeaderCell: {
+      padding: theme.spacing.xs,
       flex: theme.layout.flex,
       ...theme.typography.labelMedium,
       color: theme.colors.textSecondary,

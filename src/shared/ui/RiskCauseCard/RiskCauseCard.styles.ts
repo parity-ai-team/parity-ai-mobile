@@ -21,6 +21,7 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.sm,
     },
     headerRow: {
+      flexWrap: 'wrap',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -60,7 +61,8 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textPrimary,
     },
     gap: {
-      ...theme.typography.bodyLarge,
+      ...theme.typography.numeric,
+      ...theme.typography.headingLarge,
       color: theme.colors.textPrimary,
     },
     probability: {

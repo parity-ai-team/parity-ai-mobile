@@ -31,6 +31,9 @@ export function SafeContributionGate({
   return (
     <View style={styles.card} testID={testID}>
       <Text style={styles.title}>안전 적립</Text>
+      <Text style={[styles.status, !result.eligible && styles.statusHeld]}>
+        {result.eligible ? '통과' : '보류'}
+      </Text>
 
       {result.eligible ? (
         <>
@@ -63,7 +66,7 @@ export function SafeContributionGate({
             <Button
               key={traceId}
               label={traceIds.length > 1 ? `근거 보기 ${index + 1}` : '근거 보기'}
-              variant="secondary"
+              variant="pill"
               onPress={() => onPressEvidence(traceId)}
             />
           ))}

@@ -34,7 +34,7 @@ export function Button({ label, onPress, variant = 'primary', disabled = false }
         variant === 'text' && styles.text,
         variant === 'pill' && styles.pill,
         focused && styles.focused,
-        pressed && !disabled && styles.pressed,
+        pressed && !disabled && (isSecondary ? styles.pressedSecondary : styles.pressed),
         disabled && styles.disabled,
       ]}
     >

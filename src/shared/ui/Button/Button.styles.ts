@@ -38,12 +38,14 @@ export function createStyles(theme: Theme) {
       borderColor: theme.colors.border,
     },
     pressed: {
-      opacity: theme.layout.pressedOpacity,
+      backgroundColor: theme.colors.brandPressed,
     },
+    pressedSecondary: { backgroundColor: theme.colors.brandSoft },
     disabled: {
       backgroundColor: theme.colors.disabledSurface,
     },
     label: {
+      flexShrink: theme.layout.flex,
       ...theme.typography.labelMedium,
       color: theme.colors.textInverse,
       // 동적 글꼴 200% 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.

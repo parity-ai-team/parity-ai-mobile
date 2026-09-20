@@ -1,4 +1,5 @@
-import { Pressable, Text, View } from 'react-native';
+import { InteractivePressable as Pressable } from '@/shared/ui/InteractivePressable/InteractivePressable';
+import { Text, View } from 'react-native';
 
 import { useTheme } from '@/shared/ui';
 

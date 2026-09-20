@@ -22,6 +22,7 @@ export function createStyles(theme: Theme) {
       borderRadius: theme.radii.full,
     },
     label: {
+      flexShrink: theme.layout.flex,
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,
       // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.

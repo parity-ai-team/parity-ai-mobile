@@ -40,7 +40,7 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textPrimary,
     },
     optionLabelSelected: {
-      color: theme.colors.brand,
+      color: theme.colors.brandPressed,
     },
     hint: {
       ...theme.typography.bodySmall,

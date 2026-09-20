@@ -69,21 +69,21 @@ export function AlternativeCard({
 
       <View style={styles.metricRow}>
         <Text style={styles.metricLabel}>최저 현금</Text>
-        <View>
+        <View style={styles.metricColumn}>
           <Text style={styles.metricValue}>{formatKrw(detail.outcome.minimum_cash_krw)}</Text>
           {minimumWorse ? <Text style={styles.metricWorse}>기준선보다 낮아요</Text> : null}
         </View>
       </View>
       <View style={styles.metricRow}>
         <Text style={styles.metricLabel}>기말 현금</Text>
-        <View>
+        <View style={styles.metricColumn}>
           <Text style={styles.metricValue}>{formatKrw(detail.outcome.closing_cash_krw)}</Text>
           {closingWorse ? <Text style={styles.metricWorse}>기준선보다 낮아요</Text> : null}
         </View>
       </View>
       <View style={styles.metricRow}>
         <Text style={styles.metricLabel}>비상금 기준 하회 일수</Text>
-        <View>
+        <View style={styles.metricColumn}>
           <Text style={styles.metricValue}>{`${detail.outcome.floor_breach_days}일`}</Text>
           {breachWorse ? <Text style={styles.metricWorse}>기준선보다 길어요</Text> : null}
         </View>
@@ -106,7 +106,7 @@ export function AlternativeCard({
             <Button
               key={traceId}
               label={traceIds.length > 1 ? `근거 보기 ${index + 1}` : '근거 보기'}
-              variant="secondary"
+              variant="pill"
               onPress={() => onPressEvidence(traceId)}
             />
           ))}

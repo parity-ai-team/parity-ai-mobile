@@ -1,4 +1,6 @@
 export const layout = {
+  baselineStickyIndex: 3,
+  tableMinWidth: 640,
   tablet: 768,
   desktop: 1100,
   contentMax: 560,

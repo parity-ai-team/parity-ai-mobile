@@ -1,10 +1,10 @@
 import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
-import { Button, useTheme } from '@/shared/ui';
+import { LoadingCards, Button, useTheme } from '@/shared/ui';
 
 import { createStyles } from './AnalysisLoadingScreen.styles';
 
@@ -27,7 +27,7 @@ export default function AnalysisLoadingScreen() {
   if (analysisResponse) {
     return (
       <Page contentContainerStyle={styles.content}>
-        <ActivityIndicator size="large" color={theme.colors.brand} />
+        <LoadingCards />
         <Text style={styles.title}>분석 중이에요…</Text>
       </Page>
     );

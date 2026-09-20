@@ -7,6 +7,9 @@ import { useFinancialInputSession } from '@/features/financial-input';
 import { isResultUsable } from '@/shared/types';
 import {
   Button,
+  Card,
+  Columns,
+  Column,
   CashFlowChart,
   DataModeBadge,
   LimitationsNotice,
@@ -15,6 +18,7 @@ import {
   useTheme,
 } from '@/shared/ui';
 
+import { RiskSummary } from './RiskSummary';
 import { createStyles } from './ResultScreen.styles';
 
 function goToEvidence(traceId: string) {
@@ -57,44 +61,52 @@ export default function ResultScreen() {
   }
 
   return (
-    <Page contentContainerStyle={styles.content}>
+    <Page wide contentContainerStyle={styles.content}>
       <DataModeBadge mode="synthetic" dataVersion={versions.data} />
       <LimitationsNotice limitations={limitations ?? []} testID="result-limitations" />
 
       <Text style={styles.title}>분석 결과</Text>
+      <RiskSummary risks={result.risks} />
+      <Columns>
+        <Column>
+          <Card>
+            <Text style={styles.sectionTitle}>12개월 현금흐름</Text>
 
-      <CashFlowChart
-        points={result.cashflow}
-        selectedPeriod={selectedPeriod}
-        onSelectPeriod={setSelectedPeriod}
-        testID="result-chart"
-      />
-
-      <Text style={styles.sectionTitle}>위험 시점</Text>
-      {result.risks.length === 0 ? (
-        <Text style={styles.body}>현재 가정에서 뚜렷한 위험월이 없어요.</Text>
-      ) : (
-        <View style={styles.riskList}>
-          {result.risks.map((risk) => (
-            <RiskCauseCard
-              key={risk.period}
-              risk={risk}
-              selected={risk.period === selectedPeriod}
-              onPress={() => setSelectedPeriod(risk.period)}
-              onPressEvidence={goToEvidence}
-              testID={`result-risk-${risk.period}`}
+            <CashFlowChart
+              points={result.cashflow}
+              selectedPeriod={selectedPeriod}
+              onSelectPeriod={setSelectedPeriod}
+              testID="result-chart"
             />
-          ))}
-        </View>
-      )}
+          </Card>
+        </Column>
+        <Column>
+          <Text style={styles.sectionTitle}>위험 시점</Text>
+          {result.risks.length === 0 ? (
+            <Text style={styles.body}>현재 가정에서 뚜렷한 위험월이 없어요.</Text>
+          ) : (
+            <View style={styles.riskList}>
+              {result.risks.map((risk) => (
+                <RiskCauseCard
+                  key={risk.period}
+                  risk={risk}
+                  selected={risk.period === selectedPeriod}
+                  onPress={() => setSelectedPeriod(risk.period)}
+                  onPressEvidence={goToEvidence}
+                  testID={`result-risk-${risk.period}`}
+                />
+              ))}
+            </View>
+          )}
 
-      <Text style={styles.sectionTitle}>안전 적립</Text>
-      <SafeContributionGate
-        result={result.safe_contribution}
-        onPressEvidence={goToEvidence}
-        testID="result-safe-contribution"
-      />
-
+          <Text style={styles.sectionTitle}>안전 적립</Text>
+          <SafeContributionGate
+            result={result.safe_contribution}
+            onPressEvidence={goToEvidence}
+            testID="result-safe-contribution"
+          />
+        </Column>
+      </Columns>
       <View style={styles.actionRow}>
         <Button label="입력 수정" variant="secondary" onPress={() => router.push('/plan')} />
         <Button label="대안 비교" onPress={() => router.push('/alternatives')} />

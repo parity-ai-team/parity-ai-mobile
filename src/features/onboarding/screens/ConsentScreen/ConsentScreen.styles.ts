@@ -8,7 +8,7 @@ export function createStyles(theme: Theme) {
       flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.xl,
-      gap: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     title: {
       ...theme.typography.headingLarge,

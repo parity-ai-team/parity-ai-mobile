@@ -7,7 +7,8 @@ export function createStyles(theme: Theme) {
     card: {
       boxShadow: theme.layout.cardShadow,
       minHeight: theme.accessibility.minTouchTarget,
-      padding: theme.spacing.xl,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radii.lg,
       borderWidth: theme.layout.zero,
       borderColor: theme.colors.transparent,

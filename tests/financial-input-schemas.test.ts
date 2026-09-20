@@ -80,6 +80,13 @@ describe('householdFormSchema — 필수값·형식 검증', () => {
       expect(result.success).toBe(false);
     },
   );
+
+  it('과거 출산 예정월은 거부한다', () => {
+    const result = householdFormSchema.safeParse({
+      household: { ...valid.household, expected_month: '2020-01' },
+    });
+    expect(result.success).toBe(false);
+  });
 });
 
 describe('financialFormSchema — 필수값·음수·소수 검증', () => {

@@ -4,11 +4,11 @@ export function createStyles(theme: Theme) {
   return StyleSheet.create({
     card: {
       backgroundColor: theme.colors.surface,
-      padding: theme.spacing.xl,
+      padding: theme.spacing.lg,
       borderRadius: theme.radii.lg,
       borderWidth: theme.layout.zero,
       borderColor: theme.colors.transparent,
-      gap: theme.spacing.lg,
+      gap: theme.spacing.md,
       boxShadow: theme.layout.cardShadow,
       minWidth: theme.layout.zero,
     },

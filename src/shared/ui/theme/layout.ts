@@ -34,7 +34,7 @@ export const layout = {
   headerZIndex: 2,
   stickyZIndex: 1,
   sidebarWidth: 320,
-  controlHeight: 56,
+  controlHeight: 48,
   brandLogoWidth: 80,
   brandLogoHeight: 56,
   brandLogoScale: 1.65,

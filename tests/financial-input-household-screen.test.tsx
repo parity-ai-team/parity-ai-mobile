@@ -67,6 +67,21 @@ describe('HouseholdScreen — 직접 입력', () => {
 
     expect(router.push).toHaveBeenCalledWith('/financial');
   });
+
+  it('과거 출산 예정월이면 다음으로 넘어가지 않는다', async () => {
+    await renderManual();
+
+    await fireEvent.changeText(screen.getByLabelText('출산 예정월'), '2020-01');
+    await fireEvent.changeText(screen.getByLabelText('출산 순서'), '1');
+    await fireEvent.press(screen.getByRole('radio', { name: '두 성인(맞벌이·외벌이)' }));
+    await fireEvent.changeText(screen.getByLabelText('부양가족 수'), '0');
+    await fireEvent.press(screen.getByRole('button', { name: '다음' }));
+
+    expect(
+      await screen.findByText('오류: 출산 예정월은 이번 달 또는 이후로 입력해 주세요.'),
+    ).toBeTruthy();
+    expect(router.push).not.toHaveBeenCalled();
+  });
 });
 
 describe('HouseholdScreen — 데모 선택', () => {

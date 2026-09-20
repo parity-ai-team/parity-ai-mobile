@@ -39,7 +39,7 @@ export function createStyles(theme: Theme) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingVertical: theme.spacing.md,
+      paddingVertical: theme.spacing.xs,
       gap: theme.spacing.sm,
     },
     headerRight: {
@@ -48,7 +48,22 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.sm,
       flexShrink: theme.layout.flex,
     },
-    brand: { ...theme.typography.headingSmall, color: theme.colors.deepGreen },
+    brandLockup: {
+      width: theme.layout.brandLogoWidth,
+      height: theme.layout.brandLogoHeight,
+      justifyContent: 'center',
+    },
+    brandLogo: {
+      width: theme.layout.brandLogoWidth,
+      height: theme.layout.brandLogoHeight,
+      transform: [{ scale: theme.layout.brandLogoScale }],
+    },
+    brand: {
+      position: 'absolute',
+      width: theme.layout.visuallyHiddenSize,
+      height: theme.layout.visuallyHiddenSize,
+      opacity: theme.layout.zero,
+    },
     stage: {
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,

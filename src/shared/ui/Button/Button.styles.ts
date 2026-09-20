@@ -31,6 +31,7 @@ export function createStyles(theme: Theme) {
     },
     primary: {
       backgroundColor: theme.colors.brand,
+      boxShadow: theme.layout.buttonShadow,
     },
     secondary: {
       backgroundColor: theme.colors.surface,

@@ -12,9 +12,9 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.full,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     dot: {
       width: theme.layout.dot,

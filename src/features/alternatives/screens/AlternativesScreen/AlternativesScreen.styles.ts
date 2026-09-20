@@ -35,7 +35,7 @@ export function createStyles(theme: Theme) {
       minWidth: theme.layout.zero,
     },
     title: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.headingLarge,
       color: theme.colors.textPrimary,
     },
     intro: {
@@ -53,14 +53,14 @@ export function createStyles(theme: Theme) {
       boxShadow: theme.layout.cardShadow,
       padding: theme.spacing.xl,
       borderRadius: theme.radii.lg,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.sm,
     },
     baselineCard: {
       backgroundColor: theme.colors.brandSoft,
-      borderColor: theme.colors.brand,
+      borderColor: theme.colors.transparent,
     },
     cardTitle: {
       ...theme.typography.labelMedium,
@@ -105,9 +105,9 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.full,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.background,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     burdenLabel: {
       ...theme.typography.bodySmall,

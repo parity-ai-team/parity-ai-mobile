@@ -4,7 +4,7 @@ import type { Theme } from '@/shared/ui';
 
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
-    summary: { backgroundColor: theme.colors.surface, borderColor: theme.colors.brand },
+    summary: { backgroundColor: theme.colors.brandSoft, borderColor: theme.colors.transparent },
     summaryPeriod: {
       ...theme.typography.headingLarge,
       ...theme.typography.numeric,

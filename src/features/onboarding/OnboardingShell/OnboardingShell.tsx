@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
+import { Image, Text, View, useWindowDimensions } from 'react-native';
 import { usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -8,6 +8,8 @@ import { Container, DataModeBadge, useTheme } from '@/shared/ui';
 import { ONBOARDING_DATA_VERSION } from '../constants';
 import { OnboardingSessionProvider } from '../OnboardingSessionContext';
 import { createStyles } from './OnboardingShell.styles';
+
+const brandLogo = require('../../../../assets/parity-ai-logo-final.png');
 
 export interface OnboardingShellProps {
   children: ReactNode;
@@ -46,7 +48,15 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Container style={styles.headerRow}>
-            <Text style={styles.brand}>PARITY AI</Text>
+            <View style={styles.brandLockup}>
+              <Image
+                source={brandLogo}
+                style={styles.brandLogo}
+                resizeMode="contain"
+                accessible={false}
+              />
+              <Text style={styles.brand}>PARITY AI</Text>
+            </View>
             <View style={styles.headerRight}>
               {showStage ? <Text style={styles.stage}>{stage}</Text> : null}
               <DataModeBadge mode="synthetic" dataVersion={ONBOARDING_DATA_VERSION} />

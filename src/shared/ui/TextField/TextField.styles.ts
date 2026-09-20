@@ -14,10 +14,10 @@ export function createStyles(theme: Theme) {
     inputRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.inputBorder,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
       borderRadius: theme.radii.md,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     focused: {
       borderColor: theme.colors.brand,
@@ -37,12 +37,12 @@ export function createStyles(theme: Theme) {
       paddingVertical: theme.spacing.md,
       ...theme.typography.numeric,
       // docs/frontend.md 접근성 기준: 터치 영역 최소 44×44pt
-      minHeight: theme.accessibility.minTouchTarget,
+      minHeight: theme.layout.controlHeight,
       borderWidth: theme.layout.zero,
       borderColor: theme.colors.transparent,
       borderRadius: theme.radii.md,
       paddingHorizontal: theme.spacing.md,
-      backgroundColor: theme.colors.surface,
+      backgroundColor: theme.colors.transparent,
       color: theme.colors.textPrimary,
       ...theme.typography.bodyMedium,
     },

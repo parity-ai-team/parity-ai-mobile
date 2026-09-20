@@ -25,12 +25,13 @@ export function createStyles(theme: Theme) {
       marginTop: theme.spacing.sm,
     },
     row: {
-      paddingVertical: theme.spacing.md,
-      borderRadius: theme.radii.none,
-      borderBottomWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
+      padding: theme.spacing.lg,
+      borderRadius: theme.radii.md,
+      borderBottomWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,
+      boxShadow: theme.layout.cardShadow,
     },
     rowLabel: {
       ...theme.typography.bodySmall,

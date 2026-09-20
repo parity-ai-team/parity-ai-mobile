@@ -1,12 +1,14 @@
 import { Page, Columns, Column } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
-import { Text, View } from 'react-native';
+import { Image, Text, View } from 'react-native';
 
 import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 
 import { Button, Card, Chip, useTheme } from '@/shared/ui';
 
 import { createStyles } from './StartScreen.styles';
+
+const babyMascot = require('../../../../../assets/parity-baby-mascot-v1.png');
 
 // S01 시작 화면. docs/frontend.md "사용자 여정과 화면 명세": 서비스 범위 안내,
 // 합성 데이터 고지, 시작·데모 선택을 보여준다. 두 버튼 모두 동의 화면(S02)으로
@@ -56,6 +58,12 @@ export default function StartScreen() {
             <View style={styles.heroPanel}>
               <Text style={styles.title}>가족의 새로운 시작,{'\n'}현금흐름부터 차분하게</Text>
               <Chip label="출산 전후 12개월 · 비교와 안내" tone="brand" />
+              <Image
+                source={babyMascot}
+                style={styles.mascot}
+                resizeMode="contain"
+                accessible={false}
+              />
               <Text style={styles.heroNumber}>12개월</Text>
               <Text style={styles.heroCaption}>변화하는 수입과 지출을 한눈에</Text>
               <Text style={styles.heroCaption}>현금흐름 · 대안 비교 · 계산 근거</Text>

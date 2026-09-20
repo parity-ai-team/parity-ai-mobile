@@ -24,7 +24,7 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.lg,
     },
     title: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.headingLarge,
       color: theme.colors.textPrimary,
     },
     subtitle: {
@@ -45,9 +45,9 @@ export function createStyles(theme: Theme) {
     row: {
       padding: theme.spacing.sm,
       borderRadius: theme.radii.sm,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
+      backgroundColor: theme.colors.surfaceMuted,
       gap: theme.spacing.xs,
     },
     rowLabel: {

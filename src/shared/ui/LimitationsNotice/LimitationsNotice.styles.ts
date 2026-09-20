@@ -8,9 +8,9 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.xs,
       padding: theme.spacing.md,
       borderRadius: theme.radii.md,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     item: {
       ...theme.typography.bodySmall,

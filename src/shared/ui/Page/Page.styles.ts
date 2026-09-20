@@ -12,7 +12,8 @@ export function createStyles(theme: Theme) {
       width: theme.layout.full,
       alignSelf: 'center',
       flexGrow: theme.layout.flex,
-      padding: theme.spacing.lg,
+      paddingHorizontal: theme.spacing.lg,
+      paddingTop: theme.spacing.xl,
       paddingBottom: theme.spacing.xxxl,
       gap: theme.spacing.xl,
     },
@@ -20,8 +21,9 @@ export function createStyles(theme: Theme) {
     wide: { maxWidth: theme.layout.wideMax },
     footer: {
       backgroundColor: theme.colors.surface,
-      borderTopWidth: theme.layout.stroke,
-      borderTopColor: theme.colors.border,
+      borderTopWidth: theme.layout.zero,
+      borderTopColor: theme.colors.transparent,
+      boxShadow: theme.layout.cardShadow,
     },
     footerContent: {
       padding: theme.spacing.lg,

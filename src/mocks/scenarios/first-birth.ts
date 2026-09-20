@@ -8,6 +8,7 @@ import type {
 
 import { toAlternativeSummary } from './build-alternatives';
 import { buildCashflow } from './build-cashflow';
+import { buildScenarioEvidenceFixtures } from './build-evidence';
 import {
   buildTraceId,
   MOCK_GENERATED_AT,
@@ -206,3 +207,11 @@ export const firstBirthAlternativesFixture: AlternativeComparisonResponse = {
   model_version: MOCK_VERSIONS.model,
   generated_at: MOCK_GENERATED_AT,
 };
+
+export const firstBirthEvidenceFixtures = buildScenarioEvidenceFixtures({
+  analysisId: firstBirthFixture.analysis_id,
+  revision: firstBirthFixture.revision,
+  risks,
+  alternatives: alternativeDetails,
+  safeContribution,
+});

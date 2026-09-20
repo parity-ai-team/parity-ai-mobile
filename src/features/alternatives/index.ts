@@ -1,1 +1,1 @@
-export { AlternativesPlaceholderScreen } from './screens/AlternativesPlaceholderScreen';
+export { AlternativesScreen } from './screens/AlternativesScreen';

@@ -55,6 +55,14 @@ describe('ConfidenceTag — source', () => {
     expect(confirmedBg).toBeTruthy();
   });
 
+  it('level 없이 source만 넘기면 출처 칩만 보여준다(S12 근거 화면의 EvidenceInputFact)', async () => {
+    await render(<ConfidenceTag source="policy_rule" testID="source-only" />);
+
+    expect(screen.queryByTestId('source-only-level')).toBeNull();
+    expect(screen.getByTestId('source-only-source')).toBeTruthy();
+    expect(screen.getByText(DATA_SOURCE_LABEL.policy_rule)).toBeTruthy();
+  });
+
   it('renders assumed with a distinct background from user_confirmed', async () => {
     await render(<ConfidenceTag level="medium" source="assumed" testID="assumed" />);
     const assumedChip = screen.getByTestId('assumed-source');

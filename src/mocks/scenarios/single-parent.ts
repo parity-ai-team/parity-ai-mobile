@@ -8,6 +8,7 @@ import type {
 
 import { toAlternativeSummary } from './build-alternatives';
 import { buildCashflow } from './build-cashflow';
+import { buildScenarioEvidenceFixtures } from './build-evidence';
 import {
   buildTraceId,
   MOCK_GENERATED_AT,
@@ -346,3 +347,19 @@ export const singleParentStressedAlternativesFixture: AlternativeComparisonRespo
   model_version: MOCK_VERSIONS.model,
   generated_at: MOCK_GENERATED_AT,
 };
+
+export const singleParentEvidenceFixtures = buildScenarioEvidenceFixtures({
+  analysisId: singleParentFixture.analysis_id,
+  revision: singleParentFixture.revision,
+  risks: baselineRisks,
+  alternatives: baselineAlternativeDetails,
+  safeContribution: baselineSafeContribution,
+});
+
+export const singleParentStressedEvidenceFixtures = buildScenarioEvidenceFixtures({
+  analysisId: singleParentStressedFixture.analysis_id,
+  revision: singleParentStressedFixture.revision,
+  risks: stressedRisks,
+  alternatives: stressedAlternativeDetails,
+  safeContribution: stressedSafeContribution,
+});

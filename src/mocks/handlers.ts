@@ -2,21 +2,27 @@
 //
 // docs/decisions/api-contract-mismatch.md에서 확정한 대로 docs/backend-integration.md
 // (OpenAPI 1.5.0)만 기준으로 삼는다. 지금 지원하는 것은 POST /v1/analyses,
-// GET /v1/analyses/{id}, GET /v1/analyses/{id}/alternatives 세 가지다.
-// PATCH/recalculate/evidence/DELETE mock은 아직 없다 — 필요해지면 이 파일에
-// handler를 추가한다.
+// GET /v1/analyses/{id}, GET /v1/analyses/{id}/alternatives, GET
+// /v1/analyses/{id}/evidence/{trace_id} 네 가지다. PATCH/recalculate/DELETE
+// mock은 아직 없다 — 필요해지면 이 파일에 handler를 추가한다.
 import { ApiError } from '@/shared/api/errors';
 import type { ResponseMeta } from '@/shared/api/headers';
 import type { RequestOptions } from '@/shared/api/request';
-import type { AlternativeComparisonResponse, StressInput } from '@/shared/types';
+import type { AlternativeComparisonResponse, EvidenceResponse, StressInput } from '@/shared/types';
 
-import { firstBirthAlternativesFixture, firstBirthFixture } from './scenarios/first-birth';
-import { pastMeAlternativesFixture, pastMeFixture } from './scenarios/past-me';
+import {
+  firstBirthAlternativesFixture,
+  firstBirthEvidenceFixtures,
+  firstBirthFixture,
+} from './scenarios/first-birth';
+import { pastMeAlternativesFixture, pastMeEvidenceFixtures, pastMeFixture } from './scenarios/past-me';
 import type { MockAnalysisResponse } from './scenarios/shared';
 import {
   singleParentAlternativesFixture,
+  singleParentEvidenceFixtures,
   singleParentFixture,
   singleParentStressedAlternativesFixture,
+  singleParentStressedEvidenceFixtures,
   singleParentStressedFixture,
 } from './scenarios/single-parent';
 
@@ -46,6 +52,23 @@ const ALL_ALTERNATIVES_FIXTURES = [
 const ALTERNATIVES_FIXTURES_BY_ANALYSIS_ID = new Map(
   ALL_ALTERNATIVES_FIXTURES.map((fixture) => [fixture.analysis_id, fixture]),
 );
+
+// analysis_id·trace_id 쌍으로 찾는다 — 다른 시나리오의 trace_id를 잘못된
+// analysis_id와 섞어 조회하면 404가 나야 하기 때문에 trace_id만으로는 찾지
+// 않는다.
+const ALL_EVIDENCE_FIXTURES_BY_ANALYSIS_ID: [string, Record<string, EvidenceResponse>][] = [
+  [firstBirthFixture.analysis_id, firstBirthEvidenceFixtures],
+  [pastMeFixture.analysis_id, pastMeEvidenceFixtures],
+  [singleParentFixture.analysis_id, singleParentEvidenceFixtures],
+  [singleParentStressedFixture.analysis_id, singleParentStressedEvidenceFixtures],
+];
+
+const EVIDENCE_FIXTURES_BY_KEY = new Map<string, EvidenceResponse>();
+for (const [analysisId, entries] of ALL_EVIDENCE_FIXTURES_BY_ANALYSIS_ID) {
+  for (const [traceId, response] of Object.entries(entries)) {
+    EVIDENCE_FIXTURES_BY_KEY.set(`${analysisId}:${traceId}`, response);
+  }
+}
 
 // docs/api/openapi-1.5.0.json AnalysisCreateRequest.scenario_id 예시의 이름을
 // 그대로 쓴다.
@@ -114,6 +137,32 @@ function analysisNotFoundError(): ApiError {
   );
 }
 
+function evidenceNotFoundError(): ApiError {
+  return new ApiError(
+    {
+      request_id: 'req_mock_evidence_not_found',
+      error: {
+        code: 'ANALYSIS_NOT_FOUND',
+        message: '존재하지 않는 분석 또는 근거입니다.',
+        retryable: false,
+      },
+    },
+    404,
+  );
+}
+
+function evidenceMetaFor(response: EvidenceResponse): ResponseMeta {
+  return {
+    requestId: response.request_id,
+    revision: String(response.revision),
+    apiVersion: null,
+  };
+}
+
+// GET /v1/analyses/{id}/evidence/{traceId} 매칭용. ALTERNATIVES_PATH_PATTERN·
+// ANALYSIS_PATH_PATTERN보다 먼저 검사한다(둘 다 [^/]+ 하나만 허용해 이 경로와
+// 겹치지 않지만, 순서를 명확히 해 둔다).
+const EVIDENCE_PATH_PATTERN = /^\/v1\/analyses\/([^/]+)\/evidence\/([^/]+)$/;
 // GET /v1/analyses/{id}/alternatives 매칭용. 먼저 검사하므로 아래
 // ANALYSIS_PATH_PATTERN([^/]+ 하나만 허용)과 겹치지 않는다.
 const ALTERNATIVES_PATH_PATTERN = /^\/v1\/analyses\/([^/]+)\/alternatives$/;
@@ -137,6 +186,16 @@ export function resolveMockResponse(options: RequestOptions): MockResolution | u
   }
 
   if (method === 'GET') {
+    const evidenceMatch = path.match(EVIDENCE_PATH_PATTERN);
+    if (evidenceMatch) {
+      const [, analysisId, traceId] = evidenceMatch;
+      const fixture = EVIDENCE_FIXTURES_BY_KEY.get(`${analysisId}:${traceId}`);
+      if (!fixture) {
+        throw evidenceNotFoundError();
+      }
+      return { data: fixture, meta: evidenceMetaFor(fixture) };
+    }
+
     const alternativesMatch = path.match(ALTERNATIVES_PATH_PATTERN);
     if (alternativesMatch) {
       const fixture = ALTERNATIVES_FIXTURES_BY_ANALYSIS_ID.get(alternativesMatch[1]);

@@ -1,1 +1,1 @@
-export { AlternativesPlaceholderScreen as default } from '@/features/alternatives';
+export { AlternativesScreen as default } from '@/features/alternatives';

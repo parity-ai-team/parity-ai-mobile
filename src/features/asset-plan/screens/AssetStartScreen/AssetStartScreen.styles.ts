@@ -8,16 +8,19 @@ export function createStyles(theme: Theme) {
       flexGrow: 1,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
-      gap: theme.spacing.md,
+      gap: theme.spacing.lg,
     },
     title: {
       ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
+    intro: {
+      ...theme.typography.bodyMedium,
+      color: theme.colors.textSecondary,
+    },
     body: {
       ...theme.typography.bodyMedium,
       color: theme.colors.textSecondary,
-      // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.
     },
   });
 }

@@ -1,8 +1,17 @@
 import { ApiError } from '@/shared/api/errors';
 import { resolveMockResponse } from '@/mocks/handlers';
-import { firstBirthAlternativesFixture, firstBirthFixture } from '@/mocks/scenarios/first-birth';
+import {
+  firstBirthAlternativesFixture,
+  firstBirthEvidenceFixtures,
+  firstBirthFixture,
+} from '@/mocks/scenarios/first-birth';
 import { pastMeFixture } from '@/mocks/scenarios/past-me';
-import { singleParentFixture, singleParentStressedFixture } from '@/mocks/scenarios/single-parent';
+import {
+  singleParentEvidenceFixtures,
+  singleParentFixture,
+  singleParentStressedEvidenceFixtures,
+  singleParentStressedFixture,
+} from '@/mocks/scenarios/single-parent';
 
 describe('resolveMockResponse — POST /v1/analyses', () => {
   it('returns the first-birth fixture for first_birth_dual_income', () => {
@@ -122,6 +131,63 @@ describe('resolveMockResponse — GET /v1/analyses/{id}/alternatives', () => {
       expect(error).toBeInstanceOf(ApiError);
       expect((error as ApiError).status).toBe(404);
       expect((error as ApiError).code).toBe('ANALYSIS_NOT_FOUND');
+    }
+  });
+});
+
+describe('resolveMockResponse — GET /v1/analyses/{id}/evidence/{trace_id}', () => {
+  it('returns the matching evidence fixture for each of the 3 differentiated scenarios', () => {
+    const firstBirthTraceId = Object.keys(firstBirthEvidenceFixtures)[0];
+    const resolvedFirstBirth = resolveMockResponse({
+      method: 'GET',
+      path: `/v1/analyses/${firstBirthFixture.analysis_id}/evidence/${firstBirthTraceId}`,
+    });
+    expect(resolvedFirstBirth?.data).toBe(firstBirthEvidenceFixtures[firstBirthTraceId]);
+
+    const singleParentTraceId = Object.keys(singleParentEvidenceFixtures)[0];
+    const resolvedSingleParent = resolveMockResponse({
+      method: 'GET',
+      path: `/v1/analyses/${singleParentFixture.analysis_id}/evidence/${singleParentTraceId}`,
+    });
+    expect(resolvedSingleParent?.data).toBe(singleParentEvidenceFixtures[singleParentTraceId]);
+
+    const singleParentStressedTraceId = Object.keys(singleParentStressedEvidenceFixtures)[0];
+    const resolvedSingleParentStressed = resolveMockResponse({
+      method: 'GET',
+      path: `/v1/analyses/${singleParentStressedFixture.analysis_id}/evidence/${singleParentStressedTraceId}`,
+    });
+    expect(resolvedSingleParentStressed?.data).toBe(
+      singleParentStressedEvidenceFixtures[singleParentStressedTraceId],
+    );
+  });
+
+  it('throws a 404 ApiError for an unknown trace id', () => {
+    try {
+      resolveMockResponse({
+        method: 'GET',
+        path: `/v1/analyses/${firstBirthFixture.analysis_id}/evidence/trc_does_not_exist`,
+      });
+      throw new Error('expected resolveMockResponse to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ApiError);
+      expect((error as ApiError).status).toBe(404);
+      expect((error as ApiError).code).toBe('ANALYSIS_NOT_FOUND');
+    }
+  });
+
+  it('throws a 404 ApiError when the trace id belongs to a different analysis', () => {
+    const firstBirthTraceId = Object.keys(firstBirthEvidenceFixtures)[0];
+
+    try {
+      resolveMockResponse({
+        method: 'GET',
+        // 다른 시나리오의 analysis_id와 섞어서 조회한다.
+        path: `/v1/analyses/${pastMeFixture.analysis_id}/evidence/${firstBirthTraceId}`,
+      });
+      throw new Error('expected resolveMockResponse to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ApiError);
+      expect((error as ApiError).status).toBe(404);
     }
   });
 });

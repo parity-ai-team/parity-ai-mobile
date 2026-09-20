@@ -79,7 +79,7 @@ export default function ReviewScreen() {
       setAnalysisResponse(data);
       // 타입 라우트가 중첩 index 라우트를 "/analysis"가 아니라 파일 경로
       // 그대로("/analysis/index")로만 인식한다 — 실제 이동 경로는 동일하게 /analysis다.
-      router.push('/analysis/index');
+      router.push('/analysis');
     } catch (error) {
       if (error instanceof ApiError) {
         setGeneralError(error.message);

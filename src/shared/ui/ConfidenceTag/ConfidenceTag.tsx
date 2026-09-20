@@ -7,7 +7,8 @@ import { createStyles } from './ConfidenceTag.styles';
 import { CONFIDENCE_LEVEL_LABEL, DATA_SOURCE_LABEL } from './labels';
 
 export interface ConfidenceTagProps {
-  level: ConfidenceLevel;
+  /** 없으면 출처 칩만 보여준다(예: S12 근거 화면의 EvidenceInputFact는 신뢰도 없이 출처만 내려온다). */
+  level?: ConfidenceLevel;
   source: DataSource;
   testID?: string;
 }
@@ -20,16 +21,20 @@ export function ConfidenceTag({ level, source, testID }: ConfidenceTagProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
 
-  const levelStyle = {
-    high: styles.levelHigh,
-    medium: styles.levelMedium,
-    low: styles.levelLow,
-  }[level];
-  const levelLabelStyle = {
-    high: styles.levelHighLabel,
-    medium: styles.levelMediumLabel,
-    low: styles.levelLowLabel,
-  }[level];
+  const levelStyle = level
+    ? {
+        high: styles.levelHigh,
+        medium: styles.levelMedium,
+        low: styles.levelLow,
+      }[level]
+    : undefined;
+  const levelLabelStyle = level
+    ? {
+        high: styles.levelHighLabel,
+        medium: styles.levelMediumLabel,
+        low: styles.levelLowLabel,
+      }[level]
+    : undefined;
 
   const sourceStyle = {
     user_confirmed: styles.sourceUserConfirmed,
@@ -46,14 +51,20 @@ export function ConfidenceTag({ level, source, testID }: ConfidenceTagProps) {
     derived: styles.sourceNeutralLabel,
   }[source];
 
-  const levelLabel = `신뢰도 ${CONFIDENCE_LEVEL_LABEL[level]}`;
+  const levelLabel = level ? `신뢰도 ${CONFIDENCE_LEVEL_LABEL[level]}` : null;
   const sourceLabel = DATA_SOURCE_LABEL[source];
 
   return (
-    <View style={styles.container} testID={testID} accessibilityLabel={`${levelLabel}, ${sourceLabel}`}>
-      <View style={[styles.chip, levelStyle]} testID={testID && `${testID}-level`}>
-        <Text style={[styles.chipLabel, levelLabelStyle]}>{levelLabel}</Text>
-      </View>
+    <View
+      style={styles.container}
+      testID={testID}
+      accessibilityLabel={levelLabel ? `${levelLabel}, ${sourceLabel}` : sourceLabel}
+    >
+      {levelLabel ? (
+        <View style={[styles.chip, levelStyle]} testID={testID && `${testID}-level`}>
+          <Text style={[styles.chipLabel, levelLabelStyle]}>{levelLabel}</Text>
+        </View>
+      ) : null}
       <View style={[styles.chip, sourceStyle]} testID={testID && `${testID}-source`}>
         <Text style={[styles.chipLabel, sourceLabelStyle]}>{sourceLabel}</Text>
       </View>

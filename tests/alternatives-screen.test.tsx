@@ -191,6 +191,7 @@ describe('AlternativesScreen — 기준선과 대안 비교', () => {
 
     const worseCard = screen.getByTestId('alternatives-card-alt_worse');
     expect(within(worseCard).getByText('-1,000,000원')).toBeTruthy();
+    expect(within(worseCard).getByText('50만원')).toBeTruthy();
     expect(within(worseCard).getAllByText('현재보다 1,000,000원 덜 남아요').length).toBe(2);
     expect(within(worseCard).getByText('현재보다 3일 길어요')).toBeTruthy();
 

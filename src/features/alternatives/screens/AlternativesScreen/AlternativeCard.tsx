@@ -40,6 +40,27 @@ function getDayDeltaCopy(days: number, baselineDays: number): string {
   return `현재보다 ${Math.abs(delta)}일 ${delta < 0 ? '짧아요' : '길어요'}`;
 }
 
+function formatPeriod(period: string): { year: string; month: number } | null {
+  const match = /^(\d{4})-(\d{2})$/.exec(period);
+  return match ? { year: match[1], month: Number(match[2]) } : null;
+}
+
+function formatPeriodRange(periods: string[]): string {
+  if (periods.length === 0) return '';
+  const first = formatPeriod(periods[0]);
+  const last = formatPeriod(periods[periods.length - 1]);
+  if (!first || !last) return periods.join(' · ');
+  if (periods.length === 1) return `${first.year}년 ${first.month}월`;
+  if (first.year === last.year) return `${first.year}년 ${first.month}월 ~ ${last.month}월`;
+  return `${first.year}년 ${first.month}월 ~ ${last.year}년 ${last.month}월`;
+}
+
+function formatCompactKrw(amount: number): string {
+  if (Math.abs(amount) < 10_000) return formatKrw(amount);
+  const tenThousands = amount / 10_000;
+  return `${tenThousands.toLocaleString('ko-KR', { maximumFractionDigits: 1 })}만원`;
+}
+
 export function AlternativeCard({
   detail,
   baseline,
@@ -83,35 +104,43 @@ export function AlternativeCard({
         <Text style={styles.effectCaption}>가장 적게 남는 돈 기준</Text>
       </View>
 
-      <View style={styles.outcomeGrid}>
-        <View style={styles.outcomeMetric}>
-          <Text style={styles.metricLabel}>12개월 뒤 남는 돈</Text>
-          <Text style={styles.outcomeValue}>{formatKrw(detail.outcome.closing_cash_krw)}</Text>
-          <Text style={[styles.deltaLabel, closingWorse && styles.deltaNegative]}>
-            {getDeltaCopy(closingDelta)}
-          </Text>
+      <View style={styles.resultList}>
+        <View style={styles.resultRow}>
+          <View style={styles.resultCopy}>
+            <Text style={styles.resultLabel}>12개월 뒤 남는 돈</Text>
+            <Text style={[styles.deltaLabel, closingWorse && styles.deltaNegative]}>
+              {getDeltaCopy(closingDelta)}
+            </Text>
+          </View>
+          <Text style={styles.resultValue}>{formatKrw(detail.outcome.closing_cash_krw)}</Text>
         </View>
-        <View style={styles.outcomeMetric}>
-          <Text style={styles.metricLabel}>비상금 부족 기간</Text>
-          <Text style={styles.outcomeValue}>{`${detail.outcome.floor_breach_days}일`}</Text>
-          <Text style={[styles.deltaLabel, breachWorse && styles.deltaNegative]}>
-            {getDayDeltaCopy(detail.outcome.floor_breach_days, baseline.floor_breach_days)}
-          </Text>
+        <View style={[styles.resultRow, styles.resultRowDivider]}>
+          <View style={styles.resultCopy}>
+            <Text style={styles.resultLabel}>비상금 부족 기간</Text>
+            <Text style={[styles.deltaLabel, breachWorse && styles.deltaNegative]}>
+              {getDayDeltaCopy(detail.outcome.floor_breach_days, baseline.floor_breach_days)}
+            </Text>
+          </View>
+          <Text style={styles.resultValue}>{`${detail.outcome.floor_breach_days}일`}</Text>
         </View>
       </View>
 
       <View style={styles.quickMetrics}>
         <View style={styles.quickMetric}>
-          <Text style={styles.metricLabel}>지금 확보</Text>
-          <Text style={styles.metricValue}>{formatKrw(detail.immediate_cash_change_krw)}</Text>
+          <Text style={styles.quickMetricLabel}>바로 확보</Text>
+          <Text style={styles.quickMetricValue} numberOfLines={1}>
+            {formatCompactKrw(detail.immediate_cash_change_krw)}
+          </Text>
         </View>
-        <View style={styles.quickMetric}>
-          <Text style={styles.metricLabel}>나중에 드는 비용</Text>
-          <Text style={styles.metricValue}>{formatKrw(detail.future_cost_krw)}</Text>
+        <View style={[styles.quickMetric, styles.quickMetricDivider]}>
+          <Text style={styles.quickMetricLabel}>추가 비용</Text>
+          <Text style={styles.quickMetricValue} numberOfLines={1}>
+            {formatCompactKrw(detail.future_cost_krw)}
+          </Text>
         </View>
-        <View style={styles.quickMetric}>
-          <Text style={styles.metricLabel}>회복 기간</Text>
-          <Text style={styles.metricValue}>{`${detail.recovery_period_months}개월`}</Text>
+        <View style={[styles.quickMetric, styles.quickMetricDivider]}>
+          <Text style={styles.quickMetricLabel}>회복</Text>
+          <Text style={styles.quickMetricValue}>{`${detail.recovery_period_months}개월`}</Text>
         </View>
       </View>
 
@@ -119,10 +148,15 @@ export function AlternativeCard({
         <View style={styles.actionList}>
           <Text style={styles.actionTitle}>이렇게 바꿔요</Text>
           {detail.actions.map((action, index) => (
-            <Text key={`${action.action_type}-${index}`} style={styles.actionRow}>
-              {`${getActionTypeLabel(action.action_type)} · ${formatKrw(action.amount_krw)}`}
-              {action.affected_periods.length > 0 ? ` · ${action.affected_periods.join(', ')}` : ''}
-            </Text>
+            <View key={`${action.action_type}-${index}`} style={styles.actionItem}>
+              <Text style={styles.actionName}>{getActionTypeLabel(action.action_type)}</Text>
+              <Text style={styles.actionMeta}>
+                {formatKrw(action.amount_krw)}
+                {action.affected_periods.length > 0
+                  ? ` · ${formatPeriodRange(action.affected_periods)}`
+                  : ''}
+              </Text>
+            </View>
           ))}
         </View>
       ) : null}

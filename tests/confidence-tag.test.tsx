@@ -9,6 +9,7 @@ const ALL_SOURCES: DataSource[] = [
   'policy_rule',
   'derived',
   'assumed',
+  'public_data',
 ];
 
 describe('ConfidenceTag — level', () => {
@@ -30,7 +31,7 @@ describe('ConfidenceTag — source', () => {
     expect(screen.getByText(DATA_SOURCE_LABEL[source])).toBeTruthy();
   });
 
-  it('5가지 source 라벨은 서로 전부 다르다', () => {
+  it('모든 source 라벨은 서로 전부 다르다', () => {
     const labels = ALL_SOURCES.map((source) => DATA_SOURCE_LABEL[source]);
     expect(new Set(labels).size).toBe(ALL_SOURCES.length);
   });

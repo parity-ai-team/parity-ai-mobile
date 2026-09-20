@@ -16,7 +16,7 @@
     "typecheck": "tsc --noEmit",
     "pretest": "npm run generate:api-types",
     "test": "jest",
-    "generate:api-types": "openapi-typescript docs/api/openapi-1.5.0.json -o src/shared/types/generated/backend.d.ts"
+    "generate:api-types": "openapi-typescript docs/api/openapi-1.7.0.json -o src/shared/types/generated/backend.d.ts"
   },
   "overrides": {
     "openapi-typescript": {

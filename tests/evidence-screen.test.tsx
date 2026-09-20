@@ -172,12 +172,34 @@ describe('EvidenceScreen — 오류 처리', () => {
     expect(apiRequest).not.toHaveBeenCalled();
   });
 
-  it('404면 안내 문구와 뒤로 가기를 보여준다', async () => {
+  // 2026-09-20 백엔드 팀 확인: 무료 플랜은 재시작되면 analysis_id가
+  // 사라질 수 있다 — "뒤로 가기"는 소용없으니 시작으로 보낸다.
+  it('ANALYSIS_NOT_FOUND면 시작으로 돌아가는 안내를 보여준다', async () => {
     (apiRequest as jest.Mock).mockRejectedValue(
       new ApiError(
         {
           request_id: 'req_err',
           error: { code: 'ANALYSIS_NOT_FOUND', message: '존재하지 않습니다.', retryable: false },
+        },
+        404,
+      ),
+    );
+
+    await renderEvidenceScreen(buildAnalysisResponse());
+
+    await waitFor(() =>
+      expect(screen.getByText('분석을 찾을 수 없어요. 다시 시작해 주세요.')).toBeTruthy(),
+    );
+    await fireEvent.press(screen.getByRole('button', { name: '시작으로' }));
+    expect(router.push).toHaveBeenCalledWith('/');
+  });
+
+  it('다른 404 오류는 근거 전용 안내 문구와 뒤로 가기를 보여준다', async () => {
+    (apiRequest as jest.Mock).mockRejectedValue(
+      new ApiError(
+        {
+          request_id: 'req_err',
+          error: { code: 'INVALID_REQUEST', message: '잘못된 요청이에요.', retryable: false },
         },
         404,
       ),

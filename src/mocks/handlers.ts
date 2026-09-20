@@ -70,17 +70,18 @@ for (const [analysisId, entries] of ALL_EVIDENCE_FIXTURES_BY_ANALYSIS_ID) {
   }
 }
 
-// docs/api/openapi-1.5.0.json AnalysisCreateRequest.scenario_id 예시의 이름을
-// 그대로 쓴다.
+// 실제 백엔드(GET /v1/demo-scenarios, 2026-09-20 실서버 확인)가 쓰는
+// scenario_id 문자열 그대로다 — docs/api/openapi-1.5.0.json 예시에 있던
+// past_me_transition·single_parent_stress는 실서버 값과 달라서 맞췄다.
 function pickFixtureForCreate(
   body: CreateAnalysisRequestBody | undefined,
 ): MockAnalysisResponse | undefined {
   switch (body?.scenario_id) {
     case 'first_birth_dual_income':
       return firstBirthFixture;
-    case 'past_me_transition':
+    case 'second_birth_single_income':
       return pastMeFixture;
-    case 'single_parent_stress': {
+    case 'second_birth_single_parent_irregular_income': {
       const isStressed =
         Boolean(body?.stress?.income_delay_weeks) || Boolean(body?.stress?.child_support_missed);
       return isStressed ? singleParentStressedFixture : singleParentFixture;

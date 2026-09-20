@@ -37,6 +37,7 @@ function buildAnalysisResponse(overrides: Partial<AnalysisResponse> = {}): Analy
         reason_codes: ['BELOW_EMERGENCY_FLOOR'],
         valid_until: '2027-03',
       },
+      living_cost_context: null,
     },
     limitations: ['SYNTHETIC_DATA'],
     input_hash: null,
@@ -112,6 +113,7 @@ describe('AssetStartScreen — eligible 표시', () => {
             reason_codes: [],
             valid_until: '2027-12',
           },
+          living_cost_context: null,
         },
       }),
     );
@@ -132,6 +134,7 @@ describe('AssetStartScreen — eligible 표시', () => {
             reason_codes: ['BELOW_EMERGENCY_FLOOR'],
             valid_until: '2027-03',
           },
+          living_cost_context: null,
         },
       }),
     );
@@ -152,6 +155,7 @@ describe('AssetStartScreen — eligible 표시', () => {
             reason_codes: [],
             valid_until: '2027-12',
           },
+          living_cost_context: null,
         },
       }),
     );

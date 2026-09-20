@@ -5,7 +5,6 @@ export { endpoints } from './endpoints';
 export { ApiError } from './errors';
 export {
   API_VERSION_HEADER,
-  AUTHORIZATION_HEADER,
   buildRequestHeaders,
   ETAG_HEADER,
   generateIdempotencyKey,

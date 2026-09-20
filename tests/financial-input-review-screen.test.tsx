@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { useEffect, type ReactNode } from 'react';
 
 import { FinancialInputSessionProvider, ReviewScreen } from '@/features/financial-input';
@@ -104,5 +104,32 @@ describe('ReviewScreen — 분석 시작', () => {
     await waitFor(() => expect(screen.getByText('오류: greater_than_equal')).toBeTruthy());
     expect(screen.getByText('오류: 확인할 입력이 있어요.')).toBeTruthy();
     expect(router.push).not.toHaveBeenCalledWith('/analysis');
+  });
+
+  // 콜드 스타트 대응: apiRequest에 onSlowRequest를 넘기고, 그게 호출되면
+  // "서버를 깨우는 중" 안내를 보여준다. 실제 5초/90초 타이밍은
+  // tests/shared-api-client.test.ts가 realApiRequest 단에서 확인한다 — 여기서는
+  // 화면이 그 콜백을 받아 올바르게 반응하는지만 본다.
+  it('요청이 느려지면(onSlowRequest 호출) 서버를 깨우는 중이라는 안내를 보여준다', async () => {
+    let capturedOnSlowRequest: (() => void) | undefined;
+    (apiRequest as jest.Mock).mockImplementation((options: { onSlowRequest?: () => void }) => {
+      capturedOnSlowRequest = options.onSlowRequest;
+      return new Promise(() => {});
+    });
+
+    await renderReviewScreenWithDemo();
+    // apiRequest가 절대 resolve되지 않는 Promise를 반환하므로 press 자체를
+    // await하면 테스트가 멈춘다 — 핸들러가 apiRequest를 호출할 때까지만
+    // waitFor로 기다린다.
+    fireEvent.press(screen.getByRole('button', { name: '분석 시작' }));
+    await waitFor(() => expect(capturedOnSlowRequest).toBeDefined());
+
+    expect(screen.queryByText(/서버를 깨우는 중이에요/)).toBeNull();
+
+    await act(async () => {
+      capturedOnSlowRequest?.();
+    });
+
+    expect(screen.getByText(/서버를 깨우는 중이에요/)).toBeTruthy();
   });
 });

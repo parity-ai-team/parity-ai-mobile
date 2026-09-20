@@ -24,11 +24,11 @@ describe('resolveMockResponse — POST /v1/analyses', () => {
     expect(resolved?.data).toBe(firstBirthFixture);
   });
 
-  it('returns the past-me fixture for past_me_transition', () => {
+  it('returns the past-me fixture for second_birth_single_income', () => {
     const resolved = resolveMockResponse({
       method: 'POST',
       path: '/v1/analyses',
-      body: { scenario_id: 'past_me_transition' },
+      body: { scenario_id: 'second_birth_single_income' },
     });
 
     expect(resolved?.data).toBe(pastMeFixture);
@@ -38,7 +38,7 @@ describe('resolveMockResponse — POST /v1/analyses', () => {
     const resolved = resolveMockResponse({
       method: 'POST',
       path: '/v1/analyses',
-      body: { scenario_id: 'single_parent_stress' },
+      body: { scenario_id: 'second_birth_single_parent_irregular_income' },
     });
 
     expect(resolved?.data).toBe(singleParentFixture);
@@ -48,7 +48,10 @@ describe('resolveMockResponse — POST /v1/analyses', () => {
     const resolved = resolveMockResponse({
       method: 'POST',
       path: '/v1/analyses',
-      body: { scenario_id: 'single_parent_stress', stress: { income_delay_weeks: 2 } },
+      body: {
+        scenario_id: 'second_birth_single_parent_irregular_income',
+        stress: { income_delay_weeks: 2 },
+      },
     });
 
     expect(resolved?.data).toBe(singleParentStressedFixture);
@@ -58,7 +61,10 @@ describe('resolveMockResponse — POST /v1/analyses', () => {
     const resolved = resolveMockResponse({
       method: 'POST',
       path: '/v1/analyses',
-      body: { scenario_id: 'single_parent_stress', stress: { child_support_missed: true } },
+      body: {
+        scenario_id: 'second_birth_single_parent_irregular_income',
+        stress: { child_support_missed: true },
+      },
     });
 
     expect(resolved?.data).toBe(singleParentStressedFixture);

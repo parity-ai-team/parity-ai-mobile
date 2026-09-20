@@ -14,9 +14,27 @@ function mockFetchOnce(response: Response) {
   globalThis.fetch = jest.fn().mockResolvedValue(response) as unknown as typeof fetch;
 }
 
+// signal이 abort되면 실제 fetch가 하는 것처럼 AbortError로 reject하는 fetch
+// 목 — 콜드 스타트 타임아웃(90초) 동작을 재현하는 데 쓴다.
+function mockHangingFetch() {
+  const fetchMock = jest.fn(
+    (_url: string, init?: RequestInit) =>
+      new Promise<Response>((_resolve, reject) => {
+        init?.signal?.addEventListener('abort', () => {
+          const abortError = new Error('The operation was aborted.');
+          abortError.name = 'AbortError';
+          reject(abortError);
+        });
+      }),
+  );
+  globalThis.fetch = fetchMock as unknown as typeof fetch;
+  return fetchMock;
+}
+
 describe('realApiRequest', () => {
   afterEach(() => {
     jest.restoreAllMocks();
+    jest.useRealTimers();
   });
 
   it('resolves the success envelope for a GET request without an idempotency key', async () => {
@@ -44,6 +62,7 @@ describe('realApiRequest', () => {
     const headers = init.headers as Headers;
     expect(headers.get(IDEMPOTENCY_KEY_HEADER)).toBeNull();
     expect(headers.get(REQUEST_ID_HEADER)).toBeNull();
+    expect(headers.get('Authorization')).toBeNull();
   });
 
   it('auto-generates an idempotency key and request id for POST requests', async () => {
@@ -71,7 +90,7 @@ describe('realApiRequest', () => {
     await realApiRequest({
       method: 'POST',
       path: '/v1/analyses',
-      body: { scenario_id: 'first_birth' },
+      body: { scenario_id: 'first_birth_dual_income' },
     });
 
     const [, init] = (globalThis.fetch as jest.Mock).mock.calls[0];
@@ -80,7 +99,9 @@ describe('realApiRequest', () => {
     expect(headers.get(REQUEST_ID_HEADER)).toBe('req_00000000-0000-4000-8000-000000000000');
   });
 
-  it('sends the if-match header with the revision for PATCH requests', async () => {
+  // 2026-09-20 실서버 확인: ETag가 W/"ana_xxx:1" 형태의 약한 ETag로 온다.
+  // If-Match에는 그 문자열을 가공 없이 그대로 보내야 한다.
+  it('sends the if-match header with the raw ETag string for PATCH requests', async () => {
     mockFetchOnce(
       new Response(
         JSON.stringify({
@@ -105,17 +126,17 @@ describe('realApiRequest', () => {
     await realApiRequest({
       method: 'PATCH',
       path: '/v1/analyses/ana_1',
-      ifMatchRevision: 1,
+      ifMatch: 'W/"ana_1:1"',
       body: {},
     });
 
     const [, init] = (globalThis.fetch as jest.Mock).mock.calls[0];
     const headers = init.headers as Headers;
-    expect(headers.get(IF_MATCH_HEADER)).toBe('1');
+    expect(headers.get(IF_MATCH_HEADER)).toBe('W/"ana_1:1"');
     expect(headers.get(IDEMPOTENCY_KEY_HEADER)).toBeNull();
   });
 
-  it('rejects a PATCH without ifMatchRevision before calling fetch (avoids a guaranteed 428)', async () => {
+  it('rejects a PATCH without ifMatch before calling fetch (avoids a guaranteed 428)', async () => {
     const fetchSpy = jest.fn();
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
@@ -126,10 +147,27 @@ describe('realApiRequest', () => {
     expect(fetchSpy).not.toHaveBeenCalled();
   });
 
-  it('resolves with no body for a 204 DELETE response', async () => {
+  // 2026-09-20 실서버 확인: DELETE도 PATCH와 마찬가지로 If-Match가 없으면
+  // 428 PRECONDITION_REQUIRED다.
+  it('rejects a DELETE without ifMatch before calling fetch (avoids a guaranteed 428)', async () => {
+    const fetchSpy = jest.fn();
+    globalThis.fetch = fetchSpy as unknown as typeof fetch;
+
+    await expect(
+      realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1' }),
+    ).rejects.toThrow(/If-Match/);
+
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('resolves with no body for a 204 DELETE response given a matching ifMatch', async () => {
     mockFetchOnce(new Response(null, { status: 204 }));
 
-    const { data } = await realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1' });
+    const { data } = await realApiRequest({
+      method: 'DELETE',
+      path: '/v1/analyses/ana_1',
+      ifMatch: 'W/"ana_1:1"',
+    });
 
     expect(data).toBeUndefined();
   });
@@ -188,7 +226,7 @@ describe('realApiRequest', () => {
     mockFetchOnce(new Response(JSON.stringify(errorBody), { status: 428 }));
 
     await expect(
-      realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1', ifMatchRevision: 1 }),
+      realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1', ifMatch: 'W/"ana_1:1"' }),
     ).rejects.toMatchObject({
       status: 428,
       code: 'PRECONDITION_REQUIRED',
@@ -210,5 +248,82 @@ describe('realApiRequest', () => {
     await expect(
       realApiRequest({ method: 'GET', path: '/v1/analyses/missing' }),
     ).rejects.toBeInstanceOf(ApiError);
+  });
+
+  // 무료 플랜 백엔드는 잠들어 있다가 첫 요청에서 깨어나는 데 50초 이상 걸릴
+  // 수 있다(2026-09-20 백엔드 팀 확인).
+  describe('cold start handling', () => {
+    it('calls onSlowRequest after 5s when the response has not arrived yet', async () => {
+      jest.useFakeTimers();
+      let resolveFetch!: (response: Response) => void;
+      globalThis.fetch = jest.fn(
+        () =>
+          new Promise<Response>((resolve) => {
+            resolveFetch = resolve;
+          }),
+      ) as unknown as typeof fetch;
+      const onSlowRequest = jest.fn();
+
+      const promise = realApiRequest({
+        method: 'GET',
+        path: '/v1/analyses/ana_1',
+        onSlowRequest,
+      });
+
+      await jest.advanceTimersByTimeAsync(5_000);
+      expect(onSlowRequest).toHaveBeenCalledTimes(1);
+
+      resolveFetch(
+        new Response(
+          JSON.stringify({
+            request_id: 'req_1',
+            analysis_id: 'ana_1',
+            status: 'ready',
+            revision: 1,
+            versions: { api: '1.0', data: 'd', rules: 'r', model: 'm' },
+            result: {},
+            limitations: [],
+            generated_at: '2026-09-16T12:00:00+09:00',
+          }),
+          { status: 200 },
+        ),
+      );
+      await promise;
+    });
+
+    it('does not call onSlowRequest if the response arrives before 5s', async () => {
+      jest.useFakeTimers();
+      mockFetchOnce(
+        new Response(
+          JSON.stringify({
+            request_id: 'req_1',
+            analysis_id: 'ana_1',
+            status: 'ready',
+            revision: 1,
+            versions: { api: '1.0', data: 'd', rules: 'r', model: 'm' },
+            result: {},
+            limitations: [],
+            generated_at: '2026-09-16T12:00:00+09:00',
+          }),
+          { status: 200 },
+        ),
+      );
+      const onSlowRequest = jest.fn();
+
+      await realApiRequest({ method: 'GET', path: '/v1/analyses/ana_1', onSlowRequest });
+      await jest.advanceTimersByTimeAsync(5_000);
+
+      expect(onSlowRequest).not.toHaveBeenCalled();
+    });
+
+    it('aborts and throws a friendly error after 90s with no response', async () => {
+      jest.useFakeTimers();
+      mockHangingFetch();
+
+      const promise = realApiRequest({ method: 'GET', path: '/v1/analyses/ana_1' });
+      const assertion = expect(promise).rejects.toThrow(/90초/);
+      await jest.advanceTimersByTimeAsync(90_000);
+      await assertion;
+    });
   });
 });

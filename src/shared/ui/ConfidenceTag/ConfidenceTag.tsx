@@ -42,6 +42,9 @@ export function ConfidenceTag({ level, source, testID }: ConfidenceTagProps) {
     synthetic: styles.sourceSynthetic,
     policy_rule: styles.sourceNeutral,
     derived: styles.sourceNeutral,
+    // public_data(공공 데이터)는 policy_rule·derived와 같은 "중립" 취급이다 —
+    // 새 출처 전용 색은 디자인 담당(styles.ts) 몫이라 기존 톤을 재사용한다.
+    public_data: styles.sourceNeutral,
   }[source];
   const sourceLabelStyle = {
     user_confirmed: styles.sourceUserConfirmedLabel,
@@ -49,6 +52,7 @@ export function ConfidenceTag({ level, source, testID }: ConfidenceTagProps) {
     synthetic: styles.sourceSyntheticLabel,
     policy_rule: styles.sourceNeutralLabel,
     derived: styles.sourceNeutralLabel,
+    public_data: styles.sourceNeutralLabel,
   }[source];
 
   const levelLabel = level ? `신뢰도 ${CONFIDENCE_LEVEL_LABEL[level]}` : null;

@@ -108,7 +108,8 @@ function humanizeExplanation(text: string): string {
 // S12 근거 화면(/evidence/[traceId]). GET /v1/analyses/{id}/evidence/{trace_id}로
 // 이 수치가 어떤 입력·규칙·산출로 만들어졌는지 보여준다. analysis_id는 세션의
 // 분석 응답에서 가져오고(별도로 저장하지 않는다), trace_id는 라우트
-// 파라미터로 받는다. 404·기타 오류는 안내 문구와 뒤로 가기만 제공한다.
+// 파라미터로 받는다. ANALYSIS_NOT_FOUND는 시작으로 돌아가는 안내를,
+// 그 밖의 404·기타 오류는 문구와 뒤로 가기를 보여준다.
 export default function EvidenceScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
@@ -122,6 +123,9 @@ export default function EvidenceScreen() {
   // setState를 동기 호출"을 피하기 위해 초기값을 true로만 둔다.
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // 서버가 무료 플랜이라 재시작되면 analysis_id가 사라질 수 있다(2026-09-20
+  // 백엔드 팀 확인) — 이 경우는 "뒤로 가기"가 의미 없으니 시작으로 보낸다.
+  const [analysisMissing, setAnalysisMissing] = useState(false);
 
   const analysisId = analysisResponse?.analysis_id ?? null;
 
@@ -145,7 +149,10 @@ export default function EvidenceScreen() {
         if (cancelled) {
           return;
         }
-        if (caught instanceof ApiError && caught.status === 404) {
+        if (caught instanceof ApiError && caught.code === 'ANALYSIS_NOT_FOUND') {
+          setAnalysisMissing(true);
+          setError('분석을 찾을 수 없어요. 다시 시작해 주세요.');
+        } else if (caught instanceof ApiError && caught.status === 404) {
           setError('요청한 근거를 찾을 수 없어요.');
         } else {
           setError('근거를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.');
@@ -177,6 +184,16 @@ export default function EvidenceScreen() {
       <Page wide contentContainerStyle={styles.content}>
         <LoadingCards testID="evidence-loading" />
         <Text style={styles.body}>근거를 불러오는 중이에요…</Text>
+      </Page>
+    );
+  }
+
+  if (analysisMissing) {
+    return (
+      <Page wide contentContainerStyle={styles.content}>
+        <Text style={styles.title}>분석을 찾을 수 없어요</Text>
+        <Text style={styles.body}>분석을 찾을 수 없어요. 다시 시작해 주세요.</Text>
+        <Button label="시작으로" onPress={() => router.push('/')} />
       </Page>
     );
   }

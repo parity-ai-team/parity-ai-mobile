@@ -171,6 +171,9 @@ const result: AnalysisResult = {
   risks,
   alternatives: alternativeDetails.map(toAlternativeSummary),
   safe_contribution: safeContribution,
+  // 1.7.0에서 추가된 nullable 필드. 이 mock 시나리오들은 생활비 맥락을
+  // 다루지 않아 null로 둔다.
+  living_cost_context: null,
 };
 
 export const pastMeFixture: MockAnalysisResponse = {

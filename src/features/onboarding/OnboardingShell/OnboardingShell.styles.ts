@@ -7,22 +7,27 @@ export function createStyles(theme: Theme) {
       backgroundColor: theme.colors.surface,
       borderBottomWidth: theme.layout.stroke,
       borderBottomColor: theme.colors.border,
+      zIndex: theme.layout.headerZIndex,
     },
-    badgeBar: {
-      width: theme.layout.full,
-      maxWidth: theme.layout.wideMax,
-      alignSelf: 'center',
-      padding: theme.spacing.lg,
-      gap: theme.spacing.sm,
-    },
-    brandRow: {
+    headerRow: {
+      minHeight: theme.layout.headerHeight,
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      flexWrap: 'wrap',
+      paddingVertical: theme.spacing.sm,
       gap: theme.spacing.sm,
     },
+    headerRight: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+      flexShrink: theme.layout.flex,
+    },
     brand: { ...theme.typography.headingSmall, color: theme.colors.deepGreen },
-    stage: { ...theme.typography.bodySmall, color: theme.colors.textSecondary },
+    stage: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+      flexShrink: theme.layout.flex,
+    },
   });
 }

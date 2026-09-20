@@ -1,5 +1,4 @@
 export const layout = {
-  baselineStickyIndex: 3,
   tableMinWidth: 640,
   tablet: 768,
   desktop: 1100,
@@ -21,6 +20,10 @@ export const layout = {
   gradientMid: '48%',
   skeletonHeight: 96,
   metricColumn: '48%' as const,
+  headerHeight: 64,
+  headerZIndex: 2,
+  stickyZIndex: 1,
+  sidebarWidth: 320,
 } as const;
 export const chart = {
   width: 320,

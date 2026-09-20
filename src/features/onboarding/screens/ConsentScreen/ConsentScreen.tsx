@@ -51,8 +51,7 @@ export default function ConsentScreen() {
       />
 
       <Text style={styles.withdrawalNotice}>
-        동의는 언제든 철회할 수 있어요. 철회하면 해당 정보 처리를 중단하고, 근거 화면에서 삭제를
-        요청할 수 있어요.
+        동의는 언제든 철회할 수 있어요. 이 화면에서 동의한 카드를 다시 누르면 해제돼요.
       </Text>
     </Page>
   );

@@ -7,11 +7,11 @@ export function createStyles(theme: Theme) {
     content: {
       flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.xl,
-      gap: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     comparisonRow: {
-      gap: theme.spacing.xl,
+      gap: theme.spacing.md,
     },
     comparisonRowWide: {
       flexDirection: 'row',
@@ -50,23 +50,151 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.md,
     },
     card: {
-      boxShadow: theme.layout.cardShadow,
-      padding: theme.spacing.xl,
+      boxShadow: theme.layout.shadowNone,
+      padding: theme.spacing.md,
       borderRadius: theme.radii.lg,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.sm,
     },
     baselineCard: {
       backgroundColor: theme.colors.brandSoft,
-      borderColor: theme.colors.brand,
+      borderColor: theme.colors.transparent,
+    },
+    baselineEyebrow: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.brand,
+    },
+    baselineHero: {
+      paddingVertical: theme.spacing.sm,
+      gap: theme.spacing.xs,
+    },
+    baselineAmount: {
+      ...theme.typography.chartAmount,
+      ...theme.typography.numeric,
+      color: theme.colors.deepGreen,
+    },
+    baselineMetrics: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    baselineMetric: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+      gap: theme.spacing.xs,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: theme.spacing.sm,
     },
     cardTitle: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
-    metricColumn: { flex: theme.layout.flex, minWidth: theme.layout.zero, alignItems: 'flex-end' },
+    quickMetrics: {
+      flexDirection: 'row',
+      padding: theme.spacing.sm,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    quickMetric: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+      gap: theme.spacing.xs,
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.xs,
+    },
+    quickMetricDivider: {
+      borderLeftWidth: theme.layout.stroke,
+      borderLeftColor: theme.colors.border,
+    },
+    quickMetricLabel: {
+      ...theme.typography.chartLabel,
+      color: theme.colors.textSecondary,
+      textAlign: 'center',
+    },
+    quickMetricValue: {
+      ...theme.typography.bodySmall,
+      ...theme.typography.numeric,
+      color: theme.colors.textPrimary,
+      textAlign: 'center',
+    },
+    effectPanel: {
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.brandSoft,
+      gap: theme.spacing.xs,
+    },
+    effectPanelNegative: {
+      backgroundColor: theme.colors.criticalSoft,
+    },
+    effectLabel: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    effectAmount: {
+      ...theme.typography.chartAmount,
+      ...theme.typography.numeric,
+    },
+    effectPositive: {
+      color: theme.colors.brand,
+    },
+    effectNegative: {
+      color: theme.colors.severityCritical,
+    },
+    effectNeutral: {
+      color: theme.colors.textPrimary,
+    },
+    effectCopy: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.textPrimary,
+    },
+    effectCaption: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    resultList: {
+      borderRadius: theme.radii.md,
+      paddingHorizontal: theme.spacing.sm,
+      backgroundColor: theme.colors.surfaceMuted,
+    },
+    resultRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+    },
+    resultRowDivider: {
+      borderTopWidth: theme.layout.stroke,
+      borderTopColor: theme.colors.border,
+    },
+    resultCopy: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+      gap: theme.spacing.xs,
+    },
+    resultLabel: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    resultValue: {
+      ...theme.typography.labelMedium,
+      ...theme.typography.numeric,
+      color: theme.colors.textPrimary,
+      textAlign: 'right',
+      flexShrink: theme.layout.zero,
+    },
+    deltaLabel: {
+      ...theme.typography.chartLabel,
+      color: theme.colors.brand,
+    },
+    deltaNegative: {
+      color: theme.colors.severityCritical,
+    },
     metricRow: {
       paddingVertical: theme.spacing.sm,
       borderBottomWidth: theme.layout.stroke,
@@ -88,35 +216,36 @@ export function createStyles(theme: Theme) {
       ...theme.typography.bodyMedium,
       color: theme.colors.textPrimary,
     },
-    metricWorse: {
-      backgroundColor: theme.colors.criticalSoft,
-      borderRadius: theme.radii.sm,
-      padding: theme.spacing.xs,
-      ...theme.typography.bodySmall,
-      color: theme.colors.severityCritical,
-    },
-    burdenRow: {
-      flexWrap: 'wrap',
-      flexDirection: 'row',
-      gap: theme.spacing.xs,
-      alignItems: 'center',
-    },
     burdenChip: {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.full,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.background,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     burdenLabel: {
       ...theme.typography.bodySmall,
       color: theme.colors.textPrimary,
     },
     actionList: {
+      gap: theme.spacing.sm,
+    },
+    actionTitle: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.textPrimary,
+    },
+    actionItem: {
+      padding: theme.spacing.sm,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.surfaceMuted,
       gap: theme.spacing.xs,
     },
-    actionRow: {
+    actionName: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.textPrimary,
+    },
+    actionMeta: {
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,
     },

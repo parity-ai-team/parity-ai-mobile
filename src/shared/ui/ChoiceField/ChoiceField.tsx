@@ -45,7 +45,7 @@ export function ChoiceField<TValue extends string>({
             <Pressable
               key={option.value}
               accessibilityRole="radio"
-              accessibilityState={{ selected }}
+              accessibilityState={{ selected, checked: selected }}
               accessibilityLabel={option.label}
               onPress={() => onChange(option.value)}
               style={[styles.option, selected && styles.optionSelected]}

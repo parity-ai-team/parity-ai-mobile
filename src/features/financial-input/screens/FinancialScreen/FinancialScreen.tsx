@@ -7,6 +7,7 @@ import { Text } from 'react-native';
 
 import { Card, Columns, Column, StepProgress, Button, TextField, useTheme } from '@/shared/ui';
 
+import { DemoPrefillNotice } from '../../components/DemoPrefillNotice/DemoPrefillNotice';
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
   EMPTY_FINANCIAL_FORM_VALUES,
@@ -23,7 +24,7 @@ import { createStyles } from './FinancialScreen.styles';
 export default function FinancialScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const { draft, updateFinancial } = useFinancialInputSession();
+  const { draft, origin, updateFinancial } = useFinancialInputSession();
 
   const {
     control,
@@ -69,6 +70,7 @@ export default function FinancialScreen() {
           <Text style={styles.intro}>
             가용 현금과 매달 들어오고 나가는 금액을 원 단위로 입력해요.
           </Text>
+          {origin === 'demo' ? <DemoPrefillNotice /> : null}
 
           <Card>
             <Controller
@@ -83,7 +85,7 @@ export default function FinancialScreen() {
                   onBlur={field.onBlur}
                   placeholder="예: 12000000"
                   keyboardType="numeric"
-                  hint="원 단위 정수로 입력해요."
+                  hint="예금 등 지금 바로 쓸 수 있는 돈을 입력해요."
                   error={errors.financial?.current_cash_krw?.message}
                   testID="financial-current-cash"
                 />
@@ -96,13 +98,13 @@ export default function FinancialScreen() {
               render={({ field }) => (
                 <TextField
                   unit="원"
-                  label="비상금 최소 기준 (선택)"
+                  label="꼭 남겨둘 비상금"
                   value={field.value}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
                   placeholder="예: 6000000"
                   keyboardType="numeric"
-                  hint="비워두면 서버가 기본값을 적용해요."
+                  hint="생활비로 꼭 남겨둘 돈이에요. 따로 없으면 0을 입력해요."
                   error={errors.financial?.emergency_floor_krw?.message}
                   testID="financial-emergency-floor"
                 />
@@ -152,13 +154,13 @@ export default function FinancialScreen() {
               render={({ field }) => (
                 <TextField
                   unit="원"
-                  label="월 재량 지출 (선택)"
+                  label="월 선택 지출"
                   value={field.value}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
                   placeholder="예: 500000"
                   keyboardType="numeric"
-                  hint="비워두면 0으로 처리해요."
+                  hint="외식·쇼핑처럼 조절할 수 있는 지출이에요. 없으면 0을 입력해요."
                   error={errors.financial?.monthly_discretionary_krw?.message}
                   testID="financial-monthly-discretionary"
                 />

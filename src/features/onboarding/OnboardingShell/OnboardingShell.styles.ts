@@ -1,12 +1,41 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet, type ViewStyle } from 'react-native';
 import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
+  const webDeviceFrame =
+    Platform.OS === 'web'
+      ? ({
+          flex: theme.layout.zero,
+          flexBasis: 'auto',
+          flexShrink: theme.layout.zero,
+          width: theme.layout.deviceWidth,
+          maxWidth: theme.layout.full,
+          height: theme.layout.deviceHeight,
+          maxHeight: theme.layout.deviceViewportHeight,
+          minHeight: theme.layout.zero,
+          alignSelf: 'center',
+          marginVertical: theme.spacing.lg,
+          paddingTop: theme.layout.deviceStatusBarHeight,
+          borderWidth: theme.layout.deviceBorderWidth,
+          borderColor: theme.colors.deviceFrame,
+          borderRadius: theme.radii.device,
+          overflow: 'hidden',
+          boxShadow: theme.layout.deviceShadow,
+          backgroundImage: theme.layout.deviceStatusBackground,
+          backgroundPosition: 'top',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: theme.layout.deviceStatusBackgroundSize,
+        } as unknown as ViewStyle)
+      : undefined;
+
   return StyleSheet.create({
-    container: { flex: theme.layout.flex, backgroundColor: theme.colors.background },
+    container: {
+      flex: theme.layout.flex,
+      backgroundColor: theme.colors.surface,
+      ...webDeviceFrame,
+    },
     header: {
       backgroundColor: theme.colors.surface,
-      borderBottomWidth: theme.layout.stroke,
-      borderBottomColor: theme.colors.border,
+      borderBottomWidth: theme.layout.zero,
       zIndex: theme.layout.headerZIndex,
     },
     headerRow: {
@@ -14,7 +43,7 @@ export function createStyles(theme: Theme) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingVertical: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
       gap: theme.spacing.sm,
     },
     headerRight: {
@@ -23,7 +52,25 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.sm,
       flexShrink: theme.layout.flex,
     },
-    brand: { ...theme.typography.headingSmall, color: theme.colors.deepGreen },
+    brandLockup: {
+      width: theme.layout.brandLogoWidth,
+      height: theme.layout.brandLogoHeight,
+      justifyContent: 'center',
+    },
+    brandLogo: {
+      width: theme.layout.brandLogoWidth,
+      height: theme.layout.brandLogoHeight,
+      transform: [
+        { translateX: theme.layout.brandLogoTranslateX },
+        { scale: theme.layout.brandLogoScale },
+      ],
+    },
+    brand: {
+      position: 'absolute',
+      width: theme.layout.visuallyHiddenSize,
+      height: theme.layout.visuallyHiddenSize,
+      opacity: theme.layout.zero,
+    },
     stage: {
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,

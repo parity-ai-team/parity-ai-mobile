@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@/shared/ui';
 
+import { DemoPrefillNotice } from '../../components/DemoPrefillNotice/DemoPrefillNotice';
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
   EMPTY_HOUSEHOLD_FORM_VALUES,
@@ -32,7 +33,7 @@ import { createStyles } from './HouseholdScreen.styles';
 export default function HouseholdScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const { draft, updateHousehold } = useFinancialInputSession();
+  const { draft, origin, updateHousehold } = useFinancialInputSession();
 
   const {
     control,
@@ -78,6 +79,7 @@ export default function HouseholdScreen() {
         <Column>
           <Text style={styles.title}>가구 정보</Text>
           <Text style={styles.intro}>출산 예정과 가족 구성을 알려주세요.</Text>
+          {origin === 'demo' ? <DemoPrefillNotice /> : null}
 
           <Card>
             <Controller

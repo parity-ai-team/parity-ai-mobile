@@ -54,17 +54,14 @@ export interface FinancialInputSessionValue {
   setAnalysisResponse: (response: AnalysisResponse | null) => void;
 }
 
-// 직접 입력일 때의 시작값. 필수 입력(household 전부, financial의
-// current_cash_krw 등)은 서버 기본값이 없으므로 비워 두고 사용자가 반드시
-// 채우게 한다. 선택 입력(emergency_floor_krw 등)은 서버 기본값과 같은 값으로
-// 시작해 사용자가 건드리지 않으면 "가정값"으로 표시되게 한다
-// (docs/api/openapi-1.5.0.json FinancialInput·EmploymentPlanInput·StressInput).
+// 직접 입력은 서버 기본값까지 전부 비워 둔다. 0원·휴직 없음·미수령 가능성
+// 없음도 사용자가 직접 확인한 뒤에만 draft에 저장한다.
 function manualDefaults(): FinancialInputDraft {
   return {
     household: {},
-    financial: { emergency_floor_krw: null, monthly_discretionary_krw: 0 },
-    plan: { leave_start: null, leave_months: 0 },
-    stress: { income_delay_weeks: 0, child_support_missed: false },
+    financial: {},
+    plan: {},
+    stress: {},
   };
 }
 
@@ -159,9 +156,9 @@ export function FinancialInputSessionProvider({ children }: { children: ReactNod
     ) => {
       const defaultValue = session.defaults[section][field];
       const draftValue = session.draft[section][field];
-      return defaultValue === draftValue;
+      return session.origin === 'demo' && defaultValue === draftValue;
     },
-    [session.defaults, session.draft],
+    [session.origin, session.defaults, session.draft],
   );
 
   const setAnalysisResponse = useCallback((response: AnalysisResponse | null) => {

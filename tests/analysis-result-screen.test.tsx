@@ -187,7 +187,7 @@ describe('ResultScreen — 차트·카드 선택 동기화', () => {
     await fireEvent.press(screen.getByTestId('result-risk-2027-02'));
 
     const chartContainer = screen.getByTestId('result-chart-svg-container');
-    expect(chartContainer.props.accessibilityLabel).toContain('선택된 위험월: 2027-02');
+    expect(chartContainer.props.accessibilityLabel).toContain('선택한 달: 2027-02');
   });
 });
 
@@ -207,12 +207,12 @@ describe('ResultScreen — 근거·화면 이동', () => {
     });
   });
 
-  it('입력 수정을 누르면 /plan으로 이동한다', async () => {
+  it('입력 수정을 누르면 항목별 수정이 가능한 /review로 이동한다', async () => {
     await renderResultScreen(buildAnalysisResponse());
 
     await fireEvent.press(screen.getByRole('button', { name: '입력 수정' }));
 
-    expect(router.push).toHaveBeenCalledWith('/plan');
+    expect(router.push).toHaveBeenCalledWith('/review');
   });
 
   it('대안 비교를 누르면 /alternatives 자리표시로 이동한다', async () => {

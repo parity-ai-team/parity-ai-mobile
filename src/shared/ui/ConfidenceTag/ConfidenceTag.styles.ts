@@ -15,25 +15,25 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.full,
-      borderWidth: theme.layout.stroke,
+      borderWidth: theme.layout.zero,
     },
     chipLabel: {
       ...theme.typography.bodySmall,
     },
     // 신뢰도(level): 정보 성격이라 severity 팔레트를 그대로 재사용한다.
     levelHigh: {
-      backgroundColor: theme.colors.background,
-      borderColor: theme.colors.success,
+      backgroundColor: theme.colors.brandSoft,
+      borderColor: theme.colors.transparent,
     },
     levelHighLabel: { color: theme.colors.success },
     levelMedium: {
-      backgroundColor: theme.colors.background,
-      borderColor: theme.colors.severityWarning,
+      backgroundColor: theme.colors.warningSoft,
+      borderColor: theme.colors.transparent,
     },
     levelMediumLabel: { color: theme.colors.severityWarning },
     levelLow: {
-      backgroundColor: theme.colors.background,
-      borderColor: theme.colors.severityCritical,
+      backgroundColor: theme.colors.criticalSoft,
+      borderColor: theme.colors.transparent,
     },
     levelLowLabel: { color: theme.colors.severityCritical },
     // 출처(source): user_confirmed(성공/초록)와 assumed(경고/주황)를
@@ -49,13 +49,13 @@ export function createStyles(theme: Theme) {
     },
     sourceAssumedLabel: { color: theme.colors.textInverse },
     sourceSynthetic: {
-      backgroundColor: theme.colors.background,
-      borderColor: theme.colors.dataModeSynthetic,
+      backgroundColor: theme.colors.brandSoft,
+      borderColor: theme.colors.transparent,
     },
     sourceSyntheticLabel: { color: theme.colors.dataModeSynthetic },
     sourceNeutral: {
-      backgroundColor: theme.colors.background,
-      borderColor: theme.colors.border,
+      backgroundColor: theme.colors.surfaceMuted,
+      borderColor: theme.colors.transparent,
     },
     sourceNeutralLabel: { color: theme.colors.textSecondary },
   });

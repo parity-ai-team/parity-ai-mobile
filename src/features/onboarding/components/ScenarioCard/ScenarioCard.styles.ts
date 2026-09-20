@@ -7,17 +7,18 @@ export function createStyles(theme: Theme) {
     card: {
       boxShadow: theme.layout.cardShadow,
       minHeight: theme.accessibility.minTouchTarget,
-      padding: theme.spacing.xl,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radii.lg,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,
     },
     cardSelected: {
       backgroundColor: theme.colors.brandSoft,
-      borderColor: theme.colors.brand,
-      borderWidth: theme.layout.strongStroke,
+      borderColor: theme.colors.transparent,
+      borderWidth: theme.layout.zero,
     },
     title: {
       ...theme.typography.labelMedium,

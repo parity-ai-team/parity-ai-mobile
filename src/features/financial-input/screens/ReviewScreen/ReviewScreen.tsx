@@ -6,16 +6,7 @@ import { Text, View } from 'react-native';
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
 import { formatKrw } from '@/shared/format';
 import type { AnalysisResponse } from '@/shared/types';
-import {
-  Card,
-  Chip,
-  Columns,
-  Column,
-  StepProgress,
-  Button,
-  useTheme,
-  type Theme,
-} from '@/shared/ui';
+import { Card, Columns, Column, StepProgress, Button, useTheme, type Theme } from '@/shared/ui';
 
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
@@ -121,11 +112,20 @@ export default function ReviewScreen() {
         <Column>
           <Text style={styles.title}>검토</Text>
           <Text style={styles.intro}>
-            입력한 값을 확인해 주세요. 가정값은 비워두어 서버 기본값이 적용될 값이에요.
+            {origin === 'demo'
+              ? '데모 값을 확인하고, 바꾸고 싶은 항목은 수정해 주세요.'
+              : '직접 입력한 값을 확인하고, 바꾸고 싶은 항목은 수정해 주세요.'}
           </Text>
 
           <Card>
-            <Text style={styles.sectionTitle}>가구 정보</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>가구 정보</Text>
+              <Button
+                label="가구 정보 수정"
+                variant="text"
+                onPress={() => router.push('/household')}
+              />
+            </View>
             <ReviewRow
               theme={theme}
               label="출산 예정월"
@@ -156,7 +156,14 @@ export default function ReviewScreen() {
             />
           </Card>
           <Card>
-            <Text style={styles.sectionTitle}>금융 정보</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>금융 정보</Text>
+              <Button
+                label="금융 정보 수정"
+                variant="text"
+                onPress={() => router.push('/financial')}
+              />
+            </View>
             <ReviewRow
               theme={theme}
               label="가용 현금"
@@ -198,7 +205,10 @@ export default function ReviewScreen() {
             />
           </Card>
           <Card>
-            <Text style={styles.sectionTitle}>휴직·소득 계획</Text>
+            <View style={styles.sectionHeader}>
+              <Text style={styles.sectionTitle}>휴직·소득 계획</Text>
+              <Button label="계획 수정" variant="text" onPress={() => router.push('/plan')} />
+            </View>
             <ReviewRow
               theme={theme}
               label="휴직 시작월"
@@ -256,8 +266,14 @@ function ReviewRow({ theme, label, value, assumed, error }: ReviewRowProps) {
   return (
     <View style={styles.row}>
       <Text style={styles.rowLabel}>{label}</Text>
-      <Text style={styles.rowValue}>{value}</Text>
-      <Chip label={assumed ? '가정값' : '사용자 입력'} tone={assumed ? 'warning' : 'brand'} />
+      <View style={styles.valueRow}>
+        <Text style={styles.rowValue} numberOfLines={2}>
+          {value}
+        </Text>
+        <Text style={[styles.rowOrigin, assumed && styles.assumedOrigin]}>
+          {assumed ? '가정값' : '사용자 입력'}
+        </Text>
+      </View>
       {error ? (
         <Text style={styles.rowError} accessibilityRole="alert">
           {`오류: ${error}`}

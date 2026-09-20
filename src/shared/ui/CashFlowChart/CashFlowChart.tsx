@@ -1,17 +1,14 @@
 import { useState } from 'react';
-import { ScrollView, Pressable, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import Svg, { Circle, G, Line, Path, Text as SvgText } from 'react-native-svg';
-
 import { formatKrw } from '@/shared/format';
 import type { CashflowPoint } from '@/shared/types';
-
-import { Button } from '../Button';
+import { InteractivePressable } from '../InteractivePressable/InteractivePressable';
 import { useTheme } from '../theme';
 import { createStyles } from './CashFlowChart.styles';
 import {
   buildAxisTicks,
   computeValueDomain,
-  formatKrwCompactAxis,
   monthSlotBounds,
   scaleIndexToX,
   scaleValueToY,
@@ -24,26 +21,15 @@ export interface CashFlowChartProps {
   testID?: string;
 }
 
-// 차트 그리기 전용 크기 상수. theme 토큰(색·간격·타이포그래피)과 달리 이건
-// "SVG 안에서 몇 px를 차지하는가"라는 그리기 좌표 문제라 토큰화 대상이
-// 아니다 — 색상·글자 크기 등 실제 스타일 값은 전부 theme에서 가져온다.
-function buildLinePath(coords: readonly { x: number; y: number }[]): string {
-  return coords.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x},${point.y}`).join(' ');
+function linePath(coords: readonly { x: number; y: number }[]) {
+  return coords.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x},${p.y}`).join(' ');
+}
+function monthLabel(period: string) {
+  const [year, month] = period.split('-');
+  return `${year}년 ${Number(month)}월`;
 }
 
-function buildBandPath(
-  topCoords: readonly { x: number; y: number }[],
-  bottomCoords: readonly { x: number; y: number }[],
-): string {
-  const top = topCoords.map((point, index) => `${index === 0 ? 'M' : 'L'} ${point.x},${point.y}`);
-  const bottom = [...bottomCoords].reverse().map((point) => `L ${point.x},${point.y}`);
-  return [...top, ...bottom, 'Z'].join(' ');
-}
-
-// docs/frontend.md "핵심 UI 컴포넌트"/"차트 표시 규칙": p50 선, p20~p80 구간,
-// 비상금 하한선, 확정 현금을 하나의 차트에 그린다. 위험월(selectedPeriod)은
-// 세로 강조선 + 마커로 표시하고 선택 시 onSelectPeriod를 호출한다. 값은 전부
-// 서버 응답 그대로이며 이 컴포넌트는 화면 좌표로 변환만 한다(scale.ts).
+// 금액을 재계산하지 않고 서버의 월별 응답과 선택 상태를 표시한다.
 export function CashFlowChart({
   points,
   selectedPeriod,
@@ -52,247 +38,297 @@ export function CashFlowChart({
 }: CashFlowChartProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const DEFAULT_CHART_WIDTH: number = theme.chart.width;
-  const CHART_HEIGHT = theme.chart.height;
-  const AXIS_LABEL_WIDTH = theme.chart.axisWidth;
-  const MONTH_LABEL_HEIGHT = theme.chart.monthHeight;
-  const TOP_VALUE_LABEL_PADDING = theme.chart.topPadding;
-  const [width, setWidth] = useState(DEFAULT_CHART_WIDTH);
+  const [width, setWidth] = useState<number>(theme.chart.width);
+  const [localPeriod, setLocalPeriod] = useState<string | null>(null);
   const [tableExpanded, setTableExpanded] = useState(false);
+  const [detailsExpanded, setDetailsExpanded] = useState(false);
+  const count = points.length;
+  const lowestIndex = points.reduce(
+    (best, p, i) => (p.p50_krw < points[best].p50_krw ? i : best),
+    0,
+  );
+  const requestedIndex = points.findIndex((p) => p.period === (selectedPeriod ?? localPeriod));
+  const selectedIndex = requestedIndex >= 0 ? requestedIndex : lowestIndex;
+  const selected = points[selectedIndex];
+  const select = (period: string) => {
+    setLocalPeriod(period);
+    onSelectPeriod?.(period);
+  };
+
+  if (!selected) {
+    return (
+      <Text style={styles.hint} testID={testID}>
+        아직 표시할 월별 금액이 없어요.
+      </Text>
+    );
+  }
 
   const domain = computeValueDomain(points);
-  const plotWidth = Math.max(width - AXIS_LABEL_WIDTH, 0);
-  const plotHeight = CHART_HEIGHT - MONTH_LABEL_HEIGHT - TOP_VALUE_LABEL_PADDING;
-  const count = points.length;
-
-  const coordsFor = (valueOf: (point: CashflowPoint) => number) =>
-    points.map((point, index) => ({
-      x: AXIS_LABEL_WIDTH + scaleIndexToX(index, count, plotWidth),
-      y: TOP_VALUE_LABEL_PADDING + scaleValueToY(valueOf(point), domain, plotHeight),
+  const plotWidth = Math.max(width - theme.chart.axisWidth - theme.chart.rightPadding, 0);
+  const plotHeight = theme.chart.height - theme.chart.monthHeight - theme.chart.topPadding;
+  const yFor = (value: number) => theme.chart.topPadding + scaleValueToY(value, domain, plotHeight);
+  const coords = (getValue: (p: CashflowPoint) => number) =>
+    points.map((p, i) => ({
+      x: theme.chart.axisWidth + scaleIndexToX(i, count, plotWidth),
+      y: yFor(getValue(p)),
     }));
-
-  const p50Coords = coordsFor((point) => point.p50_krw);
-  const p20Coords = coordsFor((point) => point.p20_krw);
-  const p80Coords = coordsFor((point) => point.p80_krw);
-  const confirmedCoords = coordsFor((point) => point.confirmed_cash_krw);
-  const floorCoords = coordsFor((point) => point.emergency_floor_krw);
-
-  const selectedIndex = points.findIndex((point) => point.period === selectedPeriod);
-  const ticks = buildAxisTicks(domain);
-
-  const minP50Index = points.reduce(
-    (bestIndex, point, index) => (point.p50_krw < points[bestIndex].p50_krw ? index : bestIndex),
-    0,
-  );
-  const maxP50Index = points.reduce(
-    (bestIndex, point, index) => (point.p50_krw > points[bestIndex].p50_krw ? index : bestIndex),
-    0,
-  );
+  const forecast = coords((p) => p.p50_krw);
+  const lower = coords((p) => p.p20_krw);
+  const upper = coords((p) => p.p80_krw);
+  const confirmed = coords((p) => p.confirmed_cash_krw);
+  const floor = coords((p) => p.emergency_floor_krw);
+  const band = `${linePath(upper)} ${[...lower]
+    .reverse()
+    .map((p) => `L ${p.x},${p.y}`)
+    .join(' ')} Z`;
+  const belowFloor = selected.p50_krw < selected.emergency_floor_krw;
+  const monthStride = Math.max(1, Math.ceil(count / 6));
   const summary =
-    count === 0
-      ? '현금흐름 데이터가 없어요.'
-      : `${points[0].period}부터 ${points[count - 1].period}까지 ${count}개월 현금흐름. ` +
-        `p50 기준 최저 ${formatKrw(points[minP50Index].p50_krw)}(${points[minP50Index].period}), ` +
-        `최고 ${formatKrw(points[maxP50Index].p50_krw)}(${points[maxP50Index].period}).` +
-        (selectedPeriod ? ` 선택된 위험월: ${selectedPeriod}.` : '') +
-        ' 자세한 값은 아래 표에서 확인할 수 있어요.';
-
-  const legendItems: { color: string; label: string }[] = [
-    { color: theme.colors.brand, label: 'p50(중앙값)' },
-    { color: theme.colors.success, label: '확정 현금' },
-    { color: theme.colors.severityCritical, label: '비상금 하한선' },
-    { color: theme.colors.severityWarning, label: '선택된 위험월' },
-  ];
+    `${points[0].period}부터 ${points[count - 1].period}까지 ${count}개월 현금흐름. ` +
+    `선택한 달: ${selected.period}. 예상 잔액 ${formatKrw(selected.p50_krw)}, ` +
+    `필요 비상금 ${formatKrw(selected.emergency_floor_krw)}. ` +
+    '이전 달과 다음 달 버튼 또는 월별 금액 보기로 자세히 확인할 수 있어요.';
 
   return (
     <View style={styles.container} testID={testID}>
+      <View style={styles.monthHeader}>
+        <InteractivePressable
+          accessibilityRole="button"
+          accessibilityLabel="이전 달"
+          accessibilityState={{ disabled: selectedIndex === 0 }}
+          disabled={selectedIndex === 0}
+          style={[styles.monthButton, selectedIndex === 0 && styles.disabled]}
+          onPress={() => select(points[selectedIndex - 1].period)}
+        >
+          <Text style={styles.arrow}>‹</Text>
+        </InteractivePressable>
+        <View style={styles.monthHeading} accessibilityLiveRegion="polite">
+          <Text style={styles.period}>{monthLabel(selected.period)}</Text>
+        </View>
+        <InteractivePressable
+          accessibilityRole="button"
+          accessibilityLabel="다음 달"
+          accessibilityState={{ disabled: selectedIndex === count - 1 }}
+          disabled={selectedIndex === count - 1}
+          style={[styles.monthButton, selectedIndex === count - 1 && styles.disabled]}
+          onPress={() => select(points[selectedIndex + 1].period)}
+        >
+          <Text style={styles.arrow}>›</Text>
+        </InteractivePressable>
+      </View>
+      <View style={styles.selectedSummary} accessibilityLiveRegion="polite">
+        <Text style={styles.amount} testID={testID && `${testID}-selected-amount`}>
+          {formatKrw(selected.p50_krw)}
+        </Text>
+        <Text style={styles.hint}>이 달에 남을 것으로 예상되는 돈</Text>
+      </View>
       <View style={styles.legendRow}>
-        {legendItems.map((item) => (
-          <View key={item.label} style={styles.legendItem}>
-            <View style={[styles.legendSwatch, { backgroundColor: item.color }]} />
-            <Text style={styles.legendLabel}>{item.label}</Text>
-          </View>
-        ))}
         <View style={styles.legendItem}>
-          <View style={[styles.legendSwatch, { backgroundColor: theme.colors.border }]} />
-          <Text style={styles.legendLabel}>p20~p80 구간</Text>
+          <View style={styles.forecastSwatch} />
+          <Text style={styles.hint}>예상 잔액</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={styles.floorSwatch} />
+          <Text style={styles.hint}>필요 비상금</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View style={styles.confirmedSwatch} />
+          <Text style={styles.hint}>확정 현금</Text>
         </View>
       </View>
-
-      <Text style={styles.legendLabel}>좌우로 이동해 월별 흐름을 확인할 수 있어요.</Text>
-      <ScrollView horizontal contentContainerStyle={styles.chartScroll}>
+      <Text style={styles.unit}>단위: 만원</Text>
+      <View style={styles.chartArea} onLayout={(event) => setWidth(event.nativeEvent.layout.width)}>
         <View
-          style={[
-            styles.chartArea,
-            {
-              minWidth: points.length * theme.accessibility.minTouchTarget + theme.chart.axisWidth,
-            },
-          ]}
-          onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
           accessible
           accessibilityRole="image"
           accessibilityLabel={summary}
           testID={testID && `${testID}-svg-container`}
         >
-          <Svg width={width} height={CHART_HEIGHT}>
-            {ticks.map((tick) => {
-              const y = TOP_VALUE_LABEL_PADDING + scaleValueToY(tick, domain, plotHeight);
-              return (
-                <G key={tick}>
-                  <Line
-                    x1={AXIS_LABEL_WIDTH}
-                    y1={y}
-                    x2={width}
-                    y2={y}
-                    stroke={theme.colors.border}
-                    strokeWidth={tick === 0 ? theme.chart.axisStroke : theme.chart.thinStroke}
-                  />
-                  <SvgText
-                    x={AXIS_LABEL_WIDTH - theme.chart.axisInset}
-                    y={y + theme.chart.labelOffset}
-                    fontSize={theme.typography.bodySmall.fontSize}
-                    fill={theme.colors.textSecondary}
-                    textAnchor="end"
-                  >
-                    {formatKrwCompactAxis(tick)}
-                  </SvgText>
-                </G>
-              );
-            })}
-
+          <Svg width={width} height={theme.chart.height}>
+            {buildAxisTicks(domain).map((tick) => (
+              <G key={tick}>
+                <Line
+                  x1={theme.chart.axisWidth}
+                  y1={yFor(tick)}
+                  x2={width - theme.chart.rightPadding}
+                  y2={yFor(tick)}
+                  stroke={theme.colors.border}
+                  strokeWidth={theme.chart.thinStroke}
+                />
+                <SvgText
+                  x={theme.chart.axisWidth - theme.chart.axisInset}
+                  y={yFor(tick) + theme.chart.labelOffset}
+                  textAnchor="end"
+                  fontSize={theme.typography.chartLabel.fontSize}
+                  fill={theme.colors.textSecondary}
+                >
+                  {Number((tick / 10000).toFixed(1)).toLocaleString('ko-KR')}
+                </SvgText>
+              </G>
+            ))}
+            <Path d={band} fill={theme.colors.brand} fillOpacity={theme.chart.bandOpacity} />
             <Path
-              d={buildBandPath(p80Coords, p20Coords)}
-              fill={theme.colors.brand}
-              fillOpacity={theme.chart.bandOpacity}
-            />
-
-            <Path
-              d={buildLinePath(floorCoords)}
+              d={linePath(floor)}
               stroke={theme.colors.severityCritical}
               strokeWidth={theme.chart.axisStroke}
               strokeDasharray={theme.chart.floorDash}
               fill="none"
             />
-
             <Path
-              d={buildLinePath(confirmedCoords)}
-              stroke={theme.colors.success}
+              d={linePath(confirmed)}
+              stroke={theme.colors.chartConfirmed}
               strokeWidth={theme.chart.lineStroke}
+              strokeDasharray={theme.chart.confirmedDash}
               fill="none"
             />
-
             <Path
-              d={buildLinePath(p50Coords)}
+              d={linePath(forecast)}
               stroke={theme.colors.brand}
-              strokeWidth={theme.chart.lineStroke}
+              strokeWidth={theme.chart.forecastStroke}
+              strokeLinejoin="round"
+              strokeLinecap="round"
               fill="none"
             />
-
-            {selectedIndex >= 0 ? (
-              <>
-                <Line
-                  x1={p50Coords[selectedIndex].x}
-                  y1={TOP_VALUE_LABEL_PADDING}
-                  x2={p50Coords[selectedIndex].x}
-                  y2={TOP_VALUE_LABEL_PADDING + plotHeight}
-                  stroke={theme.colors.severityWarning}
-                  strokeWidth={theme.chart.lineStroke}
-                  strokeDasharray={theme.chart.selectedDash}
-                />
-                <Circle
-                  cx={p50Coords[selectedIndex].x}
-                  cy={p50Coords[selectedIndex].y}
-                  r={theme.chart.markerRadius}
-                  fill={theme.colors.severityWarning}
-                />
-              </>
-            ) : null}
-
-            {points.map((point, index) => {
-              const { left, right } = monthSlotBounds(index, count, plotWidth);
-              return (
+            <Line
+              x1={forecast[selectedIndex].x}
+              y1={theme.chart.topPadding}
+              x2={forecast[selectedIndex].x}
+              y2={yFor(domain.min)}
+              stroke={theme.colors.inputBorder}
+              strokeWidth={theme.chart.thinStroke}
+              strokeDasharray={theme.chart.selectedDash}
+            />
+            <Circle
+              cx={forecast[selectedIndex].x}
+              cy={forecast[selectedIndex].y}
+              r={theme.chart.markerHaloRadius}
+              fill={theme.colors.surface}
+            />
+            <Circle
+              cx={forecast[selectedIndex].x}
+              cy={forecast[selectedIndex].y}
+              r={theme.chart.markerRadius}
+              fill={theme.colors.brand}
+            />
+            {points.map((p, i) =>
+              (i % monthStride === 0 && i < count - monthStride) || i === count - 1 ? (
                 <SvgText
-                  key={`label-${point.period}`}
-                  x={AXIS_LABEL_WIDTH + (left + right) / 2}
-                  y={
-                    TOP_VALUE_LABEL_PADDING +
-                    plotHeight +
-                    MONTH_LABEL_HEIGHT -
-                    theme.chart.labelOffset
-                  }
-                  fontSize={theme.typography.bodySmall.fontSize}
-                  fill={theme.colors.textSecondary}
+                  key={p.period}
+                  x={forecast[i].x}
+                  y={theme.chart.height - theme.chart.labelOffset}
                   textAnchor="middle"
+                  fontSize={theme.typography.chartLabel.fontSize}
+                  fill={theme.colors.textSecondary}
                 >
-                  {point.period.slice(5)}
+                  {Number(p.period.slice(5))}월
                 </SvgText>
-              );
-            })}
+              ) : null,
+            )}
           </Svg>
-
-          {/* 월별 선택 영역은 44pt를 확보하고, 좁은 화면에서는 차트를 가로로 스크롤한다.
-            키보드·스크린리더 선택은 아래의 확장 가능한 표에서 제공한다. */}
-          {onSelectPeriod ? (
-            <View
-              style={[styles.hitOverlay, { top: TOP_VALUE_LABEL_PADDING, height: plotHeight }]}
-              pointerEvents="box-none"
-            >
-              {points.map((point, index) => {
-                const { left, right } = monthSlotBounds(index, count, plotWidth);
-                return (
-                  <Pressable
-                    accessible={false}
-                    focusable={false}
-                    key={`hit-${point.period}`}
-                    style={[styles.hitArea, { left: AXIS_LABEL_WIDTH + left, width: right - left }]}
-                    onPress={() => onSelectPeriod(point.period)}
-                    testID={testID && `${testID}-select-${point.period}`}
-                  />
-                );
-              })}
-            </View>
-          ) : null}
         </View>
-      </ScrollView>
-      <View style={styles.toggleRow}>
-        <Button
-          label={tableExpanded ? '표 접기' : '표로 보기'}
-          variant="pill"
-          onPress={() => setTableExpanded((prev) => !prev)}
-        />
-      </View>
-
-      {tableExpanded ? (
-        <ScrollView horizontal>
-          <View style={styles.table} testID={testID && `${testID}-table`}>
-            <View style={styles.tableHeaderRow}>
-              <Text style={styles.tableHeaderCell}>월</Text>
-              <Text style={styles.tableHeaderCell}>p20</Text>
-              <Text style={styles.tableHeaderCell}>p50</Text>
-              <Text style={styles.tableHeaderCell}>p80</Text>
-              <Text style={styles.tableHeaderCell}>하한선</Text>
-            </View>
-            {points.map((point) => {
-              const selected = point.period === selectedPeriod;
+        {count > 0 ? (
+          <View
+            style={[styles.hitOverlay, { top: theme.chart.topPadding, height: plotHeight }]}
+            pointerEvents="box-none"
+          >
+            {points.map((p, i) => {
+              const { left, right } = monthSlotBounds(i, count, plotWidth);
               return (
                 <Pressable
-                  key={point.period}
-                  style={[styles.tableRow, selected && styles.tableRowSelected]}
-                  onPress={onSelectPeriod ? () => onSelectPeriod(point.period) : undefined}
-                  accessibilityRole={onSelectPeriod ? 'button' : undefined}
-                  accessibilityState={onSelectPeriod ? { selected } : undefined}
-                  accessibilityLabel={`${point.period}${selected ? ' · 선택된 위험월' : ''}`}
-                >
-                  <Text style={styles.tableCell}>{point.period}</Text>
-                  <Text style={styles.tableCell}>{formatKrw(point.p20_krw)}</Text>
-                  <Text style={styles.tableCell}>{formatKrw(point.p50_krw)}</Text>
-                  <Text style={styles.tableCell}>{formatKrw(point.p80_krw)}</Text>
-                  <Text style={styles.tableCell}>{formatKrw(point.emergency_floor_krw)}</Text>
-                </Pressable>
+                  key={p.period}
+                  accessible={false}
+                  focusable={false}
+                  style={[
+                    styles.hitArea,
+                    { left: theme.chart.axisWidth + left, width: right - left },
+                  ]}
+                  onPress={() => select(p.period)}
+                  testID={testID && `${testID}-select-${p.period}`}
+                />
               );
             })}
           </View>
-        </ScrollView>
+        ) : null}
+      </View>
+      <Text style={styles.dateRange}>
+        {monthLabel(points[0].period)} — {monthLabel(points[count - 1].period)}
+      </Text>
+      <View
+        style={[styles.insight, belowFloor && styles.insightWarning]}
+        accessibilityLiveRegion="polite"
+      >
+        <Text style={[styles.insightTitle, belowFloor && styles.warningText]}>
+          {belowFloor ? '비상금보다 적게 남는 달이에요' : '예상 잔액이 비상금 기준 이상이에요'}
+        </Text>
+        <Text style={styles.hint}>
+          이 달에 남겨둘 비상금 {formatKrw(selected.emergency_floor_krw)}
+        </Text>
+        <Text style={styles.hint}>
+          예상 범위 {formatKrw(selected.p20_krw)} ~ {formatKrw(selected.p80_krw)}
+        </Text>
+      </View>
+      <InteractivePressable
+        accessibilityRole="button"
+        accessibilityLabel="그래프 읽는 방법"
+        accessibilityState={{ expanded: detailsExpanded }}
+        style={styles.disclosure}
+        onPress={() => setDetailsExpanded(!detailsExpanded)}
+      >
+        <Text style={styles.disclosureLabel}>그래프 읽는 방법</Text>
+        <Text style={styles.disclosureLabel}>{detailsExpanded ? '−' : '+'}</Text>
+      </InteractivePressable>
+      {detailsExpanded ? (
+        <View style={styles.guide}>
+          <Text style={styles.hint}>
+            초록 선은 예상 잔액이에요. 빨간 점선 아래로 내려가면 남겨둘 비상금이 부족해져요.
+          </Text>
+          <Text style={styles.hint}>
+            연한 초록 영역은 예상의 변동 범위예요. 실제 잔액은 이 범위 밖일 수도 있어요.
+          </Text>
+          <View style={styles.legendItem}>
+            <View style={styles.confirmedSwatch} />
+            <Text style={styles.hint}>회색 점선은 확정 현금 기준이에요.</Text>
+          </View>
+        </View>
+      ) : null}
+      <InteractivePressable
+        accessibilityRole="button"
+        accessibilityLabel={tableExpanded ? '월별 금액 닫기' : '월별 금액 보기'}
+        accessibilityState={{ expanded: tableExpanded }}
+        style={styles.disclosure}
+        onPress={() => setTableExpanded(!tableExpanded)}
+      >
+        <Text style={styles.disclosureLabel}>
+          {tableExpanded ? '월별 금액 닫기' : '월별 금액 보기'}
+        </Text>
+        <Text style={styles.disclosureLabel}>{tableExpanded ? '−' : '+'}</Text>
+      </InteractivePressable>
+      {tableExpanded ? (
+        <View style={styles.monthList} testID={testID && `${testID}-table`}>
+          {points.map((p) => (
+            <InteractivePressable
+              key={p.period}
+              style={[styles.monthRow, p.period === selected.period && styles.monthRowSelected]}
+              accessibilityRole="button"
+              accessibilityState={{ selected: p.period === selected.period }}
+              accessibilityLabel={`${p.period}, 예상 잔액 ${formatKrw(p.p50_krw)}, 비상금 ${formatKrw(p.emergency_floor_krw)}`}
+              onPress={() => select(p.period)}
+            >
+              <View style={styles.monthRowHeader}>
+                <Text style={styles.period}>{p.period}</Text>
+                <Text style={styles.monthRowAmount}>{formatKrw(p.p50_krw)}</Text>
+              </View>
+              <Text style={styles.hint}>
+                비상금 {formatKrw(p.emergency_floor_krw)}
+                {p.p50_krw < p.emergency_floor_krw ? ' · 기준 미달' : ''}
+              </Text>
+              <Text style={styles.hint}>
+                예상 범위 {formatKrw(p.p20_krw)} ~ {formatKrw(p.p80_krw)}
+              </Text>
+              <Text style={styles.hint}>확정 현금 {formatKrw(p.confirmed_cash_krw)}</Text>
+            </InteractivePressable>
+          ))}
+        </View>
       ) : null}
     </View>
   );

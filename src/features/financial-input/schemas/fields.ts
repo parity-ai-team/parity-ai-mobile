@@ -11,6 +11,12 @@ const MONTH_PATTERN = /^\d{4}-(0[1-9]|1[0-2])$/;
 
 const AMOUNT_FORMAT_MESSAGE = '0 이상의 정수만 입력할 수 있어요 (음수·소수 불가).';
 const MONTH_FORMAT_MESSAGE = 'YYYY-MM 형식으로 입력해 주세요 (예: 2027-03).';
+const PAST_MONTH_MESSAGE = '출산 예정월은 이번 달 또는 이후로 입력해 주세요.';
+
+function currentMonthValue(now = new Date()) {
+  const month = String(now.getMonth() + 1).padStart(2, '0');
+  return `${now.getFullYear()}-${month}`;
+}
 
 // 필수 금액(KRW). 음수·소수·빈 값을 거부한다.
 export function requiredKrwString(requiredMessage: string) {
@@ -34,7 +40,14 @@ export function optionalKrwString() {
 
 // 필수 YYYY-MM.
 export function requiredMonthString(requiredMessage: string) {
-  return z.string().trim().min(1, requiredMessage).regex(MONTH_PATTERN, MONTH_FORMAT_MESSAGE);
+  return z
+    .string()
+    .trim()
+    .min(1, requiredMessage)
+    .regex(MONTH_PATTERN, MONTH_FORMAT_MESSAGE)
+    .refine((value) => !MONTH_PATTERN.test(value) || value >= currentMonthValue(), {
+      message: PAST_MONTH_MESSAGE,
+    });
 }
 
 // 선택 YYYY-MM. 비우면 null로 취급한다.
@@ -74,6 +87,24 @@ export function optionalIntRangeString(range: { min: number; max: number }) {
     .refine(
       (value) => {
         if (value === '') return true;
+        if (!NON_NEGATIVE_INT_PATTERN.test(value)) return false;
+        const parsed = Number(value);
+        return parsed >= range.min && parsed <= range.max;
+      },
+      { message: `${range.min}~${range.max} 사이의 정수만 입력할 수 있어요.` },
+    );
+}
+
+export function requiredIntRangeString(
+  range: { min: number; max: number },
+  requiredMessage: string,
+) {
+  return z
+    .string()
+    .trim()
+    .min(1, requiredMessage)
+    .refine(
+      (value) => {
         if (!NON_NEGATIVE_INT_PATTERN.test(value)) return false;
         const parsed = Number(value);
         return parsed >= range.min && parsed <= range.max;

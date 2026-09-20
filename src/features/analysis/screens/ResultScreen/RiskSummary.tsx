@@ -1,4 +1,4 @@
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 import type { RiskItem } from '@/shared/types';
 import { formatKrw } from '@/shared/format';
 import { Card, Chip, useTheme } from '@/shared/ui';
@@ -19,9 +19,16 @@ export function RiskSummary({ risks }: { risks: readonly RiskItem[] }) {
       <Text style={styles.sectionTitle}>가장 부족해지는 달</Text>
       {worst ? (
         <>
-          <Text style={styles.summaryPeriod}>{worst.period}</Text>
-          <Text style={styles.body}>예상 부족액</Text>
-          <Text style={styles.summaryAmount}>{formatKrw(worst.expected_gap_krw)}</Text>
+          <View style={styles.summaryMetricRow}>
+            <View style={styles.summaryMetric}>
+              <Text style={styles.metricLabel}>예상 위험월</Text>
+              <Text style={styles.summaryPeriod}>{worst.period}</Text>
+            </View>
+            <View style={styles.summaryAmountMetric}>
+              <Text style={styles.metricLabel}>예상 부족액</Text>
+              <Text style={styles.summaryAmount}>{formatKrw(worst.expected_gap_krw)}</Text>
+            </View>
+          </View>
           <Text style={styles.body}>현재 입력과 가정을 기준으로 계산한 값이에요.</Text>
         </>
       ) : (

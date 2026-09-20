@@ -23,12 +23,12 @@
 
 ## 토큰 목록
 
-| 파일               | 내용                                    |
-| ------------------ | --------------------------------------- |
-| `colors.ts`        | 팔레트(비공개) + 의미 기반 색상 토큰    |
-| `spacing.ts`       | 4pt 기준 간격 스케일                    |
-| `radii.ts`         | 모서리 반경 스케일                      |
-| `typography.ts`    | fontSize/lineHeight/fontWeight 프리셋   |
-| `accessibility.ts` | 최소 터치 영역, hitSlop 계산기          |
-| `tokens.ts`        | 위 토큰을 묶은 `theme` 객체             |
-| `useTheme.ts`       | 컴포넌트에서 테마를 읽는 훅             |
+| 파일               | 내용                                  |
+| ------------------ | ------------------------------------- |
+| `colors.ts`        | 팔레트(비공개) + 의미 기반 색상 토큰  |
+| `spacing.ts`       | 4pt 기준 간격 스케일                  |
+| `radii.ts`         | 모서리 반경 스케일                    |
+| `typography.ts`    | fontSize/lineHeight/fontWeight 프리셋 |
+| `accessibility.ts` | 최소 터치 영역, hitSlop 계산기        |
+| `tokens.ts`        | 위 토큰을 묶은 `theme` 객체           |
+| `useTheme.ts`      | 컴포넌트에서 테마를 읽는 훅           |

@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import type { Theme } from '@/shared/ui';
 
@@ -9,6 +9,30 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
       gap: theme.spacing.lg,
+    },
+    comparisonRow: {
+      gap: theme.spacing.xl,
+    },
+    comparisonRowWide: {
+      flexDirection: 'row',
+      alignItems: 'flex-start',
+    },
+    baselineColumn: {
+      width: theme.layout.full,
+    },
+    baselineColumnWide: {
+      width: theme.layout.sidebarWidth,
+      zIndex: theme.layout.stickyZIndex,
+      ...(Platform.OS === 'web'
+        ? {
+            position: 'sticky' as const,
+            top: theme.layout.headerHeight + theme.spacing.lg,
+          }
+        : {}),
+    },
+    alternativesColumn: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
     },
     title: {
       ...theme.typography.headingSmall,

@@ -24,7 +24,7 @@ export default function AssetStartScreen() {
 
   if (!analysisResponse) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <Text style={styles.title}>안전 적립</Text>
         <Text style={styles.body}>세션이 만료됐어요. 검토 화면에서 다시 시작해 주세요.</Text>
         <Button label="검토 화면으로" onPress={() => router.push('/review')} />
@@ -36,7 +36,7 @@ export default function AssetStartScreen() {
 
   if (!isResultUsable(status) || !result) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <DataModeBadge mode="synthetic" dataVersion={versions.data} />
         <Text style={styles.title}>아직 안전 적립을 판단할 수 없어요</Text>
         <Text style={styles.body}>현재 상태: {status}. 결과가 준비된 뒤 다시 확인해 주세요.</Text>
@@ -46,7 +46,7 @@ export default function AssetStartScreen() {
   }
 
   return (
-    <Page contentContainerStyle={styles.content} testID="asset-start-screen">
+    <Page wide contentContainerStyle={styles.content} testID="asset-start-screen">
       <DataModeBadge mode="synthetic" dataVersion={versions.data} />
 
       <Text style={styles.title}>안전 적립</Text>

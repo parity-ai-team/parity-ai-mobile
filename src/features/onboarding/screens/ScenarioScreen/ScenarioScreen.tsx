@@ -24,6 +24,7 @@ export default function ScenarioScreen() {
 
   return (
     <Page
+      wide
       contentContainerStyle={styles.content}
       footer={<Button label="다음" onPress={goToHousehold} disabled={scenarioSelection === null} />}
     >

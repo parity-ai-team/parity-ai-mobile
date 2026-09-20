@@ -74,7 +74,7 @@ export default function EvidenceScreen() {
 
   if (!analysisResponse || !analysisId) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <Text style={styles.title}>근거</Text>
         <Text style={styles.body}>세션이 만료됐어요. 검토 화면에서 다시 시작해 주세요.</Text>
         <Button label="검토 화면으로" onPress={() => router.push('/review')} />
@@ -84,7 +84,7 @@ export default function EvidenceScreen() {
 
   if (loading) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <LoadingCards testID="evidence-loading" />
         <Text style={styles.body}>근거를 불러오는 중이에요…</Text>
       </Page>
@@ -93,7 +93,7 @@ export default function EvidenceScreen() {
 
   if (error || !evidence) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <Text style={styles.title}>근거를 표시할 수 없어요</Text>
         <Text style={styles.body}>{error ?? '요청한 근거를 찾을 수 없어요.'}</Text>
         <Button label="뒤로 가기" onPress={() => router.back()} />
@@ -102,7 +102,7 @@ export default function EvidenceScreen() {
   }
 
   return (
-    <Page contentContainerStyle={styles.content} testID="evidence-screen">
+    <Page wide contentContainerStyle={styles.content} testID="evidence-screen">
       <Text style={styles.title}>근거</Text>
       <Text style={styles.subtitle}>{`추적 ID: ${evidence.trace_id}`}</Text>
 

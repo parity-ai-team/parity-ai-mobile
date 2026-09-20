@@ -19,6 +19,7 @@ export default function ConsentScreen() {
 
   return (
     <Page
+      wide
       contentContainerStyle={styles.content}
       footer={<Button label="다음" onPress={goToScenario} disabled={!allConsentsGranted} />}
     >

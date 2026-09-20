@@ -11,28 +11,22 @@ export function createStyles(theme: Theme) {
       padding: theme.spacing.xl,
     },
     gradient: { position: 'absolute', top: theme.layout.zero, left: theme.layout.zero },
-    heroIntro: {
+    heroPanel: {
       padding: theme.spacing.lg,
       borderRadius: theme.radii.md,
       backgroundColor: theme.colors.mint,
       gap: theme.spacing.md,
     },
-    eyebrow: { ...theme.typography.labelMedium, color: theme.colors.deepGreen },
     title: { ...theme.typography.headingLarge, color: theme.colors.deepGreen },
-    heroBottom: {
-      backgroundColor: theme.colors.deepGreen,
-      padding: theme.spacing.lg,
-      borderRadius: theme.radii.md,
-      gap: theme.spacing.sm,
-    },
     heroNumber: {
       ...theme.typography.display,
       ...theme.typography.numeric,
-      color: theme.colors.mint,
+      color: theme.colors.brand,
     },
-    heroCaption: { ...theme.typography.bodySmall, color: theme.colors.textInverse },
+    heroCaption: { ...theme.typography.bodySmall, color: theme.colors.textSecondary },
     sectionTitle: { ...theme.typography.headingSmall, color: theme.colors.textPrimary },
     body: { ...theme.typography.bodyMedium, color: theme.colors.textPrimary },
+    bodyEmphasis: { color: theme.colors.brand },
     notice: { ...theme.typography.bodySmall, color: theme.colors.textSecondary },
   });
 }

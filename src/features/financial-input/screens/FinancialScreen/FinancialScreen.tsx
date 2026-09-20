@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Text } from 'react-native';
 
-import { Card, StepProgress, Button, TextField, useTheme } from '@/shared/ui';
+import { Card, Columns, Column, StepProgress, Button, TextField, useTheme } from '@/shared/ui';
 
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
@@ -56,108 +56,117 @@ export default function FinancialScreen() {
 
   return (
     <Page
+      wide
       contentContainerStyle={styles.content}
       footer={<Button label="다음" onPress={onSubmit} />}
     >
-      <StepProgress current="금융" />
-      <Text style={styles.title}>금융 정보</Text>
-      <Text style={styles.intro}>가용 현금과 매달 들어오고 나가는 금액을 원 단위로 입력해요.</Text>
+      <Columns>
+        <Column width={theme.layout.sidebarWidth}>
+          <StepProgress current="금융" />
+        </Column>
+        <Column>
+          <Text style={styles.title}>금융 정보</Text>
+          <Text style={styles.intro}>
+            가용 현금과 매달 들어오고 나가는 금액을 원 단위로 입력해요.
+          </Text>
 
-      <Card>
-        <Controller
-          control={control}
-          name="financial.current_cash_krw"
-          render={({ field }) => (
-            <TextField
-              unit="원"
-              label="가용 현금"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 12000000"
-              keyboardType="numeric"
-              hint="원 단위 정수로 입력해요."
-              error={errors.financial?.current_cash_krw?.message}
-              testID="financial-current-cash"
+          <Card>
+            <Controller
+              control={control}
+              name="financial.current_cash_krw"
+              render={({ field }) => (
+                <TextField
+                  unit="원"
+                  label="가용 현금"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 12000000"
+                  keyboardType="numeric"
+                  hint="원 단위 정수로 입력해요."
+                  error={errors.financial?.current_cash_krw?.message}
+                  testID="financial-current-cash"
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="financial.emergency_floor_krw"
-          render={({ field }) => (
-            <TextField
-              unit="원"
-              label="비상금 최소 기준 (선택)"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 6000000"
-              keyboardType="numeric"
-              hint="비워두면 서버가 기본값을 적용해요."
-              error={errors.financial?.emergency_floor_krw?.message}
-              testID="financial-emergency-floor"
+            <Controller
+              control={control}
+              name="financial.emergency_floor_krw"
+              render={({ field }) => (
+                <TextField
+                  unit="원"
+                  label="비상금 최소 기준 (선택)"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 6000000"
+                  keyboardType="numeric"
+                  hint="비워두면 서버가 기본값을 적용해요."
+                  error={errors.financial?.emergency_floor_krw?.message}
+                  testID="financial-emergency-floor"
+                />
+              )}
             />
-          )}
-        />
-      </Card>
-      <Card>
-        <Controller
-          control={control}
-          name="financial.monthly_income_krw"
-          render={({ field }) => (
-            <TextField
-              unit="원"
-              label="월 수입"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 5800000"
-              keyboardType="numeric"
-              error={errors.financial?.monthly_income_krw?.message}
-              testID="financial-monthly-income"
+          </Card>
+          <Card>
+            <Controller
+              control={control}
+              name="financial.monthly_income_krw"
+              render={({ field }) => (
+                <TextField
+                  unit="원"
+                  label="월 수입"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 5800000"
+                  keyboardType="numeric"
+                  error={errors.financial?.monthly_income_krw?.message}
+                  testID="financial-monthly-income"
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="financial.fixed_obligations_krw"
-          render={({ field }) => (
-            <TextField
-              unit="원"
-              label="카드·대출·보험 등 고정 지급 의무"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 3100000"
-              keyboardType="numeric"
-              error={errors.financial?.fixed_obligations_krw?.message}
-              testID="financial-fixed-obligations"
+            <Controller
+              control={control}
+              name="financial.fixed_obligations_krw"
+              render={({ field }) => (
+                <TextField
+                  unit="원"
+                  label="카드·대출·보험 등 고정 지급 의무"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 3100000"
+                  keyboardType="numeric"
+                  error={errors.financial?.fixed_obligations_krw?.message}
+                  testID="financial-fixed-obligations"
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="financial.monthly_discretionary_krw"
-          render={({ field }) => (
-            <TextField
-              unit="원"
-              label="월 재량 지출 (선택)"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 500000"
-              keyboardType="numeric"
-              hint="비워두면 0으로 처리해요."
-              error={errors.financial?.monthly_discretionary_krw?.message}
-              testID="financial-monthly-discretionary"
+            <Controller
+              control={control}
+              name="financial.monthly_discretionary_krw"
+              render={({ field }) => (
+                <TextField
+                  unit="원"
+                  label="월 재량 지출 (선택)"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 500000"
+                  keyboardType="numeric"
+                  hint="비워두면 0으로 처리해요."
+                  error={errors.financial?.monthly_discretionary_krw?.message}
+                  testID="financial-monthly-discretionary"
+                />
+              )}
             />
-          )}
-        />
-      </Card>
+          </Card>
+        </Column>
+      </Columns>
     </Page>
   );
 }

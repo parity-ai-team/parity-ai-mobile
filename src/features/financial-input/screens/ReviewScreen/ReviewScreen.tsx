@@ -6,7 +6,16 @@ import { Text, View } from 'react-native';
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
 import { formatKrw } from '@/shared/format';
 import type { AnalysisResponse } from '@/shared/types';
-import { Card, Chip, StepProgress, Button, useTheme, type Theme } from '@/shared/ui';
+import {
+  Card,
+  Chip,
+  Columns,
+  Column,
+  StepProgress,
+  Button,
+  useTheme,
+  type Theme,
+} from '@/shared/ui';
 
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
@@ -48,7 +57,7 @@ export default function ReviewScreen() {
 
   if (incomplete) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <Text style={styles.title}>검토</Text>
         <Text style={styles.incompleteNotice}>
           아직 채우지 않은 입력이 있어요. 가구 정보부터 다시 확인해 주세요.
@@ -95,6 +104,7 @@ export default function ReviewScreen() {
 
   return (
     <Page
+      wide
       contentContainerStyle={styles.content}
       footer={
         <Button
@@ -104,121 +114,127 @@ export default function ReviewScreen() {
         />
       }
     >
-      <StepProgress current="검토" />
-      <Text style={styles.title}>검토</Text>
-      <Text style={styles.intro}>
-        입력한 값을 확인해 주세요. 가정값은 비워두어 서버 기본값이 적용될 값이에요.
-      </Text>
+      <Columns>
+        <Column width={theme.layout.sidebarWidth}>
+          <StepProgress current="검토" />
+        </Column>
+        <Column>
+          <Text style={styles.title}>검토</Text>
+          <Text style={styles.intro}>
+            입력한 값을 확인해 주세요. 가정값은 비워두어 서버 기본값이 적용될 값이에요.
+          </Text>
 
-      <Card>
-        <Text style={styles.sectionTitle}>가구 정보</Text>
-        <ReviewRow
-          theme={theme}
-          label="출산 예정월"
-          value={household.expected_month}
-          assumed={isFieldAssumed('household', 'expected_month')}
-          error={fieldErrors['household.expected_month']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="출산 순서"
-          value={String(household.birth_order)}
-          assumed={isFieldAssumed('household', 'birth_order')}
-          error={fieldErrors['household.birth_order']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="가족 구조"
-          value={HOUSEHOLD_TYPE_LABEL[household.household_type] ?? household.household_type}
-          assumed={isFieldAssumed('household', 'household_type')}
-          error={fieldErrors['household.household_type']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="부양가족 수"
-          value={String(household.dependents)}
-          assumed={isFieldAssumed('household', 'dependents')}
-          error={fieldErrors['household.dependents']}
-        />
-      </Card>
-      <Card>
-        <Text style={styles.sectionTitle}>금융 정보</Text>
-        <ReviewRow
-          theme={theme}
-          label="가용 현금"
-          value={formatKrw(financial.current_cash_krw)}
-          assumed={isFieldAssumed('financial', 'current_cash_krw')}
-          error={fieldErrors['financial.current_cash_krw']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="비상금 최소 기준"
-          value={
-            financial.emergency_floor_krw === null
-              ? '서버 기본값 사용'
-              : formatKrw(financial.emergency_floor_krw)
-          }
-          assumed={isFieldAssumed('financial', 'emergency_floor_krw')}
-          error={fieldErrors['financial.emergency_floor_krw']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="월 수입"
-          value={formatKrw(financial.monthly_income_krw)}
-          assumed={isFieldAssumed('financial', 'monthly_income_krw')}
-          error={fieldErrors['financial.monthly_income_krw']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="고정 지급 의무"
-          value={formatKrw(financial.fixed_obligations_krw)}
-          assumed={isFieldAssumed('financial', 'fixed_obligations_krw')}
-          error={fieldErrors['financial.fixed_obligations_krw']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="월 재량 지출"
-          value={formatKrw(financial.monthly_discretionary_krw)}
-          assumed={isFieldAssumed('financial', 'monthly_discretionary_krw')}
-          error={fieldErrors['financial.monthly_discretionary_krw']}
-        />
-      </Card>
-      <Card>
-        <Text style={styles.sectionTitle}>휴직·소득 계획</Text>
-        <ReviewRow
-          theme={theme}
-          label="휴직 시작월"
-          value={plan.leave_start === null ? '휴직 없음' : plan.leave_start}
-          assumed={isFieldAssumed('plan', 'leave_start')}
-          error={fieldErrors['plan.leave_start']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="휴직 개월 수"
-          value={`${plan.leave_months}개월`}
-          assumed={isFieldAssumed('plan', 'leave_months')}
-          error={fieldErrors['plan.leave_months']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="예상 소득 지연"
-          value={`${stress.income_delay_weeks}주`}
-          assumed={isFieldAssumed('stress', 'income_delay_weeks')}
-          error={fieldErrors['stress.income_delay_weeks']}
-        />
-        <ReviewRow
-          theme={theme}
-          label="양육비 미수령 가능성"
-          value={stress.child_support_missed ? '예' : '아니오'}
-          assumed={isFieldAssumed('stress', 'child_support_missed')}
-          error={fieldErrors['stress.child_support_missed']}
-        />
-      </Card>
-      {generalError ? (
-        <Text style={styles.generalError} accessibilityRole="alert">
-          {`오류: ${generalError}`}
-        </Text>
-      ) : null}
+          <Card>
+            <Text style={styles.sectionTitle}>가구 정보</Text>
+            <ReviewRow
+              theme={theme}
+              label="출산 예정월"
+              value={household.expected_month}
+              assumed={isFieldAssumed('household', 'expected_month')}
+              error={fieldErrors['household.expected_month']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="출산 순서"
+              value={String(household.birth_order)}
+              assumed={isFieldAssumed('household', 'birth_order')}
+              error={fieldErrors['household.birth_order']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="가족 구조"
+              value={HOUSEHOLD_TYPE_LABEL[household.household_type] ?? household.household_type}
+              assumed={isFieldAssumed('household', 'household_type')}
+              error={fieldErrors['household.household_type']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="부양가족 수"
+              value={String(household.dependents)}
+              assumed={isFieldAssumed('household', 'dependents')}
+              error={fieldErrors['household.dependents']}
+            />
+          </Card>
+          <Card>
+            <Text style={styles.sectionTitle}>금융 정보</Text>
+            <ReviewRow
+              theme={theme}
+              label="가용 현금"
+              value={formatKrw(financial.current_cash_krw)}
+              assumed={isFieldAssumed('financial', 'current_cash_krw')}
+              error={fieldErrors['financial.current_cash_krw']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="비상금 최소 기준"
+              value={
+                financial.emergency_floor_krw === null
+                  ? '서버 기본값 사용'
+                  : formatKrw(financial.emergency_floor_krw)
+              }
+              assumed={isFieldAssumed('financial', 'emergency_floor_krw')}
+              error={fieldErrors['financial.emergency_floor_krw']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="월 수입"
+              value={formatKrw(financial.monthly_income_krw)}
+              assumed={isFieldAssumed('financial', 'monthly_income_krw')}
+              error={fieldErrors['financial.monthly_income_krw']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="고정 지급 의무"
+              value={formatKrw(financial.fixed_obligations_krw)}
+              assumed={isFieldAssumed('financial', 'fixed_obligations_krw')}
+              error={fieldErrors['financial.fixed_obligations_krw']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="월 재량 지출"
+              value={formatKrw(financial.monthly_discretionary_krw)}
+              assumed={isFieldAssumed('financial', 'monthly_discretionary_krw')}
+              error={fieldErrors['financial.monthly_discretionary_krw']}
+            />
+          </Card>
+          <Card>
+            <Text style={styles.sectionTitle}>휴직·소득 계획</Text>
+            <ReviewRow
+              theme={theme}
+              label="휴직 시작월"
+              value={plan.leave_start === null ? '휴직 없음' : plan.leave_start}
+              assumed={isFieldAssumed('plan', 'leave_start')}
+              error={fieldErrors['plan.leave_start']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="휴직 개월 수"
+              value={`${plan.leave_months}개월`}
+              assumed={isFieldAssumed('plan', 'leave_months')}
+              error={fieldErrors['plan.leave_months']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="예상 소득 지연"
+              value={`${stress.income_delay_weeks}주`}
+              assumed={isFieldAssumed('stress', 'income_delay_weeks')}
+              error={fieldErrors['stress.income_delay_weeks']}
+            />
+            <ReviewRow
+              theme={theme}
+              label="양육비 미수령 가능성"
+              value={stress.child_support_missed ? '예' : '아니오'}
+              assumed={isFieldAssumed('stress', 'child_support_missed')}
+              error={fieldErrors['stress.child_support_missed']}
+            />
+          </Card>
+          {generalError ? (
+            <Text style={styles.generalError} accessibilityRole="alert">
+              {`오류: ${generalError}`}
+            </Text>
+          ) : null}
+        </Column>
+      </Columns>
     </Page>
   );
 }

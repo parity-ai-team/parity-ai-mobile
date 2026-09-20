@@ -37,7 +37,7 @@ export default function ResultScreen() {
 
   if (!analysisResponse) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <Text style={styles.title}>결과를 찾을 수 없어요</Text>
         <Text style={styles.body}>세션이 만료됐어요. 검토 화면에서 다시 시작해 주세요.</Text>
         <Button label="검토 화면으로" onPress={() => router.push('/review')} />
@@ -49,7 +49,7 @@ export default function ResultScreen() {
 
   if (!isResultUsable(status) || !result) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <DataModeBadge mode="synthetic" dataVersion={versions.data} />
         <Text style={styles.title}>아직 결과를 보여드릴 수 없어요</Text>
         <Text style={styles.body}>
@@ -66,9 +66,9 @@ export default function ResultScreen() {
       <LimitationsNotice limitations={limitations ?? []} testID="result-limitations" />
 
       <Text style={styles.title}>분석 결과</Text>
-      <RiskSummary risks={result.risks} />
       <Columns>
         <Column>
+          <RiskSummary risks={result.risks} />
           <Card>
             <Text style={styles.sectionTitle}>12개월 현금흐름</Text>
 

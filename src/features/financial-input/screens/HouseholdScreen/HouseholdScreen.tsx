@@ -5,7 +5,16 @@ import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { Text } from 'react-native';
 
-import { Card, StepProgress, Button, ChoiceField, TextField, useTheme } from '@/shared/ui';
+import {
+  Card,
+  Columns,
+  Column,
+  StepProgress,
+  Button,
+  ChoiceField,
+  TextField,
+  useTheme,
+} from '@/shared/ui';
 
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
@@ -58,83 +67,90 @@ export default function HouseholdScreen() {
 
   return (
     <Page
+      wide
       contentContainerStyle={styles.content}
       footer={<Button label="다음" onPress={onSubmit} />}
     >
-      <StepProgress current="가구" />
-      <Text style={styles.title}>가구 정보</Text>
-      <Text style={styles.intro}>출산 예정과 가족 구성을 알려주세요.</Text>
+      <Columns>
+        <Column width={theme.layout.sidebarWidth}>
+          <StepProgress current="가구" />
+        </Column>
+        <Column>
+          <Text style={styles.title}>가구 정보</Text>
+          <Text style={styles.intro}>출산 예정과 가족 구성을 알려주세요.</Text>
 
-      <Card>
-        <Controller
-          control={control}
-          name="household.expected_month"
-          render={({ field }) => (
-            <TextField
-              label="출산 예정월"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 2027-03"
-              hint="연도-월 형식으로 입력해요."
-              error={errors.household?.expected_month?.message}
-              testID="household-expected-month"
+          <Card>
+            <Controller
+              control={control}
+              name="household.expected_month"
+              render={({ field }) => (
+                <TextField
+                  label="출산 예정월"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 2027-03"
+                  hint="연도-월 형식으로 입력해요."
+                  error={errors.household?.expected_month?.message}
+                  testID="household-expected-month"
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="household.birth_order"
-          render={({ field }) => (
-            <TextField
-              label="출산 순서"
-              unit="번째"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 1"
-              keyboardType="number-pad"
-              error={errors.household?.birth_order?.message}
-              testID="household-birth-order"
+            <Controller
+              control={control}
+              name="household.birth_order"
+              render={({ field }) => (
+                <TextField
+                  label="출산 순서"
+                  unit="번째"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 1"
+                  keyboardType="number-pad"
+                  error={errors.household?.birth_order?.message}
+                  testID="household-birth-order"
+                />
+              )}
             />
-          )}
-        />
-      </Card>
-      <Card>
-        <Controller
-          control={control}
-          name="household.household_type"
-          render={({ field }) => (
-            <ChoiceField
-              label="가족 구조"
-              options={HOUSEHOLD_TYPE_OPTIONS}
-              value={field.value}
-              onChange={field.onChange}
-              error={errors.household?.household_type?.message}
-              testID="household-type"
+          </Card>
+          <Card>
+            <Controller
+              control={control}
+              name="household.household_type"
+              render={({ field }) => (
+                <ChoiceField
+                  label="가족 구조"
+                  options={HOUSEHOLD_TYPE_OPTIONS}
+                  value={field.value}
+                  onChange={field.onChange}
+                  error={errors.household?.household_type?.message}
+                  testID="household-type"
+                />
+              )}
             />
-          )}
-        />
 
-        <Controller
-          control={control}
-          name="household.dependents"
-          render={({ field }) => (
-            <TextField
-              label="부양가족 수"
-              unit="명"
-              value={field.value}
-              onChangeText={field.onChange}
-              onBlur={field.onBlur}
-              placeholder="예: 0"
-              keyboardType="number-pad"
-              error={errors.household?.dependents?.message}
-              testID="household-dependents"
+            <Controller
+              control={control}
+              name="household.dependents"
+              render={({ field }) => (
+                <TextField
+                  label="부양가족 수"
+                  unit="명"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 0"
+                  keyboardType="number-pad"
+                  error={errors.household?.dependents?.message}
+                  testID="household-dependents"
+                />
+              )}
             />
-          )}
-        />
-      </Card>
+          </Card>
+        </Column>
+      </Columns>
     </Page>
   );
 }

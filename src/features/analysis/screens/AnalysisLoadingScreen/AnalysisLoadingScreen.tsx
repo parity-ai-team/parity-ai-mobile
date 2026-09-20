@@ -26,7 +26,7 @@ export default function AnalysisLoadingScreen() {
 
   if (analysisResponse) {
     return (
-      <Page contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <LoadingCards />
         <Text style={styles.title}>분석 중이에요…</Text>
       </Page>
@@ -34,7 +34,7 @@ export default function AnalysisLoadingScreen() {
   }
 
   return (
-    <Page contentContainerStyle={styles.content}>
+    <Page wide contentContainerStyle={styles.content}>
       <Text style={styles.title}>분석 결과를 찾을 수 없어요</Text>
       <Text style={styles.body}>
         세션이 만료되었거나 아직 분석을 시작하지 않았어요. 검토 화면에서 다시 시도해 주세요.

@@ -72,7 +72,7 @@ describe('ReviewScreen — 분석 시작', () => {
     await renderReviewScreenWithDemo();
     await fireEvent.press(screen.getByRole('button', { name: '분석 시작' }));
 
-    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/analysis/index'));
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/analysis'));
     expect(apiRequest).toHaveBeenCalledWith(
       expect.objectContaining({
         method: 'POST',
@@ -103,6 +103,6 @@ describe('ReviewScreen — 분석 시작', () => {
 
     await waitFor(() => expect(screen.getByText('오류: greater_than_equal')).toBeTruthy());
     expect(screen.getByText('오류: 확인할 입력이 있어요.')).toBeTruthy();
-    expect(router.push).not.toHaveBeenCalledWith('/analysis/index');
+    expect(router.push).not.toHaveBeenCalledWith('/analysis');
   });
 });

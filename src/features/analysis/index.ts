@@ -1,3 +1,3 @@
 export { AnalysisLoadingScreen } from './screens/AnalysisLoadingScreen';
-export { EvidencePlaceholderScreen } from './screens/EvidencePlaceholderScreen';
+export { EvidenceScreen } from './screens/EvidenceScreen';
 export { ResultScreen } from './screens/ResultScreen';

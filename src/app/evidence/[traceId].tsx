@@ -1,1 +1,1 @@
-export { EvidencePlaceholderScreen as default } from '@/features/analysis';
+export { EvidenceScreen as default } from '@/features/analysis';

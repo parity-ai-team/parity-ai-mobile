@@ -5,16 +5,17 @@ import type { Theme } from '../theme';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     card: {
-      padding: theme.spacing.md,
-      borderRadius: theme.radii.md,
-      borderWidth: 1,
+      boxShadow: theme.layout.cardShadow,
+      padding: theme.spacing.xl,
+      borderRadius: theme.radii.lg,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.sm,
     },
     cardSelected: {
       borderColor: theme.colors.brand,
-      borderWidth: 2,
+      borderWidth: theme.layout.strongStroke,
     },
     selectionArea: {
       gap: theme.spacing.sm,
@@ -50,7 +51,7 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.sm,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.background,
     },

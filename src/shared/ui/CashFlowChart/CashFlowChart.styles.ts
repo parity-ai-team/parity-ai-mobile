@@ -18,8 +18,8 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.xs,
     },
     legendSwatch: {
-      width: 14,
-      height: 3,
+      width: theme.spacing.lg,
+      height: theme.spacing.xs,
       borderRadius: theme.radii.sm,
     },
     legendLabel: {
@@ -27,24 +27,24 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textSecondary,
     },
     chartArea: {
-      width: '100%',
+      width: theme.layout.full,
       position: 'relative',
     },
     hitOverlay: {
       position: 'absolute',
-      left: 0,
-      right: 0,
+      left: theme.layout.zero,
+      right: theme.layout.zero,
     },
     hitArea: {
       position: 'absolute',
-      top: 0,
-      bottom: 0,
+      top: theme.layout.zero,
+      bottom: theme.layout.zero,
     },
     toggleRow: {
       alignItems: 'flex-start',
     },
     table: {
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       borderRadius: theme.radii.md,
       overflow: 'hidden',
@@ -59,19 +59,19 @@ export function createStyles(theme: Theme) {
       flexDirection: 'row',
       paddingVertical: theme.spacing.xs,
       paddingHorizontal: theme.spacing.sm,
-      borderTopWidth: 1,
+      borderTopWidth: theme.layout.stroke,
       borderTopColor: theme.colors.border,
     },
     tableRowSelected: {
       backgroundColor: theme.colors.surface,
     },
     tableCell: {
-      flex: 1,
+      flex: theme.layout.flex,
       ...theme.typography.bodySmall,
       color: theme.colors.textPrimary,
     },
     tableHeaderCell: {
-      flex: 1,
+      flex: theme.layout.flex,
       ...theme.typography.labelMedium,
       color: theme.colors.textSecondary,
     },

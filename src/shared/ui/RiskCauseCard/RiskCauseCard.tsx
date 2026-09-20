@@ -70,7 +70,10 @@ export function RiskCauseCard({
             {risk.period}
             {selected ? ' · 선택됨' : ''}
           </Text>
-          <View style={[styles.severityChip, severityStyle]} testID={testID && `${testID}-severity`}>
+          <View
+            style={[styles.severityChip, severityStyle]}
+            testID={testID && `${testID}-severity`}
+          >
             <Text style={styles.severityLabel}>{SEVERITY_LABEL[risk.severity]}</Text>
           </View>
         </View>

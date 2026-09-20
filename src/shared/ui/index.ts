@@ -25,3 +25,5 @@ export type { SafeContributionGateProps } from './SafeContributionGate';
 export { TextField } from './TextField';
 export type { TextFieldProps } from './TextField';
 export * from './theme';
+
+export { Card, Chip, LoadingCards } from './Surface/Surface';

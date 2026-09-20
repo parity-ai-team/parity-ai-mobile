@@ -8,7 +8,7 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.xs,
       padding: theme.spacing.md,
       borderRadius: theme.radii.md,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
     },

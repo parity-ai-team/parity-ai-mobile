@@ -99,6 +99,19 @@ describe('realApiRequest', () => {
     expect(headers.get(REQUEST_ID_HEADER)).toBe('req_00000000-0000-4000-8000-000000000000');
   });
 
+  it('sends FormData without forcing a JSON content type', async () => {
+    mockFetchOnce(new Response(JSON.stringify({ status: 'ready' }), { status: 201 }));
+    const body = new FormData();
+    body.append('file', new Blob(['a,b'], { type: 'text/csv' }), 'synthetic.csv');
+
+    await realApiRequest({ method: 'POST', path: '/v1/datasets', body });
+
+    const [, init] = (globalThis.fetch as jest.Mock).mock.calls[0];
+    const headers = init.headers as Headers;
+    expect(headers.get('Content-Type')).toBeNull();
+    expect(init.body).toBe(body);
+  });
+
   // 2026-09-20 실서버 확인: ETag가 W/"ana_xxx:1" 형태의 약한 ETag로 온다.
   // If-Match에는 그 문자열을 가공 없이 그대로 보내야 한다.
   it('sends the if-match header with the raw ETag string for PATCH requests', async () => {
@@ -153,9 +166,9 @@ describe('realApiRequest', () => {
     const fetchSpy = jest.fn();
     globalThis.fetch = fetchSpy as unknown as typeof fetch;
 
-    await expect(
-      realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1' }),
-    ).rejects.toThrow(/If-Match/);
+    await expect(realApiRequest({ method: 'DELETE', path: '/v1/analyses/ana_1' })).rejects.toThrow(
+      /If-Match/,
+    );
 
     expect(fetchSpy).not.toHaveBeenCalled();
   });

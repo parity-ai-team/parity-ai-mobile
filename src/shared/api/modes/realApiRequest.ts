@@ -40,6 +40,7 @@ export async function realApiRequest<TResult = unknown>(
 ): Promise<ApiResult<TResult>> {
   const { method, path, body, ifMatch, onSlowRequest } = options;
   const isMutating = MUTATING_METHODS.has(method);
+  const isMultipart = typeof FormData !== 'undefined' && body instanceof FormData;
 
   if (IF_MATCH_REQUIRED_METHODS.has(method) && ifMatch === undefined) {
     throw new Error(`${method} ${path} 요청에는 ifMatch(If-Match)가 필요합니다.`);
@@ -50,6 +51,7 @@ export async function realApiRequest<TResult = unknown>(
     idempotencyKey:
       method === 'POST' ? (options.idempotencyKey ?? generateIdempotencyKey()) : undefined,
     ifMatch,
+    contentType: isMultipart ? null : undefined,
   });
 
   const controller = new AbortController();
@@ -63,7 +65,8 @@ export async function realApiRequest<TResult = unknown>(
     response = await fetch(`${getApiBaseUrl()}${path}`, {
       method,
       headers,
-      body: body !== undefined ? JSON.stringify(body) : undefined,
+      body:
+        body === undefined ? undefined : isMultipart ? (body as FormData) : JSON.stringify(body),
       signal: controller.signal,
     });
   } catch (error) {

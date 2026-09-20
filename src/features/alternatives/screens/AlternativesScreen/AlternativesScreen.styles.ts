@@ -25,7 +25,8 @@ export function createStyles(theme: Theme) {
       zIndex: theme.layout.stickyZIndex,
       ...(Platform.OS === 'web'
         ? {
-            position: 'sticky' as const,
+            // react-native-web는 sticky를 지원하지만 RN ViewStyle 타입에는 없다.
+            position: 'sticky' as never,
             top: theme.layout.headerHeight + theme.spacing.lg,
           }
         : {}),

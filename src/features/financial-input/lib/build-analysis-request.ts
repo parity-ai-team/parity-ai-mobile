@@ -12,6 +12,7 @@ import type { FinancialInputOrigin } from '../FinancialInputSessionContext';
 export interface BuildAnalysisRequestInput {
   origin: FinancialInputOrigin;
   scenarioId: DemoScenarioId | null;
+  datasetId: string | null;
   household: HouseholdInput;
   financial: FinancialInput;
   plan: EmploymentPlanInput;
@@ -26,7 +27,7 @@ export function buildAnalysisCreateRequest(
 ): AnalysisCreateRequest {
   return {
     scenario_id: input.origin === 'demo' ? input.scenarioId : null,
-    dataset_id: null,
+    dataset_id: input.origin === 'manual' ? input.datasetId : null,
     household: input.household,
     financial: input.financial,
     plan: input.plan,

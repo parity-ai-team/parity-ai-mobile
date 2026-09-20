@@ -1,4 +1,4 @@
-// docs/api/openapi-1.5.0.json(백엔드 확정 계약, docs/decisions/api-contract-mismatch.md)
+// docs/api/openapi-1.7.0.json(백엔드 확정 계약, docs/decisions/api-contract-mismatch.md)
 // 기준 생성 타입 재노출. 추측으로 작성했던 TEMP 수기 타입(analysis-status,
 // error-codes, cause-codes, envelope, 결과 타입)은 전부 지우고 생성 타입으로
 // 교체했다 — 계속 손으로 관리하는 파일은 result-usable.ts뿐이다.
@@ -20,10 +20,18 @@ export type {
   AnalysisUpdateRequest,
   CashflowPoint,
   CauseCode,
+  ClassificationConfirmation,
+  ClassificationConfirmationRequest,
+  ClassificationReviewItem,
   ConfidenceLevel,
   ContractVersions,
   DataMode,
   DataSource,
+  DatasetClassificationSummary,
+  DatasetCreateResponse,
+  DatasetIntelligence,
+  DatasetIntelligenceResponse,
+  DatasetStatus,
   DemoScenarioListResponse,
   DemoScenarioSummary,
   EmploymentPlanInput,
@@ -48,6 +56,7 @@ export type {
   HouseholdUpdate,
   HTTPValidationError,
   LimitationCode,
+  RecurringPattern,
   RiskItem,
   RiskSeverity,
   SafeContributionResult,
@@ -55,6 +64,7 @@ export type {
   ScenarioRoute,
   StressInput,
   StressUpdate,
+  TransactionCategory,
   ValidationError,
 } from './generated';
 

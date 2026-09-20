@@ -27,6 +27,7 @@ describe('buildAnalysisCreateRequest', () => {
     const request = buildAnalysisCreateRequest({
       origin: 'demo',
       scenarioId: 'first_birth_dual_income',
+      datasetId: null,
       household,
       financial,
       plan,
@@ -48,6 +49,7 @@ describe('buildAnalysisCreateRequest', () => {
     const request = buildAnalysisCreateRequest({
       origin: 'manual',
       scenarioId: null,
+      datasetId: 'dts_0123456789abcdef0123',
       household,
       financial,
       plan,
@@ -55,12 +57,14 @@ describe('buildAnalysisCreateRequest', () => {
     });
 
     expect(request.scenario_id).toBeNull();
+    expect(request.dataset_id).toBe('dts_0123456789abcdef0123');
   });
 
   it('입력값을 다시 계산하지 않고 그대로 옮긴다', () => {
     const request = buildAnalysisCreateRequest({
       origin: 'manual',
       scenarioId: null,
+      datasetId: 'dts_0123456789abcdef0123',
       household,
       financial,
       plan,

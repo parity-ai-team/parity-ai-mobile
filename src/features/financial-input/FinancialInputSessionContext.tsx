@@ -17,6 +17,10 @@ import {
 } from '@/features/onboarding';
 import type {
   AnalysisResponse,
+  DatasetCreateResponse,
+  DatasetIntelligence,
+  DatasetIntelligenceResponse,
+  DatasetStatus,
   EmploymentPlanInput,
   FinancialInput,
   HouseholdInput,
@@ -52,6 +56,13 @@ export interface FinancialInputSessionValue {
   /** POST /v1/analyses 성공 응답. 세션 메모리에만 두고 영구 저장하지 않는다. */
   analysisResponse: AnalysisResponse | null;
   setAnalysisResponse: (response: AnalysisResponse | null) => void;
+  /** CSV 등록·분류 확인 뒤 분석에 사용할 최신 데이터셋 ID. */
+  datasetId: string | null;
+  datasetStatus: DatasetStatus | null;
+  datasetIntelligence: DatasetIntelligence | null;
+  datasetNotice: string | null;
+  setDatasetResponse: (response: DatasetCreateResponse | DatasetIntelligenceResponse) => void;
+  setDatasetNotice: (message: string | null) => void;
 }
 
 // 직접 입력은 서버 기본값까지 전부 비워 둔다. 0원·휴직 없음·미수령 가능성
@@ -121,6 +132,10 @@ export function FinancialInputSessionProvider({ children }: { children: ReactNod
   const [session, setSession] = useState<SessionState>(() => buildSessionState(initialScenarioId));
   const lastSelectionKey = useRef(selectionKey(scenarioSelection));
   const [analysisResponse, setAnalysisResponseState] = useState<AnalysisResponse | null>(null);
+  const [datasetId, setDatasetId] = useState<string | null>(null);
+  const [datasetStatus, setDatasetStatus] = useState<DatasetStatus | null>(null);
+  const [datasetIntelligence, setDatasetIntelligence] = useState<DatasetIntelligence | null>(null);
+  const [datasetNotice, setDatasetNoticeState] = useState<string | null>(null);
 
   // scenarioSelection은 S03에서 이 Provider가 이미 마운트된 뒤에 정해진다 —
   // 처음 렌더링 시점(S01)에는 항상 null이라, 선택이 실제로 바뀔 때 defaults/
@@ -134,6 +149,11 @@ export function FinancialInputSessionProvider({ children }: { children: ReactNod
     const resolvedScenarioId =
       scenarioSelection?.type === 'demo' ? (scenarioSelection.scenarioId as DemoScenarioId) : null;
     setSession(buildSessionState(resolvedScenarioId));
+    setAnalysisResponseState(null);
+    setDatasetId(null);
+    setDatasetStatus(null);
+    setDatasetIntelligence(null);
+    setDatasetNoticeState(null);
   }, [scenarioSelection]);
 
   const updateHousehold = useCallback((value: HouseholdInput) => {
@@ -165,6 +185,20 @@ export function FinancialInputSessionProvider({ children }: { children: ReactNod
     setAnalysisResponseState(response);
   }, []);
 
+  const setDatasetResponse = useCallback(
+    (response: DatasetCreateResponse | DatasetIntelligenceResponse) => {
+      setDatasetId(response.dataset_id);
+      setDatasetStatus(response.status);
+      setDatasetIntelligence(response.intelligence);
+      setDatasetNoticeState(null);
+    },
+    [],
+  );
+
+  const setDatasetNotice = useCallback((message: string | null) => {
+    setDatasetNoticeState(message);
+  }, []);
+
   const value = useMemo<FinancialInputSessionValue>(
     () => ({
       origin: session.origin,
@@ -178,6 +212,12 @@ export function FinancialInputSessionProvider({ children }: { children: ReactNod
       isFieldAssumed,
       analysisResponse,
       setAnalysisResponse,
+      datasetId,
+      datasetStatus,
+      datasetIntelligence,
+      datasetNotice,
+      setDatasetResponse,
+      setDatasetNotice,
     }),
     [
       session,
@@ -188,6 +228,12 @@ export function FinancialInputSessionProvider({ children }: { children: ReactNod
       isFieldAssumed,
       analysisResponse,
       setAnalysisResponse,
+      datasetId,
+      datasetStatus,
+      datasetIntelligence,
+      datasetNotice,
+      setDatasetResponse,
+      setDatasetNotice,
     ],
   );
 

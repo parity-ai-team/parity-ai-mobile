@@ -16,4 +16,5 @@ export const DATA_SOURCE_LABEL: Record<DataSource, string> = {
   policy_rule: '정책 규칙',
   derived: '계산값',
   assumed: '가정값(미확인)',
+  public_data: '공공 데이터',
 };

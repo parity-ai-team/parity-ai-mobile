@@ -152,6 +152,9 @@ const baselineResult: AnalysisResult = {
   risks: baselineRisks,
   alternatives: baselineAlternativeDetails.map(toAlternativeSummary),
   safe_contribution: baselineSafeContribution,
+  // 1.7.0에서 추가된 nullable 필드. 이 mock 시나리오들은 생활비 맥락을
+  // 다루지 않아 null로 둔다.
+  living_cost_context: null,
 };
 
 // 토글 on: 소득 지연 또는 양육비 미수령이 겹치며 위험월이 앞당겨지고
@@ -290,6 +293,9 @@ const stressedResult: AnalysisResult = {
   risks: stressedRisks,
   alternatives: stressedAlternativeDetails.map(toAlternativeSummary),
   safe_contribution: stressedSafeContribution,
+  // 1.7.0에서 추가된 nullable 필드. 이 mock 시나리오들은 생활비 맥락을
+  // 다루지 않아 null로 둔다.
+  living_cost_context: null,
 };
 
 export const singleParentFixture: MockAnalysisResponse = {

@@ -54,7 +54,7 @@ export default function ResultScreen() {
         <Text style={styles.body}>
           현재 상태: {status}. 입력을 다시 확인하거나 잠시 후 다시 시도해 주세요.
         </Text>
-        <Button label="입력 수정" onPress={() => router.push('/plan')} />
+        <Button label="입력 수정" onPress={() => router.push('/review')} />
       </Page>
     );
   }
@@ -65,7 +65,7 @@ export default function ResultScreen() {
         label="입력 수정"
         variant="secondary"
         style={styles.actionButton}
-        onPress={() => router.push('/plan')}
+        onPress={() => router.push('/review')}
       />
       <Button
         label="대안 비교"

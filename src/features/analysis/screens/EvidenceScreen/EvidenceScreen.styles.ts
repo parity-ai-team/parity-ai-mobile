@@ -79,6 +79,8 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textPrimary,
     },
     sourceLabel: {
+      flexShrink: theme.layout.flex,
+      textAlign: 'right',
       ...theme.typography.bodySmall,
       color: theme.colors.brand,
     },
@@ -96,7 +98,14 @@ export function createStyles(theme: Theme) {
       borderBottomColor: theme.colors.border,
       gap: theme.spacing.sm,
     },
+    resultLabel: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+    },
     resultValue: {
+      flexShrink: theme.layout.flex,
       ...theme.typography.labelMedium,
       ...theme.typography.numeric,
       color: theme.colors.brand,

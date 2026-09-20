@@ -11,7 +11,7 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.xl,
     },
     title: {
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
     intro: {
@@ -24,14 +24,29 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textPrimary,
       marginTop: theme.spacing.sm,
     },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      gap: theme.spacing.xs,
+    },
+    valueRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      flexWrap: 'wrap',
+      gap: theme.spacing.sm,
+    },
+    assumedOrigin: { color: theme.colors.severityWarning },
     row: {
-      padding: theme.spacing.lg,
+      paddingVertical: theme.spacing.sm,
       borderRadius: theme.radii.md,
-      borderBottomWidth: theme.layout.zero,
-      borderColor: theme.colors.transparent,
+      borderBottomWidth: theme.layout.stroke,
+      borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,
-      boxShadow: theme.layout.cardShadow,
+      boxShadow: theme.layout.shadowNone,
     },
     rowLabel: {
       ...theme.typography.bodySmall,
@@ -39,7 +54,7 @@ export function createStyles(theme: Theme) {
     },
     rowValue: {
       ...theme.typography.numeric,
-      ...theme.typography.bodyLarge,
+      ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
     rowOrigin: {

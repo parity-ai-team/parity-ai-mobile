@@ -16,10 +16,12 @@ import {
   useTheme,
 } from '@/shared/ui';
 
+import { DATA_SOURCE_LABEL } from '@/shared/ui/ConfidenceTag/labels';
+
 import { createStyles } from './EvidenceScreen.styles';
 
 const EXPLANATION_SOURCE_LABEL: Record<ExplanationSource, string> = {
-  template: '검증된 안내 문구',
+  template: '계산 결과 안내',
   llm: 'AI가 쉽게 풀어쓴 설명',
 };
 
@@ -85,12 +87,10 @@ function getOutputValue(name: string, value: string, unit: string | null): strin
 
 function getRuleExplanation(ruleId: string, fallback: string): string {
   const labels: Record<string, string> = {
-    rule_cashflow_risk_detection:
-      '매달 남는 돈이 꼭 지켜야 할 비상금보다 적어지는지 확인했어요.',
+    rule_cashflow_risk_detection: '매달 남는 돈이 꼭 지켜야 할 비상금보다 적어지는지 확인했어요.',
     rule_alternative_constraint_search:
       '바꾸기로 허용한 항목 안에서 실행할 수 있는 방법만 비교했어요.',
-    rule_safe_contribution_gate:
-      '비상금과 생활비가 충분히 남는 경우에만 적립 가능으로 판단했어요.',
+    rule_safe_contribution_gate: '비상금과 생활비가 충분히 남는 경우에만 적립 가능으로 판단했어요.',
   };
   return labels[ruleId] ?? fallback;
 }
@@ -98,7 +98,10 @@ function getRuleExplanation(ruleId: string, fallback: string): string {
 function humanizeExplanation(text: string): string {
   return Object.entries(CAUSE_CODE_LABEL).reduce(
     (result, [code, label]) => result.split(code).join(label),
-    text,
+    text
+      .replace(/\bmedium\b/g, '보통')
+      .replace(/\blow\b/g, '낮음')
+      .replace(/\bhigh\b/g, '높음'),
   );
 }
 
@@ -189,7 +192,12 @@ export default function EvidenceScreen() {
   }
 
   return (
-    <Page wide contentContainerStyle={styles.content} testID="evidence-screen">
+    <Page
+      wide
+      contentContainerStyle={styles.content}
+      testID="evidence-screen"
+      footer={<Button label="이전 화면으로" variant="secondary" onPress={() => router.back()} />}
+    >
       <Text style={styles.title}>왜 이런 결과가 나왔나요?</Text>
       <Text style={styles.subtitle}>입력한 정보가 결과로 이어진 과정을 쉽게 보여드려요.</Text>
 
@@ -202,13 +210,16 @@ export default function EvidenceScreen() {
             <Text style={styles.sectionTitle}>무엇을 반영했나요?</Text>
           </View>
           <View style={styles.factList}>
+            {evidence.inputs.length === 0 ? (
+              <Text style={styles.body}>추가로 표시할 입력 정보가 없어요.</Text>
+            ) : null}
             {evidence.inputs.map((input) => (
               <View key={input.name} style={styles.row} testID={`evidence-input-${input.name}`}>
                 <View style={styles.rowCopy}>
                   <Text style={styles.rowLabel}>{getInputLabel(input.name)}</Text>
                   <Text style={styles.rowValue}>{getInputValue(input.name, input.value)}</Text>
                 </View>
-                <Text style={styles.sourceLabel}>분석에 반영됨</Text>
+                <Text style={styles.sourceLabel}>{DATA_SOURCE_LABEL[input.source]}</Text>
               </View>
             ))}
           </View>
@@ -223,9 +234,14 @@ export default function EvidenceScreen() {
             <Text style={styles.sectionTitle}>어떤 기준을 적용했나요?</Text>
           </View>
           <View style={styles.factList}>
+            {evidence.rules.length === 0 ? (
+              <Text style={styles.body}>상세 기준이 제공되지 않았어요.</Text>
+            ) : null}
             {evidence.rules.map((rule) => (
               <View key={rule.rule_id} style={styles.ruleRow}>
-                <Text style={styles.rowValue}>{getRuleExplanation(rule.rule_id, rule.description)}</Text>
+                <Text style={styles.rowValue}>
+                  {getRuleExplanation(rule.rule_id, rule.description)}
+                </Text>
               </View>
             ))}
           </View>
@@ -240,9 +256,12 @@ export default function EvidenceScreen() {
             <Text style={styles.sectionTitle}>그래서 어떤 값이 나왔나요?</Text>
           </View>
           <View style={styles.factList}>
+            {evidence.outputs.length === 0 ? (
+              <Text style={styles.body}>상세 금액이 제공되지 않았어요.</Text>
+            ) : null}
             {evidence.outputs.map((output) => (
               <View key={output.name} style={styles.resultRow}>
-                <Text style={styles.rowLabel}>{OUTPUT_LABEL[output.name] ?? '계산 결과'}</Text>
+                <Text style={styles.resultLabel}>{OUTPUT_LABEL[output.name] ?? '계산 결과'}</Text>
                 <Text
                   style={[
                     styles.resultValue,

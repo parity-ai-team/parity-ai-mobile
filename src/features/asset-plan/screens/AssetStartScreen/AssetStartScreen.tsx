@@ -4,7 +4,7 @@ import { Text } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { isResultUsable } from '@/shared/types';
-import { Button, DataModeBadge, SafeContributionGate, useTheme } from '@/shared/ui';
+import { Button, SafeContributionGate, useTheme } from '@/shared/ui';
 
 import { createStyles } from './AssetStartScreen.styles';
 
@@ -32,12 +32,11 @@ export default function AssetStartScreen() {
     );
   }
 
-  const { status, result, versions } = analysisResponse;
+  const { status, result } = analysisResponse;
 
   if (!isResultUsable(status) || !result) {
     return (
       <Page wide contentContainerStyle={styles.content}>
-        <DataModeBadge mode="synthetic" dataVersion={versions.data} />
         <Text style={styles.title}>아직 안전 적립을 판단할 수 없어요</Text>
         <Text style={styles.body}>현재 상태: {status}. 결과가 준비된 뒤 다시 확인해 주세요.</Text>
         <Button label="결과 화면으로" onPress={() => router.push('/analysis/result')} />
@@ -46,24 +45,27 @@ export default function AssetStartScreen() {
   }
 
   return (
-    <Page wide contentContainerStyle={styles.content} testID="asset-start-screen">
-      <DataModeBadge mode="synthetic" dataVersion={versions.data} />
-
+    <Page
+      wide
+      contentContainerStyle={styles.content}
+      testID="asset-start-screen"
+      footer={
+        <Button
+          label="결과 화면으로"
+          variant="secondary"
+          onPress={() => router.push('/analysis/result')}
+        />
+      }
+    >
       <Text style={styles.title}>안전 적립</Text>
       <Text style={styles.intro}>
-        비상금과 부족확률 기준을 통과한 경우에만 안전 적립 금액을 보여줘요.
+        생활에 필요한 돈과 비상금을 남긴 뒤, 매달 얼마를 모을 수 있을지 확인해요.
       </Text>
 
       <SafeContributionGate
         result={result.safe_contribution}
         onPressEvidence={goToEvidence}
         testID="asset-start-safe-contribution"
-      />
-
-      <Button
-        label="결과 화면으로"
-        variant="secondary"
-        onPress={() => router.push('/analysis/result')}
       />
     </Page>
   );

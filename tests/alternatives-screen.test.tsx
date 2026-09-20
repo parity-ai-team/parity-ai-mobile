@@ -148,18 +148,14 @@ describe('AlternativesScreen — 진입 가능 여부', () => {
   it('세션에 분석 응답이 없으면 대안을 불러오지 않고 안내를 보여준다', async () => {
     await renderAlternativesScreen(null);
 
-    expect(
-      screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/),
-    ).toBeTruthy();
+    expect(screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/)).toBeTruthy();
     expect(apiRequest).not.toHaveBeenCalled();
   });
 
   it('needs_input처럼 결과를 쓸 수 없는 상태면 진입시키지 않는다', async () => {
     await renderAlternativesScreen(buildAnalysisResponse({ status: 'needs_input' }));
 
-    expect(
-      screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/),
-    ).toBeTruthy();
+    expect(screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/)).toBeTruthy();
     expect(apiRequest).not.toHaveBeenCalled();
   });
 });
@@ -180,8 +176,8 @@ describe('AlternativesScreen — 기준선과 대안 비교', () => {
     await waitFor(() => expect(screen.getByTestId('alternatives-baseline')).toBeTruthy());
     expect(screen.getByTestId('alternatives-card-alt_worse')).toBeTruthy();
     expect(screen.getByTestId('alternatives-card-alt_better')).toBeTruthy();
-    expect(screen.getByText('유동성 보호')).toBeTruthy();
-    expect(screen.getByText('최소 변경')).toBeTruthy();
+    expect(screen.getByText('당장 쓸 돈 확보')).toBeTruthy();
+    expect(screen.getByText('계획 조금만 바꾸기')).toBeTruthy();
   });
 
   it('기준선보다 나빠지는 지표를 문구로 표시한다', async () => {

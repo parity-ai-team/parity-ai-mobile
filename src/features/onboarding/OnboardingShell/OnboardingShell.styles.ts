@@ -5,9 +5,13 @@ export function createStyles(theme: Theme) {
     Platform.OS === 'web'
       ? ({
           flex: theme.layout.zero,
+          flexBasis: 'auto',
+          flexShrink: theme.layout.zero,
           width: theme.layout.deviceWidth,
+          maxWidth: theme.layout.full,
           height: theme.layout.deviceHeight,
-          minHeight: theme.layout.deviceHeight,
+          maxHeight: theme.layout.deviceViewportHeight,
+          minHeight: theme.layout.zero,
           alignSelf: 'center',
           marginVertical: theme.spacing.lg,
           paddingTop: theme.layout.deviceStatusBarHeight,

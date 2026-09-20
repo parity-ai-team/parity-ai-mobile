@@ -123,13 +123,13 @@ describe('EvidenceScreen — 정상 표시', () => {
     ).toBeTruthy();
     expect(screen.getByText('-650,000원')).toBeTruthy();
     expect(screen.getByText('2027-04월은 소득 감소 요인이 겹쳐요.')).toBeTruthy();
-    expect(screen.getByText('검증된 안내 문구')).toBeTruthy();
+    expect(screen.getByText('계산 결과 안내')).toBeTruthy();
     expect(screen.queryByText(/trc_test/)).toBeNull();
     expect(screen.queryByText('cause_code_1')).toBeNull();
     expect(screen.queryByText('INCOME_DROP')).toBeNull();
   });
 
-  it('입력값이 분석에 반영됐음을 쉽게 보여준다', async () => {
+  it('입력값의 출처를 보존해서 보여준다', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({
       data: buildEvidenceResponse(),
       meta: { requestId: 'req', revision: '1', apiVersion: null },
@@ -140,7 +140,7 @@ describe('EvidenceScreen — 정상 표시', () => {
     await waitFor(() => expect(screen.getByTestId('evidence-screen')).toBeTruthy());
     const inputRow = screen.getByTestId('evidence-input-cause_code_1');
     expect(inputRow).toBeTruthy();
-    expect(screen.getByText('분석에 반영됨')).toBeTruthy();
+    expect(screen.getByText('계산값')).toBeTruthy();
   });
 });
 
@@ -180,7 +180,9 @@ describe('EvidenceScreen — 오류 처리', () => {
     await renderEvidenceScreen(buildAnalysisResponse());
 
     await waitFor(() =>
-      expect(screen.getByText('근거를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.')).toBeTruthy(),
+      expect(
+        screen.getByText('근거를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.'),
+      ).toBeTruthy(),
     );
   });
 });

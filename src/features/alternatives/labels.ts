@@ -4,15 +4,15 @@ import type { ActionBurden, AlternativeActionType, AlternativeKind } from '@/sha
 // string>으로 선언한다 — 생성 타입에 새 kind가 추가되면 이 표를 안 고친 채로는
 // 빌드가 깨진다.
 export const ALTERNATIVE_KIND_LABEL: Record<AlternativeKind, string> = {
-  current_state: '현상유지',
-  liquidity_protection: '유동성 보호',
-  cost_minimization: '비용 최소화',
-  minimum_change: '최소 변경',
+  current_state: '지금 계획 유지',
+  liquidity_protection: '당장 쓸 돈 확보',
+  cost_minimization: '추가 비용 줄이기',
+  minimum_change: '계획 조금만 바꾸기',
 };
 
 export const ACTION_TYPE_LABEL: Record<AlternativeActionType, string> = {
-  reduce_discretionary: '재량 지출 축소',
-  defer_discretionary: '재량 지출 이연',
+  reduce_discretionary: '선택 지출 줄이기',
+  defer_discretionary: '급하지 않은 지출 미루기',
   move_flexible_payment: '납부일 조정',
 };
 

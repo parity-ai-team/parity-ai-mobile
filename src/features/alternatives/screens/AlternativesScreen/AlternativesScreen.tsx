@@ -8,7 +8,7 @@ import { apiRequest, ApiError, endpoints } from '@/shared/api';
 import { formatKrw } from '@/shared/format';
 import { isResultUsable } from '@/shared/types';
 import type { AlternativeComparisonResponse } from '@/shared/types';
-import { Card, CashFlowChart, LoadingCards, Button, DataModeBadge, useTheme } from '@/shared/ui';
+import { Card, CashFlowChart, LoadingCards, Button, useTheme } from '@/shared/ui';
 
 import { AlternativeCard } from './AlternativeCard';
 import { createStyles } from './AlternativesScreen.styles';
@@ -29,6 +29,7 @@ export default function AlternativesScreen() {
   const isDesktop = width >= theme.layout.desktop;
   const { analysisResponse } = useFinancialInputSession();
 
+  const [showChart, setShowChart] = useState(false);
   const [comparison, setComparison] = useState<AlternativeComparisonResponse | null>(null);
   // analysisId·usable이 정해지면 이 화면에서 딱 한 번만 조회하므로(라우트를
   // 벗어나기 전까지 바뀌지 않는다), effect 진입 시점에 다시 true로 되돌릴
@@ -111,19 +112,35 @@ export default function AlternativesScreen() {
   const { current_state: baseline, alternatives } = comparison;
 
   return (
-    <Page wide contentContainerStyle={styles.content} testID="alternatives-screen">
-      <DataModeBadge mode="synthetic" dataVersion={analysisResponse.versions.data} />
-
+    <Page
+      wide
+      contentContainerStyle={styles.content}
+      testID="alternatives-screen"
+      footer={
+        <Button
+          label="결과 화면으로"
+          variant="secondary"
+          onPress={() => router.push('/analysis/result')}
+        />
+      }
+    >
       <Text style={styles.title}>대안 비교</Text>
       <Text style={styles.intro}>
-        현상유지와 대안의 지표를 나란히 비교해요. 이 화면은 어떤 대안이 더 낫다고 정하지 않아요.
+        지금 계획과 지출을 조정한 경우를 비교해 보세요. 남는 돈과 실행 부담을 함께 살펴볼 수 있어요.
       </Text>
 
-      <Card>
-        <Text style={styles.cardTitle}>현재 상태의 현금흐름</Text>
-        <Text style={styles.body}>현재 상태의 12개월 흐름과 대안별 지표를 함께 살펴보세요.</Text>
-        <CashFlowChart points={analysisResponse.result?.cashflow ?? []} />
-      </Card>
+      <Button
+        label={showChart ? '현재 흐름 접기' : '현재 흐름 다시 보기'}
+        variant="text"
+        onPress={() => setShowChart(!showChart)}
+      />
+      {showChart ? (
+        <Card>
+          <Text style={styles.cardTitle}>현재 상태의 현금흐름</Text>
+          <Text style={styles.body}>현재 상태의 12개월 흐름과 대안별 지표를 함께 살펴보세요.</Text>
+          <CashFlowChart points={analysisResponse.result?.cashflow ?? []} />
+        </Card>
+      ) : null}
 
       {/*
         현상유지 카드는 좁은 화면(<1100)에서는 그냥 맨 위 일반 흐름으로 보여준다.
@@ -137,15 +154,15 @@ export default function AlternativesScreen() {
           <View style={[styles.card, styles.baselineCard]} testID="alternatives-baseline">
             <Text style={styles.cardTitle}>현재 상태(현상유지)</Text>
             <View style={styles.metricRow}>
-              <Text style={styles.metricLabel}>최저 현금</Text>
+              <Text style={styles.metricLabel}>가장 적게 남는 돈</Text>
               <Text style={styles.metricValue}>{formatKrw(baseline.minimum_cash_krw)}</Text>
             </View>
             <View style={styles.metricRow}>
-              <Text style={styles.metricLabel}>기말 현금</Text>
+              <Text style={styles.metricLabel}>12개월 뒤 남는 돈</Text>
               <Text style={styles.metricValue}>{formatKrw(baseline.closing_cash_krw)}</Text>
             </View>
             <View style={styles.metricRow}>
-              <Text style={styles.metricLabel}>비상금 기준 하회 일수</Text>
+              <Text style={styles.metricLabel}>비상금이 부족한 기간</Text>
               <Text style={styles.metricValue}>{`${baseline.floor_breach_days}일`}</Text>
             </View>
           </View>
@@ -164,12 +181,6 @@ export default function AlternativesScreen() {
           </View>
         </View>
       </View>
-
-      <Button
-        label="결과 화면으로"
-        variant="secondary"
-        onPress={() => router.push('/analysis/result')}
-      />
     </Page>
   );
 }

@@ -22,8 +22,20 @@ function point(overrides: Partial<CashflowPoint> & { period: string }): Cashflow
 describe('computeValueDomain', () => {
   it('finds the min and max across every series, including 0', () => {
     const points = [
-      point({ period: '2027-01', confirmed_cash_krw: 500_000, p20_krw: 400_000, p50_krw: 600_000, p80_krw: 700_000 }),
-      point({ period: '2027-02', confirmed_cash_krw: 2_000_000, p20_krw: 1_800_000, p50_krw: 2_000_000, p80_krw: 2_200_000 }),
+      point({
+        period: '2027-01',
+        confirmed_cash_krw: 500_000,
+        p20_krw: 400_000,
+        p50_krw: 600_000,
+        p80_krw: 700_000,
+      }),
+      point({
+        period: '2027-02',
+        confirmed_cash_krw: 2_000_000,
+        p20_krw: 1_800_000,
+        p50_krw: 2_000_000,
+        p80_krw: 2_200_000,
+      }),
     ];
 
     expect(computeValueDomain(points)).toEqual({ min: 0, max: 2_200_000 });
@@ -31,7 +43,13 @@ describe('computeValueDomain', () => {
 
   it('handles negative cashflow values (a real scenario in the analysis example)', () => {
     const points = [
-      point({ period: '2027-01', confirmed_cash_krw: -4_580_000, p20_krw: -357_208, p50_krw: 270_005, p80_krw: 932_869 }),
+      point({
+        period: '2027-01',
+        confirmed_cash_krw: -4_580_000,
+        p20_krw: -357_208,
+        p50_krw: 270_005,
+        p80_krw: 932_869,
+      }),
     ];
 
     expect(computeValueDomain(points)).toEqual({ min: -4_580_000, max: 932_869 });
@@ -95,13 +113,13 @@ describe('monthSlotBounds', () => {
 });
 
 describe('buildAxisTicks', () => {
-  it('returns sorted, de-duplicated [min, 0, max]', () => {
-    expect(buildAxisTicks({ min: -100, max: 500 })).toEqual([-100, 0, 500]);
+  it('returns intermediate ticks as well as bounds and zero', () => {
+    expect(buildAxisTicks({ min: -100, max: 500 })).toEqual([-100, 0, 50, 200, 350, 500]);
   });
 
   it('de-duplicates when min or max is already 0', () => {
-    expect(buildAxisTicks({ min: 0, max: 500 })).toEqual([0, 500]);
-    expect(buildAxisTicks({ min: -100, max: 0 })).toEqual([-100, 0]);
+    expect(buildAxisTicks({ min: 0, max: 500 })).toEqual([0, 125, 250, 375, 500]);
+    expect(buildAxisTicks({ min: -100, max: 0 })).toEqual([-100, -75, -50, -25, 0]);
   });
 });
 

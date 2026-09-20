@@ -47,19 +47,20 @@ export function AlternativeCard({
     <View style={styles.card} testID={testID}>
       <Text style={styles.cardTitle}>{getAlternativeKindLabel(detail.kind)}</Text>
 
-      <View style={styles.metricRow}>
-        <Text style={styles.metricLabel}>즉시 현금 변화</Text>
-        <Text style={styles.metricValue}>{formatKrw(detail.immediate_cash_change_krw)}</Text>
+      <View style={styles.quickMetrics}>
+        <View style={styles.quickMetric}>
+          <Text style={styles.metricLabel}>바로 확보할 돈</Text>
+          <Text style={styles.metricValue}>{formatKrw(detail.immediate_cash_change_krw)}</Text>
+        </View>
+        <View style={styles.quickMetric}>
+          <Text style={styles.metricLabel}>추가로 드는 비용</Text>
+          <Text style={styles.metricValue}>{formatKrw(detail.future_cost_krw)}</Text>
+        </View>
+        <View style={styles.quickMetric}>
+          <Text style={styles.metricLabel}>회복 기간</Text>
+          <Text style={styles.metricValue}>{`${detail.recovery_period_months}개월`}</Text>
+        </View>
       </View>
-      <View style={styles.metricRow}>
-        <Text style={styles.metricLabel}>미래 비용</Text>
-        <Text style={styles.metricValue}>{formatKrw(detail.future_cost_krw)}</Text>
-      </View>
-      <View style={styles.metricRow}>
-        <Text style={styles.metricLabel}>회복 기간</Text>
-        <Text style={styles.metricValue}>{`${detail.recovery_period_months}개월`}</Text>
-      </View>
-
       <View style={styles.burdenRow}>
         <Text style={styles.metricLabel}>실행 부담</Text>
         <View style={styles.burdenChip}>
@@ -68,21 +69,21 @@ export function AlternativeCard({
       </View>
 
       <View style={styles.metricRow}>
-        <Text style={styles.metricLabel}>최저 현금</Text>
+        <Text style={styles.metricLabel}>가장 적게 남는 돈</Text>
         <View style={styles.metricColumn}>
           <Text style={styles.metricValue}>{formatKrw(detail.outcome.minimum_cash_krw)}</Text>
           {minimumWorse ? <Text style={styles.metricWorse}>기준선보다 낮아요</Text> : null}
         </View>
       </View>
       <View style={styles.metricRow}>
-        <Text style={styles.metricLabel}>기말 현금</Text>
+        <Text style={styles.metricLabel}>12개월 뒤 남는 돈</Text>
         <View style={styles.metricColumn}>
           <Text style={styles.metricValue}>{formatKrw(detail.outcome.closing_cash_krw)}</Text>
           {closingWorse ? <Text style={styles.metricWorse}>기준선보다 낮아요</Text> : null}
         </View>
       </View>
       <View style={styles.metricRow}>
-        <Text style={styles.metricLabel}>비상금 기준 하회 일수</Text>
+        <Text style={styles.metricLabel}>비상금이 부족한 기간</Text>
         <View style={styles.metricColumn}>
           <Text style={styles.metricValue}>{`${detail.outcome.floor_breach_days}일`}</Text>
           {breachWorse ? <Text style={styles.metricWorse}>기준선보다 길어요</Text> : null}

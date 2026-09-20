@@ -15,7 +15,7 @@ export function createStyles(theme: Theme) {
       color: theme.colors.deepGreen,
     },
     summaryAmount: {
-      ...theme.typography.headingLarge,
+      ...theme.typography.chartAmount,
       ...theme.typography.numeric,
       color: theme.colors.textPrimary,
     },
@@ -26,7 +26,7 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.md,
     },
     title: {
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
     sectionTitle: {
@@ -39,10 +39,12 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.sm,
     },
     chartCard: {
+      padding: theme.spacing.md,
       boxShadow: theme.layout.shadowNone,
     },
     summaryMetricRow: {
       flexDirection: 'row',
+      flexWrap: 'wrap',
       alignItems: 'flex-end',
       justifyContent: 'space-between',
       gap: theme.spacing.md,
@@ -53,7 +55,7 @@ export function createStyles(theme: Theme) {
     },
     summaryAmountMetric: {
       flex: theme.layout.flex,
-      minWidth: theme.layout.zero,
+      minWidth: theme.layout.summaryAmountMinWidth,
       alignItems: 'flex-end',
       gap: theme.spacing.xs,
     },
@@ -73,6 +75,6 @@ export function createStyles(theme: Theme) {
       flexDirection: 'row',
       gap: theme.spacing.sm,
     },
-    actionButton: { flex: theme.layout.flex },
+    actionButton: { flex: theme.layout.flex, paddingHorizontal: theme.spacing.sm },
   });
 }

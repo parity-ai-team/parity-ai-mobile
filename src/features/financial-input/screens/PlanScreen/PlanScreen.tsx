@@ -93,7 +93,7 @@ export default function PlanScreen() {
         <Column>
           <Text style={styles.title}>휴직·소득 계획</Text>
           <Text style={styles.intro}>
-            계획이 아직 없다면 비워두어도 괜찮아요. 서버가 기본값으로 계산해요.
+            계획이 아직 없다면 비워두어도 괜찮아요. 기본값으로 계산해요.
           </Text>
 
           <Card>

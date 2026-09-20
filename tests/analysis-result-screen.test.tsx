@@ -207,12 +207,12 @@ describe('ResultScreen — 근거·화면 이동', () => {
     });
   });
 
-  it('입력 수정을 누르면 /plan으로 이동한다', async () => {
+  it('입력 수정을 누르면 항목별 수정이 가능한 /review로 이동한다', async () => {
     await renderResultScreen(buildAnalysisResponse());
 
     await fireEvent.press(screen.getByRole('button', { name: '입력 수정' }));
 
-    expect(router.push).toHaveBeenCalledWith('/plan');
+    expect(router.push).toHaveBeenCalledWith('/review');
   });
 
   it('대안 비교를 누르면 /alternatives 자리표시로 이동한다', async () => {

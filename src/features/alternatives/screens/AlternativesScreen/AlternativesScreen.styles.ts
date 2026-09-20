@@ -7,11 +7,11 @@ export function createStyles(theme: Theme) {
     content: {
       flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.xl,
-      gap: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     comparisonRow: {
-      gap: theme.spacing.xl,
+      gap: theme.spacing.md,
     },
     comparisonRowWide: {
       flexDirection: 'row',
@@ -35,7 +35,7 @@ export function createStyles(theme: Theme) {
       minWidth: theme.layout.zero,
     },
     title: {
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
     intro: {
@@ -50,8 +50,8 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.md,
     },
     card: {
-      boxShadow: theme.layout.cardShadow,
-      padding: theme.spacing.xl,
+      boxShadow: theme.layout.shadowNone,
+      padding: theme.spacing.md,
       borderRadius: theme.radii.lg,
       borderWidth: theme.layout.zero,
       borderColor: theme.colors.transparent,
@@ -65,6 +65,17 @@ export function createStyles(theme: Theme) {
     cardTitle: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
+    },
+    quickMetrics: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
+    },
+    quickMetric: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.metricMinWidth,
+      gap: theme.spacing.xs,
     },
     metricColumn: { flex: theme.layout.flex, minWidth: theme.layout.zero, alignItems: 'flex-end' },
     metricRow: {

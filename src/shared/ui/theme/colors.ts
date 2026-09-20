@@ -4,6 +4,7 @@ export const colors = {
   surface: '#FFFFFF',
   surfaceMuted: '#F0F3F2',
   border: '#E5E9E7',
+  chartConfirmed: '#8B9692',
   inputBorder: '#CBD3D0',
   textPrimary: '#191F1D',
   textSecondary: '#596562',

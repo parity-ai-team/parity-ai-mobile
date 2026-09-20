@@ -83,7 +83,7 @@ export default function FinancialScreen() {
                   onBlur={field.onBlur}
                   placeholder="예: 12000000"
                   keyboardType="numeric"
-                  hint="원 단위 정수로 입력해요."
+                  hint="예금 등 지금 바로 쓸 수 있는 돈을 입력해요."
                   error={errors.financial?.current_cash_krw?.message}
                   testID="financial-current-cash"
                 />
@@ -102,7 +102,7 @@ export default function FinancialScreen() {
                   onBlur={field.onBlur}
                   placeholder="예: 6000000"
                   keyboardType="numeric"
-                  hint="비워두면 서버가 기본값을 적용해요."
+                  hint="생활비로 꼭 남겨둘 돈이에요. 비워두면 기본값을 적용해요."
                   error={errors.financial?.emergency_floor_krw?.message}
                   testID="financial-emergency-floor"
                 />
@@ -158,7 +158,7 @@ export default function FinancialScreen() {
                   onBlur={field.onBlur}
                   placeholder="예: 500000"
                   keyboardType="numeric"
-                  hint="비워두면 0으로 처리해요."
+                  hint="외식·쇼핑처럼 조절할 수 있는 지출이에요. 비워두면 0원이에요."
                   error={errors.financial?.monthly_discretionary_krw?.message}
                   testID="financial-monthly-discretionary"
                 />

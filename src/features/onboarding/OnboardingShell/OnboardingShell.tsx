@@ -65,7 +65,11 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
             </InteractivePressable>
             <View style={styles.headerRight}>
               {showStage ? <Text style={styles.stage}>{stage}</Text> : null}
-              <DataModeBadge mode="synthetic" dataVersion={ONBOARDING_DATA_VERSION} />
+              <DataModeBadge
+                mode="synthetic"
+                dataVersion={ONBOARDING_DATA_VERSION}
+                compact={width < theme.layout.deviceWidth}
+              />
             </View>
           </Container>
         </View>

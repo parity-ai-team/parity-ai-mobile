@@ -9,6 +9,7 @@ export type DataMode = 'synthetic' | 'verified' | 'assumed';
 export interface DataModeBadgeProps {
   mode: DataMode;
   dataVersion: string;
+  compact?: boolean;
 }
 
 // docs/frontend.md "핵심 UI 컴포넌트": synthetic/verified/assumed를 색+텍스트로
@@ -22,7 +23,7 @@ const MODE_LABEL: Record<DataMode, string> = {
 
 // docs/frontend.md 화면 상단에 지속 표시하는 배지. 로직(DataModeBadge.tsx)과
 // 스타일(DataModeBadge.styles.ts)을 분리한다. src/shared/ui/theme/README.md 참고.
-export function DataModeBadge({ mode, dataVersion }: DataModeBadgeProps) {
+export function DataModeBadge({ mode, dataVersion, compact = false }: DataModeBadgeProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
   const dotColor = {
@@ -47,7 +48,7 @@ export function DataModeBadge({ mode, dataVersion }: DataModeBadgeProps) {
           accentColor={theme.colors.brandSoft}
         />
       </View>
-      <Text style={styles.label}>{label}</Text>
+      <Text style={styles.label}>{compact ? MODE_LABEL[mode] : label}</Text>
     </View>
   );
 }

@@ -1,13 +1,14 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { Text, View, useWindowDimensions } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
 import { formatKrw } from '@/shared/format';
 import { isResultUsable } from '@/shared/types';
 import type { AlternativeComparisonResponse } from '@/shared/types';
-import { Button, DataModeBadge, useTheme } from '@/shared/ui';
+import { Card, CashFlowChart, LoadingCards, Button, DataModeBadge, useTheme } from '@/shared/ui';
 
 import { AlternativeCard } from './AlternativeCard';
 import { createStyles } from './AlternativesScreen.styles';
@@ -24,6 +25,8 @@ function goToEvidence(traceId: string) {
 export default function AlternativesScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
+  const { width } = useWindowDimensions();
+  const isDesktop = width >= theme.layout.desktop;
   const { analysisResponse } = useFinancialInputSession();
 
   const [comparison, setComparison] = useState<AlternativeComparisonResponse | null>(null);
@@ -76,39 +79,39 @@ export default function AlternativesScreen() {
 
   if (!analysisResponse || !usable) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <Text style={styles.title}>대안 비교</Text>
         <Text style={styles.body}>
           결과가 준비돼야 대안을 비교할 수 있어요. 먼저 결과 화면에서 분석 상태를 확인해 주세요.
         </Text>
         <Button label="결과 화면으로" onPress={() => router.push('/analysis/result')} />
-      </ScrollView>
+      </Page>
     );
   }
 
   if (loading) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
-        <ActivityIndicator size="large" color={theme.colors.brand} testID="alternatives-loading" />
+      <Page wide contentContainerStyle={styles.content}>
+        <LoadingCards testID="alternatives-loading" />
         <Text style={styles.body}>대안을 불러오는 중이에요…</Text>
-      </ScrollView>
+      </Page>
     );
   }
 
   if (error || !comparison) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page wide contentContainerStyle={styles.content}>
         <Text style={styles.title}>대안을 불러오지 못했어요</Text>
         <Text style={styles.body}>{error ?? '잠시 후 다시 시도해 주세요.'}</Text>
         <Button label="결과 화면으로" onPress={() => router.push('/analysis/result')} />
-      </ScrollView>
+      </Page>
     );
   }
 
   const { current_state: baseline, alternatives } = comparison;
 
   return (
-    <ScrollView contentContainerStyle={styles.content} testID="alternatives-screen">
+    <Page wide contentContainerStyle={styles.content} testID="alternatives-screen">
       <DataModeBadge mode="synthetic" dataVersion={analysisResponse.versions.data} />
 
       <Text style={styles.title}>대안 비교</Text>
@@ -116,35 +119,57 @@ export default function AlternativesScreen() {
         현상유지와 대안의 지표를 나란히 비교해요. 이 화면은 어떤 대안이 더 낫다고 정하지 않아요.
       </Text>
 
-      <View style={[styles.card, styles.baselineCard]} testID="alternatives-baseline">
-        <Text style={styles.cardTitle}>현재 상태(현상유지)</Text>
-        <View style={styles.metricRow}>
-          <Text style={styles.metricLabel}>최저 현금</Text>
-          <Text style={styles.metricValue}>{formatKrw(baseline.minimum_cash_krw)}</Text>
+      <Card>
+        <Text style={styles.cardTitle}>현재 상태의 현금흐름</Text>
+        <Text style={styles.body}>현재 상태의 12개월 흐름과 대안별 지표를 함께 살펴보세요.</Text>
+        <CashFlowChart points={analysisResponse.result?.cashflow ?? []} />
+      </Card>
+
+      {/*
+        현상유지 카드는 좁은 화면(<1100)에서는 그냥 맨 위 일반 흐름으로 보여준다.
+        데스크톱에서만 왼쪽 고정 폭 레일로 옮기고 그 레일 안에서만 sticky를 준다
+        — 이전에는 Page의 stickyHeaderIndices로 화면 전체 폭에서 이 카드를
+        고정했더니, 스크롤할 때 카드가 오른쪽 대안 목록 위까지 덮어버렸다.
+        position: sticky는 네이티브 Yoga가 모르는 값이라 웹에서만 적용한다.
+      */}
+      <View style={[styles.comparisonRow, isDesktop && styles.comparisonRowWide]}>
+        <View style={[styles.baselineColumn, isDesktop && styles.baselineColumnWide]}>
+          <View style={[styles.card, styles.baselineCard]} testID="alternatives-baseline">
+            <Text style={styles.cardTitle}>현재 상태(현상유지)</Text>
+            <View style={styles.metricRow}>
+              <Text style={styles.metricLabel}>최저 현금</Text>
+              <Text style={styles.metricValue}>{formatKrw(baseline.minimum_cash_krw)}</Text>
+            </View>
+            <View style={styles.metricRow}>
+              <Text style={styles.metricLabel}>기말 현금</Text>
+              <Text style={styles.metricValue}>{formatKrw(baseline.closing_cash_krw)}</Text>
+            </View>
+            <View style={styles.metricRow}>
+              <Text style={styles.metricLabel}>비상금 기준 하회 일수</Text>
+              <Text style={styles.metricValue}>{`${baseline.floor_breach_days}일`}</Text>
+            </View>
+          </View>
         </View>
-        <View style={styles.metricRow}>
-          <Text style={styles.metricLabel}>기말 현금</Text>
-          <Text style={styles.metricValue}>{formatKrw(baseline.closing_cash_krw)}</Text>
-        </View>
-        <View style={styles.metricRow}>
-          <Text style={styles.metricLabel}>비상금 기준 하회 일수</Text>
-          <Text style={styles.metricValue}>{`${baseline.floor_breach_days}일`}</Text>
+        <View style={styles.alternativesColumn}>
+          <View style={styles.cardList}>
+            {alternatives.map((detail) => (
+              <AlternativeCard
+                key={detail.alternative_id}
+                detail={detail}
+                baseline={baseline}
+                onPressEvidence={goToEvidence}
+                testID={`alternatives-card-${detail.alternative_id}`}
+              />
+            ))}
+          </View>
         </View>
       </View>
 
-      <View style={styles.cardList}>
-        {alternatives.map((detail) => (
-          <AlternativeCard
-            key={detail.alternative_id}
-            detail={detail}
-            baseline={baseline}
-            onPressEvidence={goToEvidence}
-            testID={`alternatives-card-${detail.alternative_id}`}
-          />
-        ))}
-      </View>
-
-      <Button label="결과 화면으로" variant="secondary" onPress={() => router.push('/analysis/result')} />
-    </ScrollView>
+      <Button
+        label="결과 화면으로"
+        variant="secondary"
+        onPress={() => router.push('/analysis/result')}
+      />
+    </Page>
   );
 }

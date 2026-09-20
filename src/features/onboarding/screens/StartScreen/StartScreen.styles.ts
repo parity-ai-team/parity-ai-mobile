@@ -1,27 +1,32 @@
 import { StyleSheet } from 'react-native';
-
 import type { Theme } from '@/shared/ui';
-
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
-    content: {
-      flexGrow: 1,
-      paddingHorizontal: theme.spacing.lg,
-      paddingBottom: theme.spacing.xl,
-      gap: theme.spacing.lg,
+    content: { gap: theme.spacing.lg },
+    hero: {
+      borderRadius: theme.radii.lg,
+      overflow: 'hidden',
+      backgroundColor: theme.colors.deepGreen,
+      gap: theme.spacing.xxxl,
+      padding: theme.spacing.xl,
     },
-    title: {
-      ...theme.typography.headingLarge,
-      color: theme.colors.textPrimary,
+    gradient: { position: 'absolute', top: theme.layout.zero, left: theme.layout.zero },
+    heroPanel: {
+      padding: theme.spacing.lg,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.mint,
+      gap: theme.spacing.md,
     },
-    body: {
-      ...theme.typography.bodyLarge,
-      color: theme.colors.textPrimary,
-      // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.
+    title: { ...theme.typography.headingLarge, color: theme.colors.deepGreen },
+    heroNumber: {
+      ...theme.typography.display,
+      ...theme.typography.numeric,
+      color: theme.colors.brand,
     },
-    notice: {
-      ...theme.typography.bodyMedium,
-      color: theme.colors.textSecondary,
-    },
+    heroCaption: { ...theme.typography.bodySmall, color: theme.colors.textSecondary },
+    sectionTitle: { ...theme.typography.headingSmall, color: theme.colors.textPrimary },
+    body: { ...theme.typography.bodyMedium, color: theme.colors.textPrimary },
+    bodyEmphasis: { color: theme.colors.brand },
+    notice: { ...theme.typography.bodySmall, color: theme.colors.textSecondary },
   });
 }

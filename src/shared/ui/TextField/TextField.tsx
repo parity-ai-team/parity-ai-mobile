@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Text, TextInput, View, type KeyboardTypeOptions } from 'react-native';
 
 import { useTheme } from '../theme';
@@ -13,6 +14,7 @@ export interface TextFieldProps {
   error?: string;
   keyboardType?: KeyboardTypeOptions;
   testID?: string;
+  unit?: string;
 }
 
 // 라벨 + 입력 + 힌트/오류 텍스트가 한 세트인 입력 필드. docs/frontend.md
@@ -28,25 +30,35 @@ export function TextField({
   error,
   keyboardType = 'default',
   testID,
+  unit,
 }: TextFieldProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
+  const [focused, setFocused] = useState(false);
   const hasError = Boolean(error);
 
   return (
     <View style={styles.container}>
       <Text style={styles.label}>{label}</Text>
-      <TextInput
-        value={value}
-        onChangeText={onChangeText}
-        onBlur={onBlur}
-        placeholder={placeholder}
-        keyboardType={keyboardType}
-        style={[styles.input, hasError && styles.inputError]}
-        accessibilityLabel={label}
-        accessibilityHint={hint}
-        testID={testID}
-      />
+      <View style={[styles.inputRow, focused && styles.focused, hasError && styles.inputError]}>
+        <TextInput
+          value={value}
+          onChangeText={onChangeText}
+          onFocus={() => setFocused(true)}
+          onBlur={() => {
+            setFocused(false);
+            onBlur?.();
+          }}
+          placeholder={placeholder}
+          keyboardType={keyboardType}
+          style={styles.input}
+          placeholderTextColor={theme.colors.textSecondary}
+          accessibilityLabel={label}
+          accessibilityHint={hint}
+          testID={testID}
+        />
+        {unit ? <Text style={styles.unit}>{unit}</Text> : null}
+      </View>
       {hint && !hasError ? <Text style={styles.hint}>{hint}</Text> : null}
       {hasError ? (
         <Text style={styles.error} accessibilityRole="alert" testID={testID && `${testID}-error`}>

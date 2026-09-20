@@ -1,4 +1,5 @@
-import { Pressable, Text, View } from 'react-native';
+import { InteractivePressable as Pressable } from '@/shared/ui/InteractivePressable/InteractivePressable';
+import { Text, View } from 'react-native';
 
 import { formatKrw } from '@/shared/format';
 import type { RiskItem, RiskSeverity } from '@/shared/types';
@@ -70,7 +71,10 @@ export function RiskCauseCard({
             {risk.period}
             {selected ? ' · 선택됨' : ''}
           </Text>
-          <View style={[styles.severityChip, severityStyle]} testID={testID && `${testID}-severity`}>
+          <View
+            style={[styles.severityChip, severityStyle]}
+            testID={testID && `${testID}-severity`}
+          >
             <Text style={styles.severityLabel}>{SEVERITY_LABEL[risk.severity]}</Text>
           </View>
         </View>
@@ -104,7 +108,7 @@ export function RiskCauseCard({
             <Button
               key={traceId}
               label={traceIds.length > 1 ? `근거 보기 ${index + 1}` : '근거 보기'}
-              variant="secondary"
+              variant="pill"
               onPress={() => onPressEvidence(traceId)}
             />
           ))}

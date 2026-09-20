@@ -5,9 +5,10 @@ import type { Theme } from '../theme';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     card: {
-      padding: theme.spacing.md,
-      borderRadius: theme.radii.md,
-      borderWidth: 1,
+      boxShadow: theme.layout.cardShadow,
+      padding: theme.spacing.xl,
+      borderRadius: theme.radii.lg,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.sm,
@@ -16,8 +17,11 @@ export function createStyles(theme: Theme) {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
+    status: { ...theme.typography.display, color: theme.colors.success },
+    statusHeld: { color: theme.colors.severityWarning },
     amount: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.numeric,
+      ...theme.typography.headingLarge,
       color: theme.colors.success,
     },
     body: {
@@ -33,10 +37,10 @@ export function createStyles(theme: Theme) {
     reasonChip: {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
-      borderRadius: theme.radii.sm,
-      borderWidth: 1,
+      borderRadius: theme.radii.full,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
-      backgroundColor: theme.colors.background,
+      backgroundColor: theme.colors.warningSoft,
     },
     reasonLabel: {
       ...theme.typography.bodySmall,

@@ -1,10 +1,20 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
-import { Button, ChoiceField, TextField, useTheme } from '@/shared/ui';
+import {
+  Card,
+  Columns,
+  Column,
+  StepProgress,
+  Button,
+  ChoiceField,
+  TextField,
+  useTheme,
+} from '@/shared/ui';
 
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
@@ -71,80 +81,94 @@ export default function PlanScreen() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
-      <Text style={styles.title}>휴직·소득 계획</Text>
-      <Text style={styles.intro}>
-        계획이 아직 없다면 비워두어도 괜찮아요. 서버가 기본값으로 계산해요.
-      </Text>
+    <Page
+      wide
+      contentContainerStyle={styles.content}
+      footer={<Button label="다음" onPress={onSubmit} />}
+    >
+      <Columns>
+        <Column width={theme.layout.sidebarWidth}>
+          <StepProgress current="계획" />
+        </Column>
+        <Column>
+          <Text style={styles.title}>휴직·소득 계획</Text>
+          <Text style={styles.intro}>
+            계획이 아직 없다면 비워두어도 괜찮아요. 서버가 기본값으로 계산해요.
+          </Text>
 
-      <Text style={styles.sectionTitle}>휴직 계획</Text>
-      <Controller
-        control={control}
-        name="plan.leave_start"
-        render={({ field }) => (
-          <TextField
-            label="휴직 시작월 (선택)"
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            placeholder="예: 2027-01"
-            hint="연도-월 형식. 비워두면 휴직 없음으로 처리해요."
-            error={errors.plan?.leave_start?.message}
-            testID="plan-leave-start"
-          />
-        )}
-      />
-      <Controller
-        control={control}
-        name="plan.leave_months"
-        render={({ field }) => (
-          <TextField
-            label="휴직 개월 수 (선택)"
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            placeholder="0~12"
-            keyboardType="number-pad"
-            hint="비워두면 0개월로 처리해요."
-            error={errors.plan?.leave_months?.message}
-            testID="plan-leave-months"
-          />
-        )}
-      />
-
-      <Text style={styles.sectionTitle}>소득·지원금 변수</Text>
-      <Controller
-        control={control}
-        name="stress.income_delay_weeks"
-        render={({ field }) => (
-          <TextField
-            label="예상 소득 지연 주 수 (선택)"
-            value={field.value}
-            onChangeText={field.onChange}
-            onBlur={field.onBlur}
-            placeholder="0~52"
-            keyboardType="number-pad"
-            hint="비워두면 지연 없음으로 처리해요."
-            error={errors.stress?.income_delay_weeks?.message}
-            testID="stress-income-delay-weeks"
-          />
-        )}
-      />
-      <Controller
-        control={control}
-        name="stress.child_support_missed"
-        render={({ field }) => (
-          <ChoiceField
-            label="양육비 미수령 가능성이 있나요?"
-            options={BOOLEAN_CHOICE_OPTIONS}
-            value={field.value}
-            onChange={field.onChange}
-            testID="stress-child-support-missed"
-          />
-        )}
-      />
-
-      <Button label="다음" onPress={onSubmit} />
-    </ScrollView>
+          <Card>
+            <Text style={styles.sectionTitle}>휴직 계획</Text>
+            <Controller
+              control={control}
+              name="plan.leave_start"
+              render={({ field }) => (
+                <TextField
+                  label="휴직 시작월 (선택)"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="예: 2027-01"
+                  hint="연도-월 형식. 비워두면 휴직 없음으로 처리해요."
+                  error={errors.plan?.leave_start?.message}
+                  testID="plan-leave-start"
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="plan.leave_months"
+              render={({ field }) => (
+                <TextField
+                  label="휴직 개월 수 (선택)"
+                  unit="개월"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="0~12"
+                  keyboardType="number-pad"
+                  hint="비워두면 0개월로 처리해요."
+                  error={errors.plan?.leave_months?.message}
+                  testID="plan-leave-months"
+                />
+              )}
+            />
+          </Card>
+          <Card>
+            <Text style={styles.sectionTitle}>소득·지원금 변수</Text>
+            <Controller
+              control={control}
+              name="stress.income_delay_weeks"
+              render={({ field }) => (
+                <TextField
+                  label="예상 소득 지연 주 수 (선택)"
+                  unit="주"
+                  value={field.value}
+                  onChangeText={field.onChange}
+                  onBlur={field.onBlur}
+                  placeholder="0~52"
+                  keyboardType="number-pad"
+                  hint="비워두면 지연 없음으로 처리해요."
+                  error={errors.stress?.income_delay_weeks?.message}
+                  testID="stress-income-delay-weeks"
+                />
+              )}
+            />
+            <Controller
+              control={control}
+              name="stress.child_support_missed"
+              render={({ field }) => (
+                <ChoiceField
+                  label="양육비 미수령 가능성이 있나요?"
+                  options={BOOLEAN_CHOICE_OPTIONS}
+                  value={field.value}
+                  onChange={field.onChange}
+                  testID="stress-child-support-missed"
+                />
+              )}
+            />
+          </Card>
+        </Column>
+      </Columns>
+    </Page>
   );
 }

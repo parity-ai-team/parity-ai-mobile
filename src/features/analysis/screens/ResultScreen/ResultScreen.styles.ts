@@ -4,14 +4,25 @@ import type { Theme } from '@/shared/ui';
 
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
+    summary: { backgroundColor: theme.colors.surface, borderColor: theme.colors.brand },
+    summaryPeriod: {
+      ...theme.typography.headingLarge,
+      ...theme.typography.numeric,
+      color: theme.colors.deepGreen,
+    },
+    summaryAmount: {
+      ...theme.typography.display,
+      ...theme.typography.numeric,
+      color: theme.colors.textPrimary,
+    },
     content: {
-      flexGrow: 1,
+      flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
       gap: theme.spacing.lg,
     },
     title: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.headingLarge,
       color: theme.colors.textPrimary,
     },
     sectionTitle: {

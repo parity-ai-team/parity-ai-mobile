@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, Text, type GestureResponderEvent } from 'react-native';
 
 import { useTheme } from '../theme';
@@ -6,7 +7,7 @@ import { createStyles } from './Button.styles';
 export interface ButtonProps {
   label: string;
   onPress: (event: GestureResponderEvent) => void;
-  variant?: 'primary' | 'secondary';
+  variant?: 'primary' | 'secondary' | 'text' | 'pill';
   disabled?: boolean;
 }
 
@@ -16,7 +17,8 @@ export interface ButtonProps {
 export function Button({ label, onPress, variant = 'primary', disabled = false }: ButtonProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const isSecondary = variant === 'secondary';
+  const isSecondary = variant !== 'primary';
+  const [focused, setFocused] = useState(false);
 
   return (
     <Pressable
@@ -24,10 +26,15 @@ export function Button({ label, onPress, variant = 'primary', disabled = false }
       accessibilityState={{ disabled }}
       disabled={disabled}
       onPress={onPress}
+      onFocus={() => setFocused(true)}
+      onBlur={() => setFocused(false)}
       style={({ pressed }) => [
         styles.base,
         isSecondary ? styles.secondary : styles.primary,
-        pressed && !disabled && styles.pressed,
+        variant === 'text' && styles.text,
+        variant === 'pill' && styles.pill,
+        focused && styles.focused,
+        pressed && !disabled && (isSecondary ? styles.pressedSecondary : styles.pressed),
         disabled && styles.disabled,
       ]}
     >

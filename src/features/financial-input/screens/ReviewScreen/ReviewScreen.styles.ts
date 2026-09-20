@@ -5,13 +5,13 @@ import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     content: {
-      flexGrow: 1,
+      flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.xl,
-      gap: theme.spacing.md,
+      gap: theme.spacing.xl,
     },
     title: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.headingLarge,
       color: theme.colors.textPrimary,
     },
     intro: {
@@ -25,9 +25,9 @@ export function createStyles(theme: Theme) {
       marginTop: theme.spacing.sm,
     },
     row: {
-      padding: theme.spacing.md,
-      borderRadius: theme.radii.md,
-      borderWidth: 1,
+      paddingVertical: theme.spacing.md,
+      borderRadius: theme.radii.none,
+      borderBottomWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,
@@ -37,6 +37,7 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textSecondary,
     },
     rowValue: {
+      ...theme.typography.numeric,
       ...theme.typography.bodyLarge,
       color: theme.colors.textPrimary,
     },

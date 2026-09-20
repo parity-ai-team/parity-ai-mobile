@@ -5,7 +5,7 @@ import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     content: {
-      flexGrow: 1,
+      flexGrow: theme.layout.flex,
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: theme.spacing.lg,

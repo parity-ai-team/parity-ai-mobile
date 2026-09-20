@@ -12,16 +12,17 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.full,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
     },
     dot: {
-      width: 8,
-      height: 8,
+      width: theme.layout.dot,
+      height: theme.layout.dot,
       borderRadius: theme.radii.full,
     },
     label: {
+      flexShrink: theme.layout.flex,
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,
       // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.

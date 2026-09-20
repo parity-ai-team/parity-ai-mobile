@@ -5,13 +5,13 @@ import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     content: {
-      flexGrow: 1,
+      flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.xl,
-      gap: theme.spacing.md,
+      gap: theme.spacing.xl,
     },
     title: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.headingLarge,
       color: theme.colors.textPrimary,
     },
     intro: {

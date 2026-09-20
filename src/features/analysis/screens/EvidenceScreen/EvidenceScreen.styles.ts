@@ -4,8 +4,21 @@ import type { Theme } from '@/shared/ui';
 
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
+    timelineStep: {
+      flexDirection: 'row',
+      gap: theme.spacing.md,
+      borderLeftWidth: theme.layout.strongStroke,
+      borderLeftColor: theme.colors.brand,
+      paddingLeft: theme.spacing.md,
+    },
+    timelineNumber: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.brand,
+      paddingTop: theme.spacing.xl,
+    },
+    timelineCard: { flex: theme.layout.flex, minWidth: theme.layout.zero },
     content: {
-      flexGrow: 1,
+      flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
       gap: theme.spacing.lg,
@@ -32,7 +45,7 @@ export function createStyles(theme: Theme) {
     row: {
       padding: theme.spacing.sm,
       borderRadius: theme.radii.sm,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,

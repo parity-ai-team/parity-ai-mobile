@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet } from 'react-native';
 
 import type { Theme } from '../theme';
 
@@ -7,30 +7,45 @@ import type { Theme } from '../theme';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     base: {
+      ...(Platform.OS === 'web' ? { transition: theme.layout.transition } : {}),
       alignItems: 'center',
       justifyContent: 'center',
       // docs/frontend.md 접근성 기준: 터치 영역 최소 44×44pt
       minHeight: theme.accessibility.minTouchTarget,
       minWidth: theme.accessibility.minTouchTarget,
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.sm,
+      paddingVertical: theme.spacing.md,
       borderRadius: theme.radii.md,
+    },
+    text: { backgroundColor: theme.colors.transparent, borderColor: theme.colors.transparent },
+    pill: { borderRadius: theme.radii.full, paddingVertical: theme.spacing.sm },
+    focused: {
+      ...(Platform.OS === 'web'
+        ? {
+            outlineWidth: theme.layout.strongStroke,
+            outlineStyle: 'solid' as const,
+            outlineColor: theme.colors.brand,
+            outlineOffset: theme.layout.focusOffset,
+          }
+        : { borderWidth: theme.layout.strongStroke, borderColor: theme.colors.deepGreen }),
     },
     primary: {
       backgroundColor: theme.colors.brand,
     },
     secondary: {
       backgroundColor: theme.colors.surface,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
     },
     pressed: {
-      opacity: 0.85,
+      backgroundColor: theme.colors.brandPressed,
     },
+    pressedSecondary: { backgroundColor: theme.colors.brandSoft },
     disabled: {
       backgroundColor: theme.colors.disabledSurface,
     },
     label: {
+      flexShrink: theme.layout.flex,
       ...theme.typography.labelMedium,
       color: theme.colors.textInverse,
       // 동적 글꼴 200% 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.

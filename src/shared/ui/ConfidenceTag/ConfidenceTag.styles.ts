@@ -15,7 +15,7 @@ export function createStyles(theme: Theme) {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.full,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
     },
     chipLabel: {
       ...theme.typography.bodySmall,

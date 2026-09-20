@@ -1,7 +1,13 @@
+import { Platform } from 'react-native';
+
+const webMobileBreakpoint = 100_000;
+
 export const layout = {
   tableMinWidth: 640,
-  tablet: 768,
-  desktop: 1100,
+  // 웹은 공모전 모바일 시연용 셸 안에서 항상 한 열로 표시한다. 실제 네이티브
+  // 앱과 테스트에서는 기존 반응형 기준을 그대로 유지한다.
+  tablet: Platform.OS === 'web' ? webMobileBreakpoint : 768,
+  desktop: Platform.OS === 'web' ? webMobileBreakpoint : 1100,
   contentMax: 560,
   wideMax: 1120,
   full: '100%' as const,
@@ -24,6 +30,14 @@ export const layout = {
   headerZIndex: 2,
   stickyZIndex: 1,
   sidebarWidth: 320,
+  deviceWidth: 390,
+  deviceHeight: 844,
+  deviceBorderWidth: 8,
+  deviceStatusBarHeight: 44,
+  deviceStatusBackgroundSize: '100% 44px',
+  deviceShadow: '0px 24px 64px rgba(14, 58, 49, 0.18)',
+  deviceStatusBackground:
+    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 390 44'%3E%3Ctext x='24' y='28' font-family='Arial,sans-serif' font-size='14' font-weight='700' fill='%231E2A28'%3E21:00%3C/text%3E%3Crect x='140' y='7' width='110' height='30' rx='15' fill='%23111111'/%3E%3Cg fill='%231E2A28'%3E%3Crect x='303' y='24' width='3' height='4' rx='1'/%3E%3Crect x='308' y='21' width='3' height='7' rx='1'/%3E%3Crect x='313' y='18' width='3' height='10' rx='1'/%3E%3Crect x='318' y='15' width='3' height='13' rx='1'/%3E%3C/g%3E%3Cg fill='none' stroke='%231E2A28' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M328 19c6-5 13-5 19 0'/%3E%3Cpath d='M332 23c4-3 8-3 12 0'/%3E%3Cpath d='M336 27c1-1 3-1 4 0'/%3E%3Crect x='353' y='16' width='24' height='13' rx='3'/%3E%3C/g%3E%3Crect x='356' y='19' width='17' height='7' rx='1.5' fill='%231E2A28'/%3E%3Crect x='378.5' y='20' width='2.5' height='5' rx='1' fill='%231E2A28'/%3E%3C/svg%3E\")",
 } as const;
 export const chart = {
   width: 320,

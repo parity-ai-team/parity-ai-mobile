@@ -1,12 +1,37 @@
-import { StyleSheet } from 'react-native';
+import { Platform, StyleSheet, type ViewStyle } from 'react-native';
 import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
+  const webDeviceFrame =
+    Platform.OS === 'web'
+      ? ({
+          flex: theme.layout.zero,
+          width: theme.layout.deviceWidth,
+          height: theme.layout.deviceHeight,
+          minHeight: theme.layout.deviceHeight,
+          alignSelf: 'center',
+          marginVertical: theme.spacing.lg,
+          paddingTop: theme.layout.deviceStatusBarHeight,
+          borderWidth: theme.layout.deviceBorderWidth,
+          borderColor: theme.colors.deviceFrame,
+          borderRadius: theme.radii.device,
+          overflow: 'hidden',
+          boxShadow: theme.layout.deviceShadow,
+          backgroundImage: theme.layout.deviceStatusBackground,
+          backgroundPosition: 'top',
+          backgroundRepeat: 'no-repeat',
+          backgroundSize: theme.layout.deviceStatusBackgroundSize,
+        } as unknown as ViewStyle)
+      : undefined;
+
   return StyleSheet.create({
-    container: { flex: theme.layout.flex, backgroundColor: theme.colors.background },
+    container: {
+      flex: theme.layout.flex,
+      backgroundColor: theme.colors.surface,
+      ...webDeviceFrame,
+    },
     header: {
       backgroundColor: theme.colors.surface,
-      borderBottomWidth: theme.layout.stroke,
-      borderBottomColor: theme.colors.border,
+      borderBottomWidth: theme.layout.zero,
       zIndex: theme.layout.headerZIndex,
     },
     headerRow: {
@@ -14,7 +39,7 @@ export function createStyles(theme: Theme) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingVertical: theme.spacing.sm,
+      paddingVertical: theme.spacing.md,
       gap: theme.spacing.sm,
     },
     headerRight: {

@@ -24,6 +24,7 @@ export const colors = {
   dataModeSynthetic: '#245BB0',
   dataModeVerified: '#27633F',
   dataModeAssumed: '#865000',
+  deviceFrame: '#242722',
   transparent: 'transparent',
 } as const;
 export type ColorToken = keyof typeof colors;

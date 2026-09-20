@@ -21,11 +21,16 @@ export default function StartScreen() {
   return (
     <Page contentContainerStyle={styles.content}>
       <View style={styles.hero}>
+        {/* 순수 장식용 배경 그라데이션이라 accessible 트리에 넣지 않는다.
+            react-native-svg 15.x는 웹에서 Shape에 accessible을 주면 그대로
+            DOM 속성으로 새어나가 "Received `false` for a non-boolean
+            attribute" 경고가 났다 — focusable은 React가 인식하는 boolean
+            속성이라 안전하다. */}
         <Svg
           width={theme.layout.full}
           height={theme.layout.full}
           style={styles.gradient}
-          accessible={false}
+          focusable={false}
         >
           <Defs>
             <LinearGradient

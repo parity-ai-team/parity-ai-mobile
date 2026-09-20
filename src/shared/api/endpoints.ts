@@ -1,10 +1,14 @@
-// docs/backend-integration.md "5. 전체 API 흐름" / docs/api/openapi-1.5.0.json 기준.
+// docs/backend-integration.md "5. 전체 API 흐름" / docs/api/openapi-1.7.0.json 기준.
 const V1 = '/v1';
 
 export const endpoints = {
   health: () => '/health',
   ready: () => '/ready',
   demoScenarios: () => `${V1}/demo-scenarios`,
+  datasets: () => `${V1}/datasets`,
+  datasetIntelligence: (datasetId: string) => `${V1}/datasets/${datasetId}/intelligence`,
+  confirmClassifications: (datasetId: string) =>
+    `${V1}/datasets/${datasetId}/classifications/confirm`,
   analyses: () => `${V1}/analyses`,
   // GET(조회)·PATCH(입력 수정, If-Match 필수)·DELETE(삭제, If-Match 필수) 공용.
   // 입력 수정은 이전 계획대로 `/inputs` 하위 경로가 아니라 이 경로 자체를 쓴다.

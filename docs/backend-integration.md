@@ -6,7 +6,7 @@
 
 - 백엔드 저장소: [parity-ai-backend](https://github.com/parity-ai-team/parity-ai-backend)
 - 기준 브랜치: `main`
-- API 계약 버전: `1.5.0`
+- API 계약 버전: `1.7.0`
 - 계산 모델 버전: `cashflow-1.4.0`
 - Swagger UI: `{API_BASE_URL}/docs`
 - OpenAPI JSON: `{API_BASE_URL}/openapi.json`
@@ -30,7 +30,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ## 3. 기기별 API 주소
 
 `.env.example`의 `EXPO_PUBLIC_API_BASE_URL`을 로컬 `.env`에 복사해 사용한다. `EXPO_PUBLIC_` 값은 앱 번들에 포함되므로 토큰·비밀키를 넣지 않는다.
-로컬 API를 연결할 때는 `EXPO_PUBLIC_APP_MODE=local`로 설정한다.
+로컬 API를 연결할 때는 `EXPO_PUBLIC_APP_MODE=api`로 설정한다.
 
 | 실행 환경 | `EXPO_PUBLIC_API_BASE_URL` 예시 |
 | --- | --- |
@@ -55,21 +55,25 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 | 순서 | API | 용도 | 필수 헤더·처리 |
 | ---: | --- | --- | --- |
 | 1 | `GET /v1/demo-scenarios` | 합성 데모 시나리오 3종 조회 | 별도 헤더 없음 |
-| 2 | `POST /v1/analyses` | 시나리오·입력으로 분석 생성 | `Idempotency-Key` |
-| 3 | `GET /v1/analyses/{analysis_id}` | 최신 또는 과거 revision 조회 | 응답 `ETag` 보관 |
-| 4 | `GET /v1/analyses/{analysis_id}/alternatives` | 최대 3개 대안 상세 비교 | 응답 `ETag` 보관 |
-| 5 | `GET /v1/analyses/{analysis_id}/evidence/{trace_id}` | 결과의 입력·규칙·출력 근거 조회 | 결과의 `trace_ids` 사용 |
-| 6 | `PATCH /v1/analyses/{analysis_id}` | 사용자 입력 수정 후 새 revision 생성 | `If-Match: <최신 ETag>` |
-| 7 | `POST /v1/analyses/{analysis_id}/recalculate` | 입력 변경 없이 재계산 | `Idempotency-Key`, `If-Match` |
-| 8 | `DELETE /v1/analyses/{analysis_id}` | 분석과 민감한 하위 기록 영구 삭제 | `If-Match`, 성공 시 `204` |
+| 2 | `POST /v1/datasets` | 합성 거래 CSV 등록·AI 분류 | `multipart/form-data` |
+| 3 | `GET /v1/datasets/{dataset_id}/intelligence` | 확인할 거래 분류 재조회 | `status`, `intelligence` 보관 |
+| 4 | `POST /v1/datasets/{dataset_id}/classifications/confirm` | 거래 분류 일괄 확인 | 응답의 새 `dataset_id`로 교체 |
+| 5 | `POST /v1/analyses` | 시나리오·입력으로 분석 생성 | `Idempotency-Key` |
+| 6 | `GET /v1/analyses/{analysis_id}` | 최신 또는 과거 revision 조회 | 응답 `ETag` 보관 |
+| 7 | `GET /v1/analyses/{analysis_id}/alternatives` | 최대 3개 대안 상세 비교 | 응답 `ETag` 보관 |
+| 8 | `GET /v1/analyses/{analysis_id}/evidence/{trace_id}` | 결과의 입력·규칙·출력 근거 조회 | 결과의 `trace_ids` 사용 |
+| 9 | `PATCH /v1/analyses/{analysis_id}` | 사용자 입력 수정 후 새 revision 생성 | `If-Match: <최신 ETag>` |
+| 10 | `POST /v1/analyses/{analysis_id}/recalculate` | 입력 변경 없이 재계산 | `Idempotency-Key`, `If-Match` |
+| 11 | `DELETE /v1/analyses/{analysis_id}` | 분석과 민감한 하위 기록 영구 삭제 | `If-Match`, 성공 시 `204` |
 
-합성 CSV를 직접 시연해야 하는 경우에만 `POST /v1/datasets`에 `multipart/form-data`의 `.csv` 파일을 보낸다. 현재 모바일 기본 데모는 내장 `scenario_id`를 사용하므로 CSV 업로드가 필수가 아니다.
+직접 입력 경로에서는 `POST /v1/datasets`에 합성 `.csv` 파일을 보낸다. `status=ready`면 받은 `dataset_id`를 분석에 사용한다. `status=needs_input`이면 `intelligence.review_items`를 확인하고 분류 확인 API를 한 번 호출한 뒤, 그 응답이 새로 발급한 `dataset_id`로 분석한다. 내장 데모 경로는 기존 `scenario_id`를 그대로 사용한다.
 
 ## 6. 화면별 연결 권장
 
 | 모바일 기능 | 연결 API | 필수 상태 |
 | --- | --- | --- |
 | 데모 시나리오 선택 | `GET /v1/demo-scenarios` | 선택한 `scenario_id`, `default_analysis` |
+| CSV 업로드·분류 확인 | `POST /v1/datasets`, `POST .../classifications/confirm` | 최신 `dataset_id`, `status`, `intelligence` |
 | 분석 입력·실행 | `POST /v1/analyses` | 생성한 `Idempotency-Key` |
 | 요약 대시보드 | 생성 응답 또는 `GET /v1/analyses/{id}` | `analysis_id`, `revision`, `ETag` |
 | 현금흐름·위험 결과 | `AnalysisResponse.result` | `cashflow`, `risks`, `limitations` |
@@ -121,6 +125,7 @@ uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 | 상태 | 모바일 처리 |
 | --- | --- |
 | `400`, `422` | `field_errors` 경로를 해당 입력 UI와 연결하고 메시지 표시 |
+| `422 INSUFFICIENT_DATA`, `confirmation_required` | 데이터셋 분류 확인 화면으로 이동 |
 | `404 ANALYSIS_NOT_FOUND` | 로컬 분석 참조를 정리하고 시작 화면으로 이동 |
 | `409 IDEMPOTENCY_CONFLICT` | 재시도를 멈추고 새 사용자 작업인지 확인 |
 | `412 VERSION_CONFLICT` | 최신 revision 재조회 후 사용자에게 충돌 알림 |
@@ -174,7 +179,9 @@ export async function requestApi<T>(
 ## 11. 연동 완료 체크리스트
 
 - [ ] 기기에서 `/health`, `/ready`에 접속한다.
-- [ ] OpenAPI `1.5.0`에서 TypeScript 타입을 생성한다.
+- [ ] OpenAPI `1.7.0`에서 TypeScript 타입을 생성한다.
+- [ ] CSV 등록의 `ready`와 `needs_input` 흐름을 각각 확인한다.
+- [ ] 분류 확인 응답의 새 `dataset_id`로 분석을 요청한다.
 - [ ] 합성 시나리오 3종을 목록에 표시한다.
 - [ ] 중복 클릭·네트워크 재시도가 중복 분석을 만들지 않는다.
 - [ ] 생성·조회 응답의 `ETag`를 보관하고 새 revision에서 갱신한다.

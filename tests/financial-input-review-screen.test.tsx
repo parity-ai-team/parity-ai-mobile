@@ -1,8 +1,16 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { useEffect, type ReactNode } from 'react';
 
-import { FinancialInputSessionProvider, ReviewScreen } from '@/features/financial-input';
-import { OnboardingSessionProvider, useOnboardingSession } from '@/features/onboarding';
+import {
+  FinancialInputSessionProvider,
+  ReviewScreen,
+  useFinancialInputSession,
+} from '@/features/financial-input';
+import {
+  DEMO_SCENARIOS,
+  OnboardingSessionProvider,
+  useOnboardingSession,
+} from '@/features/onboarding';
 
 jest.mock('expo-router', () => ({
   router: { push: jest.fn() },
@@ -39,6 +47,60 @@ function renderReviewScreenWithDemo() {
   );
 }
 
+function SelectManualOnMount({ children }: { children: ReactNode }) {
+  const { scenarioSelection, selectScenario } = useOnboardingSession();
+  useEffect(() => {
+    selectScenario({ type: 'manual' });
+  }, [selectScenario]);
+  return scenarioSelection?.type === 'manual' ? <>{children}</> : null;
+}
+
+function SeedManualDataset({ children }: { children: ReactNode }) {
+  const session = useFinancialInputSession();
+  useEffect(() => {
+    const defaults = DEMO_SCENARIOS[0].default_analysis;
+    session.updateHousehold(defaults.household);
+    session.updateFinancial(defaults.financial);
+    session.updatePlan(defaults.plan);
+    session.updateStress(defaults.stress ?? { income_delay_weeks: 0, child_support_missed: false });
+    session.setDatasetResponse({
+      request_id: 'req_dataset',
+      dataset_id: 'dts_0123456789abcdef0123',
+      status: 'ready',
+      data_version: 'synthetic-1.0.0',
+      intelligence: {
+        classification: {
+          total_count: 1,
+          provided_count: 1,
+          inferred_count: 0,
+          user_confirmed_count: 0,
+          low_confidence_count: 0,
+          model_version: 'transaction-nb-1.0.0',
+        },
+        review_items: [],
+        recurring_patterns: [],
+      },
+    });
+    // 테스트 시드이므로 최초 마운트에만 실행한다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  return <>{children}</>;
+}
+
+function renderReviewScreenWithManualDataset() {
+  return render(
+    <OnboardingSessionProvider>
+      <SelectManualOnMount>
+        <FinancialInputSessionProvider>
+          <SeedManualDataset>
+            <ReviewScreen />
+          </SeedManualDataset>
+        </FinancialInputSessionProvider>
+      </SelectManualOnMount>
+    </OnboardingSessionProvider>,
+  );
+}
+
 describe('ReviewScreen — 사용자 입력/가정값 구분', () => {
   afterEach(() => {
     jest.clearAllMocks();
@@ -61,6 +123,7 @@ describe('ReviewScreen — 사용자 입력/가정값 구분', () => {
 describe('ReviewScreen — 분석 시작', () => {
   afterEach(() => {
     jest.clearAllMocks();
+    (apiRequest as jest.Mock).mockReset();
   });
 
   it('성공하면 응답을 세션에 보관하고 S08 게이트(/analysis)로 이동한다', async () => {
@@ -104,6 +167,58 @@ describe('ReviewScreen — 분석 시작', () => {
     await waitFor(() => expect(screen.getByText('오류: greater_than_equal')).toBeTruthy());
     expect(screen.getByText('오류: 확인할 입력이 있어요.')).toBeTruthy();
     expect(router.push).not.toHaveBeenCalledWith('/analysis');
+  });
+
+  it('분류 확인이 필요한 422면 데이터셋 분류 화면으로 안내한다', async () => {
+    (apiRequest as jest.Mock)
+      .mockRejectedValueOnce(
+        new ApiError(
+          {
+            request_id: 'req_err',
+            error: {
+              code: 'INSUFFICIENT_DATA',
+              message: '거래 분류 확인이 필요해요.',
+              field_errors: [{ path: 'dataset_id', reason: 'confirmation_required' }],
+              retryable: false,
+            },
+          },
+          422,
+        ),
+      )
+      .mockResolvedValueOnce({
+        data: {
+          request_id: 'req_intelligence',
+          dataset_id: 'dts_0123456789abcdef0123',
+          status: 'needs_input',
+          data_version: 'synthetic-1.0.0',
+          intelligence: {
+            classification: {
+              total_count: 1,
+              provided_count: 0,
+              inferred_count: 1,
+              user_confirmed_count: 0,
+              low_confidence_count: 1,
+              model_version: 'transaction-nb-1.0.0',
+            },
+            review_items: [],
+            recurring_patterns: [],
+          },
+        },
+        meta: {},
+      });
+
+    await renderReviewScreenWithManualDataset();
+    await waitFor(() => expect(screen.getByRole('button', { name: '분석 시작' })).toBeTruthy());
+    await fireEvent.press(screen.getByRole('button', { name: '분석 시작' }));
+
+    await waitFor(() => expect(router.push).toHaveBeenCalledWith('/dataset'));
+    expect(apiRequest).toHaveBeenNthCalledWith(
+      2,
+      expect.objectContaining({
+        method: 'GET',
+        path: '/v1/datasets/dts_0123456789abcdef0123/intelligence',
+      }),
+    );
   });
 
   // 콜드 스타트 대응: apiRequest에 onSlowRequest를 넘기고, 그게 호출되면

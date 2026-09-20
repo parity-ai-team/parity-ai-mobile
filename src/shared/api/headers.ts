@@ -29,6 +29,8 @@ export interface RequestHeaderOptions {
    * 안 된다).
    */
   ifMatch?: string;
+  /** FormData 요청에서는 런타임이 multipart boundary를 붙이도록 null을 사용한다. */
+  contentType?: string | null;
 }
 
 // 백엔드는 인증을 쓰지 않는다(2026-09-20 백엔드 팀 확인: "Authorization
@@ -36,7 +38,9 @@ export interface RequestHeaderOptions {
 // 제공하지 않는다.
 export function buildRequestHeaders(options: RequestHeaderOptions = {}): Headers {
   const headers = new Headers();
-  headers.set('Content-Type', 'application/json');
+  if (options.contentType !== null) {
+    headers.set('Content-Type', options.contentType ?? 'application/json');
+  }
 
   if (options.requestId) {
     headers.set(REQUEST_ID_HEADER, options.requestId);

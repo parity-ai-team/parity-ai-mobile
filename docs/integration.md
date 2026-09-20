@@ -5,7 +5,7 @@
 ## 기준
 
 - 최종 기준은 백엔드 `main`의 `GET /openapi.json`이다.
-- 현재 API 계약 버전은 `1.5.0`, 계산 모델 버전은 `cashflow-1.4.0`이다.
+- 현재 API 계약 버전은 `1.7.0`, 계산 모델 버전은 `cashflow-1.4.0`이다.
 - 응답 필드와 열거형은 수기 DTO보다 OpenAPI에서 생성한 타입을 우선한다.
 - `status=limited`는 오류가 아니라 합성 데이터·PoC 가정이 포함된 정상 결과다.
 
@@ -14,6 +14,8 @@
 | 항목 | 현재 백엔드 동작 |
 | --- | --- |
 | 분석 생성 | `POST /v1/analyses` |
+| CSV 데이터셋 등록 | `POST /v1/datasets` |
+| 거래 분류 확인 | `POST /v1/datasets/{dataset_id}/classifications/confirm` |
 | 분석 조회 | `GET /v1/analyses/{analysis_id}` |
 | 입력 수정 | `PATCH /v1/analyses/{analysis_id}` |
 | 재계산 | `POST /v1/analyses/{analysis_id}/recalculate` |
@@ -35,8 +37,9 @@
 
 ## 주요 호출 흐름
 
-1. `POST /v1/analyses`에 새 `Idempotency-Key`를 보내 분석 결과를 동기로 받는다.
-2. 성공 응답의 `ETag`를 `analysis_id`와 함께 저장한다.
-3. 수정·재계산·삭제 요청에 최신 `ETag`를 `If-Match`로 보낸다.
-4. `412 VERSION_CONFLICT`면 최신 revision을 다시 조회한 뒤 충돌을 해결한다.
-5. 대안은 `GET .../alternatives`, 근거는 `GET .../evidence/{trace_id}`로 조회한다.
+1. 직접 입력이면 CSV를 등록하고, 분류 확인 응답이 반환한 최신 `dataset_id`를 저장한다. 데모면 기존 `scenario_id`를 유지한다.
+2. `POST /v1/analyses`에 새 `Idempotency-Key`와 `scenario_id` 또는 `dataset_id`를 보내 분석 결과를 동기로 받는다.
+3. 성공 응답의 `ETag`를 `analysis_id`와 함께 저장한다.
+4. 수정·재계산·삭제 요청에 최신 `ETag`를 `If-Match`로 보낸다.
+5. `412 VERSION_CONFLICT`면 최신 revision을 다시 조회한 뒤 충돌을 해결한다.
+6. 대안은 `GET .../alternatives`, 근거는 `GET .../evidence/{trace_id}`로 조회한다.

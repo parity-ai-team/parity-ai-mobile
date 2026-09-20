@@ -45,6 +45,12 @@ describe('buildRequestHeaders', () => {
     expect(headers.get(IDEMPOTENCY_KEY_HEADER)).toBe('idem_abc');
   });
 
+  it('omits content-type when multipart boundary must be added by the runtime', () => {
+    const headers = buildRequestHeaders({ contentType: null });
+
+    expect(headers.get('Content-Type')).toBeNull();
+  });
+
   // 백엔드는 인증이 없다(2026-09-20 백엔드 팀 확인) — RequestHeaderOptions에
   // authToken 같은 옵션 자체가 없으니, 무엇을 넘겨도 Authorization은 절대
   // 안 실린다는 걸 남아있는 모든 옵션으로 다시 확인한다.

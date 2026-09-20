@@ -2,6 +2,10 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 
 import { DEMO_SCENARIOS, OnboardingSessionProvider, ScenarioScreen } from '@/features/onboarding';
 
+jest.mock('expo-router', () => ({
+  router: { push: jest.fn() },
+}));
+
 // getAppMode()는 기본적으로 실제 구현(process.env 없음 → 'mock')을 그대로
 // 호출한다 — api 모드 전용 테스트에서만 한 번 'api'로 바꿔치기한다.
 jest.mock('@/shared/api', () => {
@@ -11,6 +15,8 @@ jest.mock('@/shared/api', () => {
 
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { getAppMode } = require('@/shared/api');
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const { router } = require('expo-router');
 
 function renderScenarioScreen() {
   return render(
@@ -60,26 +66,36 @@ describe('ScenarioScreen', () => {
 
 describe('ScenarioScreen — api 모드', () => {
   afterEach(() => {
-    (getAppMode as jest.Mock).mockClear();
+    jest.clearAllMocks();
   });
 
-  it('직접 입력 카드가 비활성 상태이고 CSV 업로드 안내 문구를 보여준다', async () => {
+  it('직접 입력 카드에서 CSV 업로드 흐름을 안내한다', async () => {
     (getAppMode as jest.Mock).mockReturnValueOnce('api');
     await renderScenarioScreen();
 
     const manualCard = screen.getByRole('radio', { name: '직접 입력' });
-    expect(manualCard.props.accessibilityState.disabled).toBe(true);
-    expect(screen.getByText('CSV 업로드가 필요해 준비 중이에요.')).toBeTruthy();
+    expect(manualCard.props.accessibilityState.disabled).toBe(false);
+    expect(screen.getByText('거래 CSV를 등록하고 내 정보로 분석해요.')).toBeTruthy();
   });
 
-  it('직접 입력 카드를 눌러도 선택 상태가 바뀌지 않는다', async () => {
+  it('직접 입력 카드를 선택할 수 있다', async () => {
     (getAppMode as jest.Mock).mockReturnValueOnce('api');
     await renderScenarioScreen();
 
     await fireEvent.press(screen.getByRole('radio', { name: '직접 입력' }));
 
-    expect(
-      screen.getByRole('radio', { name: '직접 입력' }).props.accessibilityState.selected,
-    ).toBe(false);
+    expect(screen.getByRole('radio', { name: '직접 입력' }).props.accessibilityState.selected).toBe(
+      true,
+    );
+  });
+
+  it('직접 입력을 선택하고 다음을 누르면 CSV 업로드 화면으로 이동한다', async () => {
+    (getAppMode as jest.Mock).mockReturnValue('api');
+    await renderScenarioScreen();
+
+    await fireEvent.press(screen.getByRole('radio', { name: '직접 입력' }));
+    await fireEvent.press(screen.getByRole('button', { name: '다음' }));
+
+    expect(router.push).toHaveBeenCalledWith('/dataset');
   });
 });

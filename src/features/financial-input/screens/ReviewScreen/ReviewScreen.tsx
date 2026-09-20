@@ -3,9 +3,9 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { apiRequest, ApiError, endpoints } from '@/shared/api';
+import { apiRequest, ApiError, endpoints, getAppMode } from '@/shared/api';
 import { formatKrw } from '@/shared/format';
-import type { AnalysisResponse } from '@/shared/types';
+import type { AnalysisResponse, DatasetIntelligenceResponse } from '@/shared/types';
 import { Card, Columns, Column, StepProgress, Button, useTheme, type Theme } from '@/shared/ui';
 
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
@@ -33,7 +33,16 @@ export default function ReviewScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
   const session = useFinancialInputSession();
-  const { draft, origin, scenarioId, isFieldAssumed, setAnalysisResponse } = session;
+  const {
+    draft,
+    origin,
+    scenarioId,
+    datasetId,
+    isFieldAssumed,
+    setAnalysisResponse,
+    setDatasetResponse,
+    setDatasetNotice,
+  } = session;
 
   const [submitting, setSubmitting] = useState(false);
   const [wakingServer, setWakingServer] = useState(false);
@@ -60,6 +69,12 @@ export default function ReviewScreen() {
   }
 
   const onSubmit = async () => {
+    if (origin === 'manual' && !datasetId && getAppMode() === 'api') {
+      setDatasetNotice('분석 전에 거래 CSV를 등록해 주세요.');
+      router.push('/dataset');
+      return;
+    }
+
     setSubmitting(true);
     setWakingServer(false);
     setGeneralError(null);
@@ -69,6 +84,7 @@ export default function ReviewScreen() {
       const body = buildAnalysisCreateRequest({
         origin,
         scenarioId,
+        datasetId,
         household,
         financial,
         plan,
@@ -89,6 +105,28 @@ export default function ReviewScreen() {
       router.push('/analysis');
     } catch (error) {
       if (error instanceof ApiError) {
+        const confirmationRequired =
+          error.status === 422 &&
+          error.code === 'INSUFFICIENT_DATA' &&
+          (error.envelope.error.field_errors ?? []).some(
+            (fieldError) => fieldError.reason === 'confirmation_required',
+          );
+
+        if (confirmationRequired && datasetId) {
+          try {
+            const { data } = await apiRequest<DatasetIntelligenceResponse>({
+              method: 'GET',
+              path: endpoints.datasetIntelligence(datasetId),
+            });
+            setDatasetResponse(data);
+          } catch {
+            // 화면에서 기존 응답을 유지하고 사용자가 다시 불러올 수 있게 한다.
+          }
+          setDatasetNotice('분석 전에 AI가 분류한 거래를 확인해 주세요.');
+          router.push('/dataset');
+          return;
+        }
+
         setGeneralError(error.message);
         setFieldErrors(mapFieldErrorsByPath(error.envelope.error.field_errors ?? []));
       } else if (error instanceof Error) {

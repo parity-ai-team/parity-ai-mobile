@@ -187,7 +187,7 @@ describe('ResultScreen — 차트·카드 선택 동기화', () => {
     await fireEvent.press(screen.getByTestId('result-risk-2027-02'));
 
     const chartContainer = screen.getByTestId('result-chart-svg-container');
-    expect(chartContainer.props.accessibilityLabel).toContain('선택된 위험월: 2027-02');
+    expect(chartContainer.props.accessibilityLabel).toContain('선택한 달: 2027-02');
   });
 });
 

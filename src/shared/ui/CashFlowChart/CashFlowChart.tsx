@@ -92,16 +92,16 @@ export function CashFlowChart({
     count === 0
       ? '현금흐름 데이터가 없어요.'
       : `${points[0].period}부터 ${points[count - 1].period}까지 ${count}개월 현금흐름. ` +
-        `p50 기준 최저 ${formatKrw(points[minP50Index].p50_krw)}(${points[minP50Index].period}), ` +
+        `예상 잔액 기준 최저 ${formatKrw(points[minP50Index].p50_krw)}(${points[minP50Index].period}), ` +
         `최고 ${formatKrw(points[maxP50Index].p50_krw)}(${points[maxP50Index].period}).` +
-        (selectedPeriod ? ` 선택된 위험월: ${selectedPeriod}.` : '') +
-        ' 자세한 값은 아래 표에서 확인할 수 있어요.';
+        (selectedPeriod ? ` 선택한 달: ${selectedPeriod}.` : '') +
+        ' 월별 금액 보기에서 자세한 금액을 확인할 수 있어요.';
 
   const legendItems: { color: string; label: string }[] = [
-    { color: theme.colors.brand, label: 'p50(중앙값)' },
-    { color: theme.colors.success, label: '확정 현금' },
-    { color: theme.colors.severityCritical, label: '비상금 하한선' },
-    { color: theme.colors.severityWarning, label: '선택된 위험월' },
+    { color: theme.colors.brand, label: '예상 잔액' },
+    { color: theme.colors.success, label: '확정된 잔액' },
+    { color: theme.colors.severityCritical, label: '꼭 남겨둘 비상금' },
+    { color: theme.colors.severityWarning, label: '선택한 달' },
   ];
 
   return (
@@ -115,19 +115,18 @@ export function CashFlowChart({
         ))}
         <View style={styles.legendItem}>
           <View style={[styles.legendSwatch, { backgroundColor: theme.colors.border }]} />
-          <Text style={styles.legendLabel}>p20~p80 구간</Text>
+          <Text style={styles.legendLabel}>예상 가능한 범위</Text>
         </View>
       </View>
 
-      <Text style={styles.legendLabel}>좌우로 이동해 월별 흐름을 확인할 수 있어요.</Text>
+      <View style={styles.guide}>
+        <Text style={styles.guideText}>
+          선이 아래로 내려갈수록 쓸 수 있는 돈이 줄어들어요. 빨간 점선 아래는 비상금이 부족한 구간이에요.
+        </Text>
+      </View>
       <ScrollView horizontal contentContainerStyle={styles.chartScroll}>
         <View
-          style={[
-            styles.chartArea,
-            {
-              minWidth: points.length * theme.accessibility.minTouchTarget + theme.chart.axisWidth,
-            },
-          ]}
+          style={styles.chartArea}
           onLayout={(event) => setWidth(event.nativeEvent.layout.width)}
           accessible
           accessibilityRole="image"
@@ -230,7 +229,7 @@ export function CashFlowChart({
             })}
           </Svg>
 
-          {/* 월별 선택 영역은 44pt를 확보하고, 좁은 화면에서는 차트를 가로로 스크롤한다.
+          {/* 그래프는 12개월 전체 흐름을 한눈에 보여준다. 정확한 월별 금액과
             키보드·스크린리더 선택은 아래의 확장 가능한 표에서 제공한다. */}
           {onSelectPeriod ? (
             <View
@@ -256,7 +255,7 @@ export function CashFlowChart({
       </ScrollView>
       <View style={styles.toggleRow}>
         <Button
-          label={tableExpanded ? '표 접기' : '표로 보기'}
+          label={tableExpanded ? '월별 금액 닫기' : '월별 금액 보기'}
           variant="pill"
           onPress={() => setTableExpanded((prev) => !prev)}
         />
@@ -267,10 +266,10 @@ export function CashFlowChart({
           <View style={styles.table} testID={testID && `${testID}-table`}>
             <View style={styles.tableHeaderRow}>
               <Text style={styles.tableHeaderCell}>월</Text>
-              <Text style={styles.tableHeaderCell}>p20</Text>
-              <Text style={styles.tableHeaderCell}>p50</Text>
-              <Text style={styles.tableHeaderCell}>p80</Text>
-              <Text style={styles.tableHeaderCell}>하한선</Text>
+              <Text style={styles.tableHeaderCell}>낮은 예상</Text>
+              <Text style={styles.tableHeaderCell}>예상 잔액</Text>
+              <Text style={styles.tableHeaderCell}>높은 예상</Text>
+              <Text style={styles.tableHeaderCell}>필요 비상금</Text>
             </View>
             {points.map((point) => {
               const selected = point.period === selectedPeriod;
@@ -281,7 +280,7 @@ export function CashFlowChart({
                   onPress={onSelectPeriod ? () => onSelectPeriod(point.period) : undefined}
                   accessibilityRole={onSelectPeriod ? 'button' : undefined}
                   accessibilityState={onSelectPeriod ? { selected } : undefined}
-                  accessibilityLabel={`${point.period}${selected ? ' · 선택된 위험월' : ''}`}
+                  accessibilityLabel={`${point.period}${selected ? ' · 선택한 달' : ''}`}
                 >
                   <Text style={styles.tableCell}>{point.period}</Text>
                   <Text style={styles.tableCell}>{formatKrw(point.p20_krw)}</Text>

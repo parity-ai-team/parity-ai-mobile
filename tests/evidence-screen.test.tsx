@@ -115,12 +115,18 @@ describe('EvidenceScreen — 정상 표시', () => {
     await renderEvidenceScreen(buildAnalysisResponse());
 
     await waitFor(() => expect(screen.getByTestId('evidence-screen')).toBeTruthy());
-    expect(screen.getByText('추적 ID: trc_test')).toBeTruthy();
-    expect(screen.getByText('INCOME_DROP')).toBeTruthy();
-    expect(screen.getByText('월별 가용 현금이 비상금 기준 아래로 내려가는지 판정하는 규칙')).toBeTruthy();
-    expect(screen.getByText('-650000원')).toBeTruthy();
-    expect(screen.getByText('2027-04월은 INCOME_DROP 요인이 겹쳐요.')).toBeTruthy();
-    expect(screen.getByText('템플릿 문구')).toBeTruthy();
+    expect(screen.getByText('왜 이런 결과가 나왔나요?')).toBeTruthy();
+    expect(screen.getByText('부족이 예상되는 이유 1')).toBeTruthy();
+    expect(screen.getByText('소득 감소')).toBeTruthy();
+    expect(
+      screen.getByText('매달 남는 돈이 꼭 지켜야 할 비상금보다 적어지는지 확인했어요.'),
+    ).toBeTruthy();
+    expect(screen.getByText('-650,000원')).toBeTruthy();
+    expect(screen.getByText('2027-04월은 소득 감소 요인이 겹쳐요.')).toBeTruthy();
+    expect(screen.getByText('검증된 안내 문구')).toBeTruthy();
+    expect(screen.queryByText(/trc_test/)).toBeNull();
+    expect(screen.queryByText('cause_code_1')).toBeNull();
+    expect(screen.queryByText('INCOME_DROP')).toBeNull();
   });
 
   it('입력값의 출처를 ConfidenceTag(신뢰도 없이 출처만)로 보여준다', async () => {

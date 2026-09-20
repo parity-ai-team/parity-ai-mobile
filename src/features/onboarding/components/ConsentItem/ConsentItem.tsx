@@ -20,22 +20,22 @@ export function ConsentItem({ label, description, checked, onToggle, testID }: C
   const styles = createStyles(theme);
 
   return (
-    <View style={styles.container}>
-      <Pressable
-        accessibilityRole="checkbox"
-        accessibilityState={{ checked }}
-        accessibilityLabel={label}
-        accessibilityHint={description}
-        onPress={() => onToggle(!checked)}
-        style={styles.row}
-        testID={testID}
-      >
+    <Pressable
+      accessibilityRole="checkbox"
+      accessibilityState={{ checked }}
+      accessibilityLabel={label}
+      accessibilityHint={description}
+      onPress={() => onToggle(!checked)}
+      style={styles.container}
+      testID={testID}
+    >
+      <View style={styles.row}>
         <View style={[styles.box, checked && styles.boxChecked]}>
           {checked && <Text style={styles.checkMark}>✓</Text>}
         </View>
         <Text style={styles.label}>{label}</Text>
-      </Pressable>
+      </View>
       <Text style={styles.description}>{description}</Text>
-    </View>
+    </Pressable>
   );
 }

@@ -34,7 +34,7 @@ describe('CashFlowChart', () => {
 
     expect(screen.queryByTestId('chart-table')).toBeNull();
 
-    await fireEvent.press(screen.getByRole('button', { name: '표로 보기' }));
+    await fireEvent.press(screen.getByRole('button', { name: '월별 금액 보기' }));
 
     const table = screen.getByTestId('chart-table');
     expect(table).toBeTruthy();
@@ -47,7 +47,7 @@ describe('CashFlowChart', () => {
     const onSelectPeriod = jest.fn();
     await render(<CashFlowChart points={points} onSelectPeriod={onSelectPeriod} testID="chart" />);
 
-    await fireEvent.press(screen.getByRole('button', { name: '표로 보기' }));
+    await fireEvent.press(screen.getByRole('button', { name: '월별 금액 보기' }));
     await fireEvent.press(screen.getByRole('button', { name: new RegExp(points[5].period) }));
 
     expect(onSelectPeriod).toHaveBeenCalledWith(points[5].period);
@@ -63,7 +63,7 @@ describe('CashFlowChart', () => {
       />,
     );
 
-    await fireEvent.press(screen.getByRole('button', { name: '표로 보기' }));
+    await fireEvent.press(screen.getByRole('button', { name: '월별 금액 보기' }));
 
     const row = screen.getByRole('button', { name: new RegExp(points[2].period) });
     expect(row.props.accessibilityState.selected).toBe(true);

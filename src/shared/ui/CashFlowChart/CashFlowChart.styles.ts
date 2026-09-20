@@ -26,6 +26,15 @@ export function createStyles(theme: Theme) {
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,
     },
+    guide: {
+      backgroundColor: theme.colors.brandSoft,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.sm,
+    },
+    guideText: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textPrimary,
+    },
     chartScroll: { flexGrow: theme.layout.flex },
     chartArea: {
       width: theme.layout.full,

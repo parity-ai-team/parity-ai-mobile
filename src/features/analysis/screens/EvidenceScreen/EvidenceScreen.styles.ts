@@ -6,22 +6,28 @@ export function createStyles(theme: Theme) {
   return StyleSheet.create({
     timelineStep: {
       flexDirection: 'row',
-      gap: theme.spacing.md,
-      borderLeftWidth: theme.layout.strongStroke,
-      borderLeftColor: theme.colors.brand,
-      paddingLeft: theme.spacing.md,
+      alignItems: 'flex-start',
+      gap: theme.spacing.sm,
     },
     timelineNumber: {
       ...theme.typography.labelMedium,
       color: theme.colors.brand,
-      paddingTop: theme.spacing.xl,
+      backgroundColor: theme.colors.brandSoft,
+      borderRadius: theme.radii.full,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
     },
-    timelineCard: { flex: theme.layout.flex, minWidth: theme.layout.zero },
+    timelineCard: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+      gap: theme.spacing.md,
+      boxShadow: theme.layout.shadowNone,
+    },
     content: {
       flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
       paddingVertical: theme.spacing.xl,
-      gap: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     title: {
       ...theme.typography.headingLarge,
@@ -32,7 +38,7 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textSecondary,
     },
     sectionTitle: {
-      ...theme.typography.labelMedium,
+      ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
     body: {

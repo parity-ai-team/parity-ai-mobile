@@ -6,22 +6,40 @@ export function createStyles(theme: Theme) {
   return StyleSheet.create({
     card: {
       boxShadow: theme.layout.cardShadow,
-      padding: theme.spacing.xl,
+      padding: theme.spacing.lg,
       borderRadius: theme.radii.lg,
       borderWidth: theme.layout.zero,
       borderColor: theme.colors.transparent,
       backgroundColor: theme.colors.surface,
+      gap: theme.spacing.md,
+    },
+    headerRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: theme.spacing.sm,
+    },
+    titleRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
       gap: theme.spacing.sm,
     },
     title: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
-    status: { ...theme.typography.display, color: theme.colors.success },
+    statusChip: {
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      borderRadius: theme.radii.full,
+      backgroundColor: theme.colors.brandSoft,
+    },
+    statusChipHeld: { backgroundColor: theme.colors.warningSoft },
+    status: { ...theme.typography.labelMedium, color: theme.colors.success },
     statusHeld: { color: theme.colors.severityWarning },
     amount: {
       ...theme.typography.numeric,
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       color: theme.colors.success,
     },
     body: {

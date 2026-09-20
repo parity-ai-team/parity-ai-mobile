@@ -10,7 +10,7 @@ export function createStyles(theme: Theme) {
     legendRow: {
       flexDirection: 'row',
       flexWrap: 'wrap',
-      gap: theme.spacing.md,
+      gap: theme.spacing.sm,
     },
     legendItem: {
       flexDirection: 'row',
@@ -18,7 +18,7 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.xs,
     },
     legendSwatch: {
-      width: theme.spacing.lg,
+      width: theme.spacing.md,
       height: theme.spacing.xs,
       borderRadius: theme.radii.sm,
     },
@@ -42,7 +42,7 @@ export function createStyles(theme: Theme) {
       bottom: theme.layout.zero,
     },
     toggleRow: {
-      alignItems: 'flex-start',
+      alignItems: 'flex-end',
     },
     table: {
       minWidth: theme.layout.tableMinWidth,

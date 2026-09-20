@@ -11,7 +11,7 @@ import {
   Columns,
   Column,
   CashFlowChart,
-  DataModeBadge,
+  AppIcon,
   LimitationsNotice,
   RiskCauseCard,
   SafeContributionGate,
@@ -45,12 +45,11 @@ export default function ResultScreen() {
     );
   }
 
-  const { status, result, limitations, versions } = analysisResponse;
+  const { status, result, limitations } = analysisResponse;
 
   if (!isResultUsable(status) || !result) {
     return (
       <Page wide contentContainerStyle={styles.content}>
-        <DataModeBadge mode="synthetic" dataVersion={versions.data} />
         <Text style={styles.title}>아직 결과를 보여드릴 수 없어요</Text>
         <Text style={styles.body}>
           현재 상태: {status}. 입력을 다시 확인하거나 잠시 후 다시 시도해 주세요.
@@ -60,17 +59,49 @@ export default function ResultScreen() {
     );
   }
 
-  return (
-    <Page wide contentContainerStyle={styles.content}>
-      <DataModeBadge mode="synthetic" dataVersion={versions.data} />
-      <LimitationsNotice limitations={limitations ?? []} testID="result-limitations" />
+  const actions = (
+    <View style={styles.actionRow}>
+      <Button
+        label="입력 수정"
+        variant="secondary"
+        style={styles.actionButton}
+        onPress={() => router.push('/plan')}
+      />
+      <Button
+        label="대안 비교"
+        style={styles.actionButton}
+        onPress={() => router.push('/alternatives')}
+      />
+      <Button
+        label="안전 적립"
+        style={styles.actionButton}
+        onPress={() => router.push('/asset-start')}
+      />
+    </View>
+  );
 
+  return (
+    <Page
+      wide
+      contentOffset={{ x: theme.layout.zero, y: theme.layout.zero }}
+      contentContainerStyle={styles.content}
+      footer={actions}
+    >
       <Text style={styles.title}>분석 결과</Text>
+      <LimitationsNotice limitations={limitations ?? []} testID="result-limitations" />
       <Columns>
         <Column>
           <RiskSummary risks={result.risks} />
-          <Card>
-            <Text style={styles.sectionTitle}>12개월 현금흐름</Text>
+          <Card style={styles.chartCard}>
+            <View style={styles.sectionHeader}>
+              <AppIcon
+                name="trend"
+                size={theme.layout.sectionIconSize}
+                color={theme.colors.brand}
+                accentColor={theme.colors.mint}
+              />
+              <Text style={styles.sectionTitle}>12개월 현금흐름</Text>
+            </View>
 
             <CashFlowChart
               points={result.cashflow}
@@ -81,7 +112,15 @@ export default function ResultScreen() {
           </Card>
         </Column>
         <Column>
-          <Text style={styles.sectionTitle}>위험 시점</Text>
+          <View style={styles.sectionHeader}>
+            <AppIcon
+              name="warning"
+              size={theme.layout.sectionIconSize}
+              color={theme.colors.severityWarning}
+              accentColor={theme.colors.warningSoft}
+            />
+            <Text style={styles.sectionTitle}>위험 시점</Text>
+          </View>
           {result.risks.length === 0 ? (
             <Text style={styles.body}>현재 가정에서 뚜렷한 위험월이 없어요.</Text>
           ) : (
@@ -99,7 +138,6 @@ export default function ResultScreen() {
             </View>
           )}
 
-          <Text style={styles.sectionTitle}>안전 적립</Text>
           <SafeContributionGate
             result={result.safe_contribution}
             onPressEvidence={goToEvidence}
@@ -107,11 +145,6 @@ export default function ResultScreen() {
           />
         </Column>
       </Columns>
-      <View style={styles.actionRow}>
-        <Button label="입력 수정" variant="secondary" onPress={() => router.push('/plan')} />
-        <Button label="대안 비교" onPress={() => router.push('/alternatives')} />
-        <Button label="안전 적립" onPress={() => router.push('/asset-start')} />
-      </View>
     </Page>
   );
 }

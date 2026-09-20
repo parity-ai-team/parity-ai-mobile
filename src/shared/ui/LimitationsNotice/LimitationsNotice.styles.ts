@@ -10,7 +10,7 @@ export function createStyles(theme: Theme) {
       borderRadius: theme.radii.md,
       borderWidth: theme.layout.zero,
       borderColor: theme.colors.transparent,
-      backgroundColor: theme.colors.surfaceMuted,
+      backgroundColor: theme.colors.brandSoft,
     },
     item: {
       ...theme.typography.bodySmall,

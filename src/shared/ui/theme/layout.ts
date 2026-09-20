@@ -20,6 +20,8 @@ export const layout = {
   badgeIconSize: 20,
   badgeIconGlyphSize: 12,
   stepIconSize: 20,
+  sectionIconSize: 24,
+  shadowNone: 'none',
   pressedOpacity: 0.88,
   transition: 'background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease',
   cardShadow: '0px 8px 24px rgba(25, 31, 29, 0.06)',
@@ -52,7 +54,7 @@ export const layout = {
 } as const;
 export const chart = {
   width: 320,
-  height: 220,
+  height: 200,
   axisWidth: 60,
   monthHeight: 20,
   topPadding: 12,

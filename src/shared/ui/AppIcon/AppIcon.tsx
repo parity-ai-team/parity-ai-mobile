@@ -1,6 +1,7 @@
 import Svg, { Circle, Path, Rect } from 'react-native-svg';
 
-export type AppIconName = 'household' | 'wallet' | 'calendar' | 'review' | 'database';
+export type AppIconName =
+  'household' | 'wallet' | 'calendar' | 'review' | 'database' | 'trend' | 'warning' | 'shield';
 
 export interface AppIconProps {
   name: AppIconName;
@@ -69,6 +70,50 @@ export function AppIcon({ name, size, color, accentColor }: AppIconProps) {
           fill="none"
           stroke={color}
           strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </Svg>
+    );
+  }
+
+  if (name === 'trend') {
+    return (
+      <Svg {...commonProps}>
+        <Path d="M3 19V5" stroke={accentColor} strokeWidth="2" strokeLinecap="round" />
+        <Path d="M3 19h18" stroke={accentColor} strokeWidth="2" strokeLinecap="round" />
+        <Path
+          d="m5.5 15.5 4-4 3 2 5.5-6"
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <Path d="M15.5 7.5H18v2.7" fill="none" stroke={color} strokeWidth="2" />
+      </Svg>
+    );
+  }
+
+  if (name === 'warning') {
+    return (
+      <Svg {...commonProps}>
+        <Circle cx="12" cy="12" r="10" fill={accentColor} />
+        <Path d="M12 6.5v7" stroke={color} strokeWidth="2.5" strokeLinecap="round" />
+        <Circle cx="12" cy="17.5" r="1.3" fill={color} />
+      </Svg>
+    );
+  }
+
+  if (name === 'shield') {
+    return (
+      <Svg {...commonProps}>
+        <Path d="M12 2.5 20 6v5.5c0 5-3.4 8.2-8 10-4.6-1.8-8-5-8-10V6z" fill={accentColor} />
+        <Path
+          d="m8 12 2.5 2.5L16 9"
+          fill="none"
+          stroke={color}
+          strokeWidth="2.3"
           strokeLinecap="round"
           strokeLinejoin="round"
         />

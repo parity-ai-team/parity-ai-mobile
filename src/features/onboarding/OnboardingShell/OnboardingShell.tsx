@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react';
 import { Image, Text, View, useWindowDimensions } from 'react-native';
-import { usePathname } from 'expo-router';
+import { router, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Container, DataModeBadge, useTheme } from '@/shared/ui';
+import { InteractivePressable } from '@/shared/ui/InteractivePressable/InteractivePressable';
 
 import { ONBOARDING_DATA_VERSION } from '../constants';
 import { OnboardingSessionProvider } from '../OnboardingSessionContext';
@@ -48,7 +49,12 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Container style={styles.headerRow}>
-            <View style={styles.brandLockup}>
+            <InteractivePressable
+              style={styles.brandLockup}
+              onPress={() => router.replace('/')}
+              accessibilityRole="button"
+              accessibilityLabel="첫 화면으로 돌아가기"
+            >
               <Image
                 source={brandLogo}
                 style={styles.brandLogo}
@@ -56,7 +62,7 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
                 accessible={false}
               />
               <Text style={styles.brand}>PARITY AI</Text>
-            </View>
+            </InteractivePressable>
             <View style={styles.headerRight}>
               {showStage ? <Text style={styles.stage}>{stage}</Text> : null}
               <DataModeBadge mode="synthetic" dataVersion={ONBOARDING_DATA_VERSION} />

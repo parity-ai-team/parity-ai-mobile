@@ -17,9 +17,11 @@ export function createStyles(theme: Theme) {
       backgroundColor: theme.colors.surfaceMuted,
     },
     dot: {
-      width: theme.layout.dot,
-      height: theme.layout.dot,
+      width: theme.layout.badgeIconSize,
+      height: theme.layout.badgeIconSize,
       borderRadius: theme.radii.full,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
     label: {
       flexShrink: theme.layout.flex,

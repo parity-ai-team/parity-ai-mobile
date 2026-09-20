@@ -1,5 +1,6 @@
 import { Text, View } from 'react-native';
 
+import { AppIcon } from '../AppIcon';
 import { useTheme } from '../theme';
 import { createStyles } from './DataModeBadge.styles';
 
@@ -38,7 +39,14 @@ export function DataModeBadge({ mode, dataVersion }: DataModeBadgeProps) {
       accessibilityLabel={label}
       testID="data-mode-badge"
     >
-      <View style={[styles.dot, { backgroundColor: dotColor }]} testID="data-mode-badge-dot" />
+      <View style={[styles.dot, { backgroundColor: dotColor }]} testID="data-mode-badge-dot">
+        <AppIcon
+          name="database"
+          size={theme.layout.badgeIconGlyphSize}
+          color={theme.colors.textInverse}
+          accentColor={theme.colors.brandSoft}
+        />
+      </View>
       <Text style={styles.label}>{label}</Text>
     </View>
   );

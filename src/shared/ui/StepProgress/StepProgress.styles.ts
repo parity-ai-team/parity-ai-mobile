@@ -19,6 +19,11 @@ export function createStyles(theme: Theme) {
       borderLeftWidth: theme.layout.strongStroke,
       borderLeftColor: theme.colors.border,
     },
+    stepHeading: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.xs,
+    },
     current: { borderTopColor: theme.colors.brand },
     currentVertical: { borderLeftColor: theme.colors.brand },
     label: { ...theme.typography.labelMedium, color: theme.colors.textSecondary },

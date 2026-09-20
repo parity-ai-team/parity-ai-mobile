@@ -1,8 +1,15 @@
 import { Text, View, useWindowDimensions } from 'react-native';
+import { AppIcon, type AppIconName } from '../AppIcon';
 import { useTheme } from '../theme';
 import { createStyles } from './StepProgress.styles';
 
 const steps = ['가구', '금융', '계획', '검토'] as const;
+const stepIcons: Record<(typeof steps)[number], AppIconName> = {
+  가구: 'household',
+  금융: 'wallet',
+  계획: 'calendar',
+  검토: 'review',
+};
 
 // 모바일·태블릿에서는 상단 가로 진행 표시, 데스크톱(≥1100)에서는 왼쪽 세로
 // 단계 목록으로 보여준다. accessibilityLabel은 방향과 무관하게 동일하다.
@@ -26,7 +33,15 @@ export function StepProgress({ current }: { current: (typeof steps)[number] }) {
             step === current && (isDesktop ? styles.currentVertical : styles.current),
           ]}
         >
-          <Text style={[styles.label, step === current && styles.currentLabel]}>{step}</Text>
+          <View style={styles.stepHeading}>
+            <AppIcon
+              name={stepIcons[step]}
+              size={theme.layout.stepIconSize}
+              color={step === current ? theme.colors.brand : theme.colors.textSecondary}
+              accentColor={step === current ? theme.colors.mint : theme.colors.inputBorder}
+            />
+            <Text style={[styles.label, step === current && styles.currentLabel]}>{step}</Text>
+          </View>
           <Text style={styles.status}>
             {step === current
               ? '진행 중'

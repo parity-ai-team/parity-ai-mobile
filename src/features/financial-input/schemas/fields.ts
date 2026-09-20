@@ -94,3 +94,21 @@ export function optionalIntRangeString(range: { min: number; max: number }) {
       { message: `${range.min}~${range.max} 사이의 정수만 입력할 수 있어요.` },
     );
 }
+
+export function requiredIntRangeString(
+  range: { min: number; max: number },
+  requiredMessage: string,
+) {
+  return z
+    .string()
+    .trim()
+    .min(1, requiredMessage)
+    .refine(
+      (value) => {
+        if (!NON_NEGATIVE_INT_PATTERN.test(value)) return false;
+        const parsed = Number(value);
+        return parsed >= range.min && parsed <= range.max;
+      },
+      { message: `${range.min}~${range.max} 사이의 정수만 입력할 수 있어요.` },
+    );
+}

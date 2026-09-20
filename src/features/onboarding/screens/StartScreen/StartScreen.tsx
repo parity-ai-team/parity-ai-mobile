@@ -6,20 +6,31 @@ import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 
 import { Button, Card, Chip, useTheme } from '@/shared/ui';
 
+import { useOnboardingSession } from '../../OnboardingSessionContext';
+import { DEMO_SCENARIOS } from '../../scenarios';
 import { createStyles } from './StartScreen.styles';
 
 const babyMascot = require('../../../../../assets/parity-baby-mascot-v1.png');
 
 // S01 시작 화면. docs/frontend.md "사용자 여정과 화면 명세": 서비스 범위 안내,
 // 합성 데이터 고지, 시작·데모 선택을 보여준다. 두 버튼 모두 동의 화면(S02)으로
-// 이동한다 — 금융·출산일정·가구구조 동의는 데모 여부와 무관하게 필요하고,
-// 데모/직접입력 선택 자체는 S03에서 한다. 데스크톱에서는 왼쪽 히어로, 오른쪽
+// 이동하되, 시작은 직접 입력을 초기화하고 데모로 보기는 첫 데모를 선택한다.
+// 이후 S03에서 사용자가 선택을 다시 바꿀 수 있다. 데스크톱에서는 왼쪽 히어로, 오른쪽
 // 안내 카드의 2열로 보여준다(Columns는 좁은 화면에서 자동으로 한 열로 쌓인다).
 export default function StartScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
+  const { selectScenario } = useOnboardingSession();
 
-  const goToConsent = () => router.push('/consent');
+  const startManualInput = () => {
+    selectScenario({ type: 'manual' });
+    router.push('/consent');
+  };
+
+  const startDemo = () => {
+    selectScenario({ type: 'demo', scenarioId: DEMO_SCENARIOS[0].scenario_id });
+    router.push('/consent');
+  };
 
   return (
     <Page wide contentContainerStyle={styles.content}>
@@ -82,8 +93,8 @@ export default function StartScreen() {
               지금 보시는 화면과 예시 데이터는 실제 정보가 아닌 합성 데이터예요.
             </Text>
           </Card>
-          <Button label="시작" onPress={goToConsent} />
-          <Button label="데모로 보기" onPress={goToConsent} variant="secondary" />
+          <Button label="시작" onPress={startManualInput} />
+          <Button label="데모로 보기" onPress={startDemo} variant="secondary" />
         </Column>
       </Columns>
     </Page>

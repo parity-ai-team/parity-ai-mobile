@@ -112,7 +112,9 @@ export default function ReviewScreen() {
         <Column>
           <Text style={styles.title}>검토</Text>
           <Text style={styles.intro}>
-            입력한 값을 확인하고, 바꾸고 싶은 항목은 수정해 주세요. 가정값은 예시 또는 기본값이에요.
+            {origin === 'demo'
+              ? '데모 값을 확인하고, 바꾸고 싶은 항목은 수정해 주세요.'
+              : '직접 입력한 값을 확인하고, 바꾸고 싶은 항목은 수정해 주세요.'}
           </Text>
 
           <Card>
@@ -265,7 +267,9 @@ function ReviewRow({ theme, label, value, assumed, error }: ReviewRowProps) {
     <View style={styles.row}>
       <Text style={styles.rowLabel}>{label}</Text>
       <View style={styles.valueRow}>
-        <Text style={styles.rowValue}>{value}</Text>
+        <Text style={styles.rowValue} numberOfLines={2}>
+          {value}
+        </Text>
         <Text style={[styles.rowOrigin, assumed && styles.assumedOrigin]}>
           {assumed ? '가정값' : '사용자 입력'}
         </Text>

@@ -93,26 +93,29 @@ describe('financialFormSchema — 필수값·음수·소수 검증', () => {
   const valid = {
     financial: {
       current_cash_krw: '12000000',
-      emergency_floor_krw: '',
+      emergency_floor_krw: '6000000',
       monthly_income_krw: '5800000',
       fixed_obligations_krw: '3100000',
-      monthly_discretionary_krw: '',
+      monthly_discretionary_krw: '500000',
     },
   };
 
-  it('올바른 값은 통과한다(선택 필드는 비워도 됨)', () => {
+  it('직접 확인한 금액을 모두 입력하면 통과한다', () => {
     expect(financialFormSchema.safeParse(valid).success).toBe(true);
   });
 
-  it.each(['current_cash_krw', 'monthly_income_krw', 'fixed_obligations_krw'] as const)(
-    '%s가 빈 문자열이면 거부한다',
-    (field) => {
-      const result = financialFormSchema.safeParse({
-        financial: { ...valid.financial, [field]: '' },
-      });
-      expect(result.success).toBe(false);
-    },
-  );
+  it.each([
+    'current_cash_krw',
+    'emergency_floor_krw',
+    'monthly_income_krw',
+    'fixed_obligations_krw',
+    'monthly_discretionary_krw',
+  ] as const)('%s가 빈 문자열이면 거부한다', (field) => {
+    const result = financialFormSchema.safeParse({
+      financial: { ...valid.financial, [field]: '' },
+    });
+    expect(result.success).toBe(false);
+  });
 
   it('금액이 음수면 거부한다', () => {
     const result = financialFormSchema.safeParse({
@@ -128,7 +131,7 @@ describe('financialFormSchema — 필수값·음수·소수 검증', () => {
     expect(result.success).toBe(false);
   });
 
-  it('선택 필드(emergency_floor_krw)에 음수를 넣으면 거부한다', () => {
+  it('emergency_floor_krw에 음수를 넣으면 거부한다', () => {
     const result = financialFormSchema.safeParse({
       financial: { ...valid.financial, emergency_floor_krw: '-1' },
     });
@@ -138,12 +141,30 @@ describe('financialFormSchema — 필수값·음수·소수 검증', () => {
 
 describe('planFormSchema — 범위·날짜 형식 검증', () => {
   const valid = {
-    plan: { leave_start: '', leave_months: '' },
-    stress: { income_delay_weeks: '', child_support_missed: 'false' as const },
+    plan: { has_leave_plan: 'false' as const, leave_start: '', leave_months: '' },
+    stress: { income_delay_weeks: '0', child_support_missed: 'false' as const },
   };
 
-  it('전부 비워도 통과한다(서버 기본값 적용 대상)', () => {
+  it('없음과 0을 명시적으로 입력하면 통과한다', () => {
     expect(planFormSchema.safeParse(valid).success).toBe(true);
+  });
+
+  it('휴직 계획·소득 지연·양육비 가능성을 확인하지 않으면 거부한다', () => {
+    expect(
+      planFormSchema.safeParse({
+        plan: { has_leave_plan: null, leave_start: '', leave_months: '' },
+        stress: { income_delay_weeks: '', child_support_missed: null },
+      }).success,
+    ).toBe(false);
+  });
+
+  it('휴직 계획이 있으면 시작월과 개월 수가 필수다', () => {
+    expect(
+      planFormSchema.safeParse({
+        ...valid,
+        plan: { has_leave_plan: 'true', leave_start: '', leave_months: '' },
+      }).success,
+    ).toBe(false);
   });
 
   it('leave_months가 범위(0~12)를 벗어나면 거부한다', () => {
@@ -196,18 +217,18 @@ describe('폼 → AnalysisCreateRequest 하위 타입 변환', () => {
     });
   });
 
-  it('toFinancialInput은 빈 emergency_floor_krw를 null로, 빈 monthly_discretionary_krw를 0으로 바꾼다', () => {
+  it('toFinancialInput은 직접 입력한 0원도 그대로 옮긴다', () => {
     expect(
       toFinancialInput({
         current_cash_krw: '12000000',
-        emergency_floor_krw: '',
+        emergency_floor_krw: '0',
         monthly_income_krw: '5800000',
         fixed_obligations_krw: '3100000',
-        monthly_discretionary_krw: '',
+        monthly_discretionary_krw: '0',
       }),
     ).toEqual({
       current_cash_krw: 12_000_000,
-      emergency_floor_krw: null,
+      emergency_floor_krw: 0,
       monthly_income_krw: 5_800_000,
       fixed_obligations_krw: 3_100_000,
       monthly_discretionary_krw: 0,
@@ -226,15 +247,17 @@ describe('폼 → AnalysisCreateRequest 하위 타입 변환', () => {
     ).toMatchObject({ emergency_floor_krw: 6_000_000, monthly_discretionary_krw: 500_000 });
   });
 
-  it('toEmploymentPlanInput은 빈 값을 서버 기본값(null, 0)으로 바꾼다', () => {
-    expect(toEmploymentPlanInput({ leave_start: '', leave_months: '' })).toEqual({
+  it('toEmploymentPlanInput은 휴직 없음을 명시하면 null과 0으로 바꾼다', () => {
+    expect(
+      toEmploymentPlanInput({ has_leave_plan: 'false', leave_start: '', leave_months: '' }),
+    ).toEqual({
       leave_start: null,
       leave_months: 0,
     });
   });
 
   it('toStressInput은 child_support_missed 문자열을 boolean으로 바꾼다', () => {
-    expect(toStressInput({ income_delay_weeks: '', child_support_missed: 'true' })).toEqual({
+    expect(toStressInput({ income_delay_weeks: '0', child_support_missed: 'true' })).toEqual({
       income_delay_weeks: 0,
       child_support_missed: true,
     });
@@ -262,7 +285,11 @@ describe('폼 → AnalysisCreateRequest 하위 타입 변환', () => {
     });
     expect(toFinancialInput(fromFinancialInput(financial))).toEqual(financial);
 
-    const plan = toEmploymentPlanInput({ leave_start: '2027-05', leave_months: '3' });
+    const plan = toEmploymentPlanInput({
+      has_leave_plan: 'true',
+      leave_start: '2027-05',
+      leave_months: '3',
+    });
     expect(toEmploymentPlanInput(fromEmploymentPlanInput(plan))).toEqual(plan);
 
     const stress = toStressInput({ income_delay_weeks: '2', child_support_missed: 'true' });

@@ -96,13 +96,13 @@ export default function FinancialScreen() {
               render={({ field }) => (
                 <TextField
                   unit="원"
-                  label="비상금 최소 기준 (선택)"
+                  label="꼭 남겨둘 비상금"
                   value={field.value}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
                   placeholder="예: 6000000"
                   keyboardType="numeric"
-                  hint="생활비로 꼭 남겨둘 돈이에요. 비워두면 기본값을 적용해요."
+                  hint="생활비로 꼭 남겨둘 돈이에요. 따로 없으면 0을 입력해요."
                   error={errors.financial?.emergency_floor_krw?.message}
                   testID="financial-emergency-floor"
                 />
@@ -152,13 +152,13 @@ export default function FinancialScreen() {
               render={({ field }) => (
                 <TextField
                   unit="원"
-                  label="월 재량 지출 (선택)"
+                  label="월 선택 지출"
                   value={field.value}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
                   placeholder="예: 500000"
                   keyboardType="numeric"
-                  hint="외식·쇼핑처럼 조절할 수 있는 지출이에요. 비워두면 0원이에요."
+                  hint="외식·쇼핑처럼 조절할 수 있는 지출이에요. 없으면 0을 입력해요."
                   error={errors.financial?.monthly_discretionary_krw?.message}
                   testID="financial-monthly-discretionary"
                 />

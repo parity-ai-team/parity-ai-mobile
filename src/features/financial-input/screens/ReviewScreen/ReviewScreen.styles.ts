@@ -35,8 +35,8 @@ export function createStyles(theme: Theme) {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      flexWrap: 'wrap',
       gap: theme.spacing.sm,
+      width: theme.layout.full,
     },
     assumedOrigin: { color: theme.colors.severityWarning },
     row: {
@@ -53,11 +53,15 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textSecondary,
     },
     rowValue: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+      flexShrink: theme.layout.flex,
       ...theme.typography.numeric,
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
     rowOrigin: {
+      flexShrink: theme.layout.zero,
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,
     },

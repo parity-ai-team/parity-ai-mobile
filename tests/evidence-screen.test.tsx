@@ -127,6 +127,22 @@ describe('EvidenceScreen — 정상 표시', () => {
     expect(screen.queryByText(/trc_test/)).toBeNull();
     expect(screen.queryByText('cause_code_1')).toBeNull();
     expect(screen.queryByText('INCOME_DROP')).toBeNull();
+    expect(screen.queryByRole('button', { name: '결과 화면으로' })).toBeNull();
+    expect(screen.getAllByRole('button', { name: '원래 화면으로 돌아가기' })).toHaveLength(1);
+  });
+
+  it('하단의 단일 복귀 버튼은 진입 직전 화면으로 돌아간다', async () => {
+    (apiRequest as jest.Mock).mockResolvedValue({
+      data: buildEvidenceResponse(),
+      meta: { requestId: 'req', revision: '1', apiVersion: null },
+    });
+
+    await renderEvidenceScreen(buildAnalysisResponse());
+    await waitFor(() => expect(screen.getByTestId('evidence-screen')).toBeTruthy());
+
+    await fireEvent.press(screen.getByRole('button', { name: '원래 화면으로 돌아가기' }));
+
+    expect(router.back).toHaveBeenCalledTimes(1);
   });
 
   it('입력값의 출처를 보존해서 보여준다', async () => {

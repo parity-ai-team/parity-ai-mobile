@@ -126,7 +126,7 @@ export default function AlternativesScreen() {
     >
       <Text style={styles.title}>대안 비교</Text>
       <Text style={styles.intro}>
-        지금 계획과 지출을 조정한 경우를 비교해 보세요. 남는 돈과 실행 부담을 함께 살펴볼 수 있어요.
+        각 대안을 적용했을 때 가장 적게 남는 돈이 현재보다 얼마나 달라지는지 먼저 확인해 보세요.
       </Text>
 
       <Button
@@ -152,18 +152,21 @@ export default function AlternativesScreen() {
       <View style={[styles.comparisonRow, isDesktop && styles.comparisonRowWide]}>
         <View style={[styles.baselineColumn, isDesktop && styles.baselineColumnWide]}>
           <View style={[styles.card, styles.baselineCard]} testID="alternatives-baseline">
-            <Text style={styles.cardTitle}>현재 상태(현상유지)</Text>
-            <View style={styles.metricRow}>
+            <Text style={styles.baselineEyebrow}>비교 기준</Text>
+            <Text style={styles.cardTitle}>현재 계획 그대로 유지</Text>
+            <View style={styles.baselineHero}>
               <Text style={styles.metricLabel}>가장 적게 남는 돈</Text>
-              <Text style={styles.metricValue}>{formatKrw(baseline.minimum_cash_krw)}</Text>
+              <Text style={styles.baselineAmount}>{formatKrw(baseline.minimum_cash_krw)}</Text>
             </View>
-            <View style={styles.metricRow}>
-              <Text style={styles.metricLabel}>12개월 뒤 남는 돈</Text>
-              <Text style={styles.metricValue}>{formatKrw(baseline.closing_cash_krw)}</Text>
-            </View>
-            <View style={styles.metricRow}>
-              <Text style={styles.metricLabel}>비상금이 부족한 기간</Text>
-              <Text style={styles.metricValue}>{`${baseline.floor_breach_days}일`}</Text>
+            <View style={styles.baselineMetrics}>
+              <View style={styles.baselineMetric}>
+                <Text style={styles.metricLabel}>12개월 뒤</Text>
+                <Text style={styles.metricValue}>{formatKrw(baseline.closing_cash_krw)}</Text>
+              </View>
+              <View style={styles.baselineMetric}>
+                <Text style={styles.metricLabel}>비상금 부족</Text>
+                <Text style={styles.metricValue}>{`${baseline.floor_breach_days}일`}</Text>
+              </View>
             </View>
           </View>
         </View>

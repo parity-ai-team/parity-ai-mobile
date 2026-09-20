@@ -180,7 +180,7 @@ describe('AlternativesScreen — 기준선과 대안 비교', () => {
     expect(screen.getByText('계획 조금만 바꾸기')).toBeTruthy();
   });
 
-  it('기준선보다 나빠지는 지표를 문구로 표시한다', async () => {
+  it('현재 계획 대비 증감액과 기간 차이를 먼저 보여준다', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({
       data: buildComparison(),
       meta: { requestId: 'req', revision: '1', apiVersion: null },
@@ -190,12 +190,14 @@ describe('AlternativesScreen — 기준선과 대안 비교', () => {
     await waitFor(() => expect(screen.getByTestId('alternatives-baseline')).toBeTruthy());
 
     const worseCard = screen.getByTestId('alternatives-card-alt_worse');
-    expect(within(worseCard).getAllByText('기준선보다 낮아요').length).toBeGreaterThan(0);
-    expect(within(worseCard).getByText('기준선보다 길어요')).toBeTruthy();
+    expect(within(worseCard).getByText('-1,000,000원')).toBeTruthy();
+    expect(within(worseCard).getAllByText('현재보다 1,000,000원 덜 남아요').length).toBe(2);
+    expect(within(worseCard).getByText('현재보다 3일 길어요')).toBeTruthy();
 
     const betterCard = screen.getByTestId('alternatives-card-alt_better');
-    expect(within(betterCard).queryByText('기준선보다 낮아요')).toBeNull();
-    expect(within(betterCard).queryByText('기준선보다 길어요')).toBeNull();
+    expect(within(betterCard).getByText('+500,000원')).toBeTruthy();
+    expect(within(betterCard).getAllByText('현재보다 500,000원 더 남아요').length).toBe(2);
+    expect(within(betterCard).getByText('현재와 같아요')).toBeTruthy();
   });
 
   it('근거 보기를 누르면 trace id를 담아 근거 화면으로 이동한다', async () => {

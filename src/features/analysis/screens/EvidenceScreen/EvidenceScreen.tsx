@@ -196,7 +196,7 @@ export default function EvidenceScreen() {
       wide
       contentContainerStyle={styles.content}
       testID="evidence-screen"
-      footer={<Button label="이전 화면으로" variant="secondary" onPress={() => router.back()} />}
+      footer={<Button label="원래 화면으로 돌아가기" onPress={() => router.back()} />}
     >
       <Text style={styles.title}>왜 이런 결과가 나왔나요?</Text>
       <Text style={styles.subtitle}>입력한 정보가 결과로 이어진 과정을 쉽게 보여드려요.</Text>
@@ -284,11 +284,6 @@ export default function EvidenceScreen() {
           </Text>
         </View>
       </Card>
-      <Button
-        label="결과 화면으로"
-        variant="secondary"
-        onPress={() => router.push('/analysis/result')}
-      />
     </Page>
   );
 }

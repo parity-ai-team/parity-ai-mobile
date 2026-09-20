@@ -62,22 +62,108 @@ export function createStyles(theme: Theme) {
       backgroundColor: theme.colors.brandSoft,
       borderColor: theme.colors.transparent,
     },
+    baselineEyebrow: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.brand,
+    },
+    baselineHero: {
+      paddingVertical: theme.spacing.sm,
+      gap: theme.spacing.xs,
+    },
+    baselineAmount: {
+      ...theme.typography.chartAmount,
+      ...theme.typography.numeric,
+      color: theme.colors.deepGreen,
+    },
+    baselineMetrics: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    baselineMetric: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+      gap: theme.spacing.xs,
+    },
+    cardHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      gap: theme.spacing.sm,
+    },
     cardTitle: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
     quickMetrics: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: theme.spacing.sm,
-      paddingVertical: theme.spacing.sm,
+      gap: theme.spacing.xs,
+      padding: theme.spacing.sm,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     quickMetric: {
       flex: theme.layout.flex,
-      minWidth: theme.layout.metricMinWidth,
+      minWidth: theme.layout.zero,
       gap: theme.spacing.xs,
     },
-    metricColumn: { flex: theme.layout.flex, minWidth: theme.layout.zero, alignItems: 'flex-end' },
+    effectPanel: {
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.md,
+      backgroundColor: theme.colors.brandSoft,
+      gap: theme.spacing.xs,
+    },
+    effectPanelNegative: {
+      backgroundColor: theme.colors.criticalSoft,
+    },
+    effectLabel: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    effectAmount: {
+      ...theme.typography.chartAmount,
+      ...theme.typography.numeric,
+    },
+    effectPositive: {
+      color: theme.colors.brand,
+    },
+    effectNegative: {
+      color: theme.colors.severityCritical,
+    },
+    effectNeutral: {
+      color: theme.colors.textPrimary,
+    },
+    effectCopy: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.textPrimary,
+    },
+    effectCaption: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    outcomeGrid: {
+      flexDirection: 'row',
+      gap: theme.spacing.sm,
+    },
+    outcomeMetric: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.sm,
+      backgroundColor: theme.colors.surfaceMuted,
+      gap: theme.spacing.xs,
+    },
+    outcomeValue: {
+      ...theme.typography.labelMedium,
+      ...theme.typography.numeric,
+      color: theme.colors.textPrimary,
+    },
+    deltaLabel: {
+      ...theme.typography.chartLabel,
+      color: theme.colors.brand,
+    },
+    deltaNegative: {
+      color: theme.colors.severityCritical,
+    },
     metricRow: {
       paddingVertical: theme.spacing.sm,
       borderBottomWidth: theme.layout.stroke,
@@ -99,19 +185,6 @@ export function createStyles(theme: Theme) {
       ...theme.typography.bodyMedium,
       color: theme.colors.textPrimary,
     },
-    metricWorse: {
-      backgroundColor: theme.colors.criticalSoft,
-      borderRadius: theme.radii.sm,
-      padding: theme.spacing.xs,
-      ...theme.typography.bodySmall,
-      color: theme.colors.severityCritical,
-    },
-    burdenRow: {
-      flexWrap: 'wrap',
-      flexDirection: 'row',
-      gap: theme.spacing.xs,
-      alignItems: 'center',
-    },
     burdenChip: {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
@@ -126,6 +199,10 @@ export function createStyles(theme: Theme) {
     },
     actionList: {
       gap: theme.spacing.xs,
+    },
+    actionTitle: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.textPrimary,
     },
     actionRow: {
       ...theme.typography.bodySmall,

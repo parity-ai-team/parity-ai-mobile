@@ -77,8 +77,8 @@ export default function ReviewScreen() {
         body,
       });
       setAnalysisResponse(data);
-      // 타입 라우트가 중첩 index 라우트를 "/analysis"가 아니라 파일 경로
-      // 그대로("/analysis/index")로만 인식한다 — 실제 이동 경로는 동일하게 /analysis다.
+      // 중첩 index 라우트(src/app/analysis/index.tsx)는 파일 경로가 아니라
+      // 부모 경로 "/analysis"로 이동한다 — S08 게이트로 향하는 경로다.
       router.push('/analysis');
     } catch (error) {
       if (error instanceof ApiError) {

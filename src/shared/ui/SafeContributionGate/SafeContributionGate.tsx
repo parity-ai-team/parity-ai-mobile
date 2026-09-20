@@ -4,6 +4,7 @@ import { formatKrw } from '@/shared/format';
 import type { SafeContributionResult } from '@/shared/types';
 
 import { Button } from '../Button';
+import { AppIcon } from '../AppIcon';
 import { getCauseCodeLabel } from '../RiskCauseCard';
 import { useTheme } from '../theme';
 import { createStyles } from './SafeContributionGate.styles';
@@ -30,10 +31,22 @@ export function SafeContributionGate({
 
   return (
     <View style={styles.card} testID={testID}>
-      <Text style={styles.title}>안전 적립</Text>
-      <Text style={[styles.status, !result.eligible && styles.statusHeld]}>
-        {result.eligible ? '통과' : '보류'}
-      </Text>
+      <View style={styles.headerRow}>
+        <View style={styles.titleRow}>
+          <AppIcon
+            name="shield"
+            size={theme.layout.sectionIconSize}
+            color={result.eligible ? theme.colors.success : theme.colors.severityWarning}
+            accentColor={result.eligible ? theme.colors.brandSoft : theme.colors.warningSoft}
+          />
+          <Text style={styles.title}>안전 적립</Text>
+        </View>
+        <View style={[styles.statusChip, !result.eligible && styles.statusChipHeld]}>
+          <Text style={[styles.status, !result.eligible && styles.statusHeld]}>
+            {result.eligible ? '통과' : '보류'}
+          </Text>
+        </View>
+      </View>
 
       {result.eligible ? (
         <>

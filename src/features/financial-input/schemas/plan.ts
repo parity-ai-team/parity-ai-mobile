@@ -3,76 +3,123 @@ import { z } from 'zod';
 import type { ChoiceFieldOption } from '@/shared/ui';
 import type { EmploymentPlanInput, StressInput } from '@/shared/types';
 
-import { optionalIntRangeString, optionalMonthString } from './fields';
+import { optionalIntRangeString, optionalMonthString, requiredIntRangeString } from './fields';
 
-// child_support_missed는 boolean이지만 ChoiceField는 문자열 값을 다루므로
-// 폼 안에서는 'true'/'false' 문자열로 두고 toStressInput()에서 boolean으로
-// 바꾼다.
-export const BOOLEAN_CHOICE_OPTIONS: readonly ChoiceFieldOption<'true' | 'false'>[] = [
+type BooleanChoice = 'true' | 'false';
+
+export const BOOLEAN_CHOICE_OPTIONS: readonly ChoiceFieldOption<BooleanChoice>[] = [
   { value: 'false', label: '아니오' },
   { value: 'true', label: '예' },
 ];
 
-export const planFormSchema = z.object({
-  plan: z.object({
-    leave_start: optionalMonthString(),
-    leave_months: optionalIntRangeString({ min: 0, max: 12 }),
-  }),
-  stress: z.object({
-    income_delay_weeks: optionalIntRangeString({ min: 0, max: 52 }),
-    child_support_missed: z.enum(['true', 'false']),
-  }),
-});
+export interface PlanFormValues {
+  plan: {
+    has_leave_plan: BooleanChoice | null;
+    leave_start: string;
+    leave_months: string;
+  };
+  stress: {
+    income_delay_weeks: string;
+    child_support_missed: BooleanChoice | null;
+  };
+}
 
-export type PlanFormValues = z.infer<typeof planFormSchema>;
+function requiredBooleanChoice(message: string) {
+  return z.custom<BooleanChoice | null>((value) => value === 'true' || value === 'false', {
+    message,
+  });
+}
+
+export const planFormSchema: z.ZodType<PlanFormValues> = z
+  .object({
+    plan: z.object({
+      has_leave_plan: requiredBooleanChoice('휴직 계획 여부를 선택해 주세요.'),
+      leave_start: optionalMonthString(),
+      leave_months: optionalIntRangeString({ min: 1, max: 12 }),
+    }),
+    stress: z.object({
+      income_delay_weeks: requiredIntRangeString(
+        { min: 0, max: 52 },
+        '예상 소득 지연 주 수를 입력해 주세요. 없으면 0을 입력해요.',
+      ),
+      child_support_missed: requiredBooleanChoice('양육비 미수령 가능성을 선택해 주세요.'),
+    }),
+  })
+  .superRefine((values, context) => {
+    if (values.plan.has_leave_plan !== 'true') return;
+
+    if (values.plan.leave_start.trim() === '') {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['plan', 'leave_start'],
+        message: '휴직 시작월을 입력해 주세요.',
+      });
+    }
+    if (values.plan.leave_months.trim() === '') {
+      context.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ['plan', 'leave_months'],
+        message: '휴직 개월 수를 입력해 주세요.',
+      });
+    }
+  });
 
 export const EMPTY_PLAN_FORM_VALUES: PlanFormValues = {
   plan: {
+    has_leave_plan: null,
     leave_start: '',
     leave_months: '',
   },
   stress: {
     income_delay_weeks: '',
-    child_support_missed: 'false',
+    child_support_missed: null,
   },
 };
 
-// 반환 타입 주석(EmploymentPlanInput)이 생성 타입과 어긋나면 여기서 컴파일
-// 오류가 난다. 비우면 서버 기본값(leave_start: null, leave_months: 0)과 같다.
 export function toEmploymentPlanInput(values: PlanFormValues['plan']): EmploymentPlanInput {
-  const leaveStart = values.leave_start.trim();
-  const leaveMonths = values.leave_months.trim();
+  if (values.has_leave_plan !== 'true') {
+    return { leave_start: null, leave_months: 0 };
+  }
 
   return {
-    leave_start: leaveStart === '' ? null : leaveStart,
-    leave_months: leaveMonths === '' ? 0 : Number(leaveMonths),
+    leave_start: values.leave_start.trim(),
+    leave_months: Number(values.leave_months),
   };
 }
 
 export function fromEmploymentPlanInput(
   input: Partial<EmploymentPlanInput>,
 ): PlanFormValues['plan'] {
+  const hasStoredValue = 'leave_start' in input || 'leave_months' in input;
+  const hasLeavePlan =
+    typeof input.leave_start === 'string' ||
+    (typeof input.leave_months === 'number' && input.leave_months > 0);
+
   return {
+    has_leave_plan: hasStoredValue ? (hasLeavePlan ? 'true' : 'false') : null,
     leave_start: input.leave_start ?? '',
-    leave_months: input.leave_months !== undefined ? String(input.leave_months) : '',
+    leave_months:
+      hasLeavePlan && input.leave_months !== undefined ? String(input.leave_months) : '',
   };
 }
 
-// 반환 타입 주석(StressInput)이 생성 타입과 어긋나면 여기서 컴파일 오류가
-// 난다. 비우면 서버 기본값(income_delay_weeks: 0, child_support_missed: false)과 같다.
 export function toStressInput(values: PlanFormValues['stress']): StressInput {
-  const incomeDelayWeeks = values.income_delay_weeks.trim();
-
   return {
-    income_delay_weeks: incomeDelayWeeks === '' ? 0 : Number(incomeDelayWeeks),
+    income_delay_weeks: Number(values.income_delay_weeks),
     child_support_missed: values.child_support_missed === 'true',
   };
 }
 
 export function fromStressInput(input: Partial<StressInput>): PlanFormValues['stress'] {
+  const hasChildSupportValue = 'child_support_missed' in input;
+
   return {
     income_delay_weeks:
       input.income_delay_weeks !== undefined ? String(input.income_delay_weeks) : '',
-    child_support_missed: input.child_support_missed ? 'true' : 'false',
+    child_support_missed: hasChildSupportValue
+      ? input.child_support_missed
+        ? 'true'
+        : 'false'
+      : null,
   };
 }

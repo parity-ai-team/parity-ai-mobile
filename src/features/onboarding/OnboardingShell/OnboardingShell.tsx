@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react';
-import { Text, View, useWindowDimensions } from 'react-native';
-import { usePathname } from 'expo-router';
+import { Image, Text, View, useWindowDimensions } from 'react-native';
+import { router, usePathname } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { Container, DataModeBadge, useTheme } from '@/shared/ui';
+import { InteractivePressable } from '@/shared/ui/InteractivePressable/InteractivePressable';
 
 import { ONBOARDING_DATA_VERSION } from '../constants';
 import { OnboardingSessionProvider } from '../OnboardingSessionContext';
 import { createStyles } from './OnboardingShell.styles';
+
+const brandLogo = require('../../../../assets/parity-ai-logo-final.png');
 
 export interface OnboardingShellProps {
   children: ReactNode;
@@ -46,10 +49,27 @@ export function OnboardingShell({ children }: OnboardingShellProps) {
       <SafeAreaView style={styles.container}>
         <View style={styles.header}>
           <Container style={styles.headerRow}>
-            <Text style={styles.brand}>PARITY AI</Text>
+            <InteractivePressable
+              style={styles.brandLockup}
+              onPress={() => router.replace('/')}
+              accessibilityRole="button"
+              accessibilityLabel="첫 화면으로 돌아가기"
+            >
+              <Image
+                source={brandLogo}
+                style={styles.brandLogo}
+                resizeMode="contain"
+                accessible={false}
+              />
+              <Text style={styles.brand}>PARITY AI</Text>
+            </InteractivePressable>
             <View style={styles.headerRight}>
               {showStage ? <Text style={styles.stage}>{stage}</Text> : null}
-              <DataModeBadge mode="synthetic" dataVersion={ONBOARDING_DATA_VERSION} />
+              <DataModeBadge
+                mode="synthetic"
+                dataVersion={ONBOARDING_DATA_VERSION}
+                compact={width < theme.layout.deviceWidth}
+              />
             </View>
           </Container>
         </View>

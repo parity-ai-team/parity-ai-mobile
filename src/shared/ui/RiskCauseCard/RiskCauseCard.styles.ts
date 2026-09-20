@@ -6,19 +6,21 @@ export function createStyles(theme: Theme) {
   return StyleSheet.create({
     card: {
       boxShadow: theme.layout.cardShadow,
-      padding: theme.spacing.xl,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       borderRadius: theme.radii.lg,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
       backgroundColor: theme.colors.surface,
-      gap: theme.spacing.sm,
+      gap: theme.spacing.xs,
     },
     cardSelected: {
-      borderColor: theme.colors.brand,
-      borderWidth: theme.layout.strongStroke,
+      borderColor: theme.colors.transparent,
+      borderWidth: theme.layout.zero,
+      backgroundColor: theme.colors.brandSoft,
     },
     selectionArea: {
-      gap: theme.spacing.sm,
+      gap: theme.spacing.xs,
     },
     headerRow: {
       flexWrap: 'wrap',
@@ -36,12 +38,12 @@ export function createStyles(theme: Theme) {
       paddingVertical: theme.spacing.xs,
       borderRadius: theme.radii.full,
     },
-    severityInfo: { backgroundColor: theme.colors.severityInfo },
-    severityWarning: { backgroundColor: theme.colors.severityWarning },
-    severityCritical: { backgroundColor: theme.colors.severityCritical },
+    severityInfo: { backgroundColor: theme.colors.brandSoft },
+    severityWarning: { backgroundColor: theme.colors.warningSoft },
+    severityCritical: { backgroundColor: theme.colors.criticalSoft },
     severityLabel: {
       ...theme.typography.bodySmall,
-      color: theme.colors.textInverse,
+      color: theme.colors.textPrimary,
     },
     causeRow: {
       flexDirection: 'row',
@@ -51,10 +53,10 @@ export function createStyles(theme: Theme) {
     causeChip: {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
-      borderRadius: theme.radii.sm,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.background,
+      borderRadius: theme.radii.full,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     causeLabel: {
       ...theme.typography.bodySmall,
@@ -62,7 +64,7 @@ export function createStyles(theme: Theme) {
     },
     gap: {
       ...theme.typography.numeric,
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
     probability: {

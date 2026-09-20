@@ -149,18 +149,14 @@ describe('AlternativesScreen — 진입 가능 여부', () => {
   it('세션에 분석 응답이 없으면 대안을 불러오지 않고 안내를 보여준다', async () => {
     await renderAlternativesScreen(null);
 
-    expect(
-      screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/),
-    ).toBeTruthy();
+    expect(screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/)).toBeTruthy();
     expect(apiRequest).not.toHaveBeenCalled();
   });
 
   it('needs_input처럼 결과를 쓸 수 없는 상태면 진입시키지 않는다', async () => {
     await renderAlternativesScreen(buildAnalysisResponse({ status: 'needs_input' }));
 
-    expect(
-      screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/),
-    ).toBeTruthy();
+    expect(screen.getByText(/결과가 준비돼야 대안을 비교할 수 있어요/)).toBeTruthy();
     expect(apiRequest).not.toHaveBeenCalled();
   });
 });
@@ -181,11 +177,11 @@ describe('AlternativesScreen — 기준선과 대안 비교', () => {
     await waitFor(() => expect(screen.getByTestId('alternatives-baseline')).toBeTruthy());
     expect(screen.getByTestId('alternatives-card-alt_worse')).toBeTruthy();
     expect(screen.getByTestId('alternatives-card-alt_better')).toBeTruthy();
-    expect(screen.getByText('유동성 보호')).toBeTruthy();
-    expect(screen.getByText('최소 변경')).toBeTruthy();
+    expect(screen.getByText('당장 쓸 돈 확보')).toBeTruthy();
+    expect(screen.getByText('계획 조금만 바꾸기')).toBeTruthy();
   });
 
-  it('기준선보다 나빠지는 지표를 문구로 표시한다', async () => {
+  it('현재 계획 대비 증감액과 기간 차이를 먼저 보여준다', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({
       data: buildComparison(),
       meta: { requestId: 'req', revision: '1', apiVersion: null },
@@ -195,12 +191,15 @@ describe('AlternativesScreen — 기준선과 대안 비교', () => {
     await waitFor(() => expect(screen.getByTestId('alternatives-baseline')).toBeTruthy());
 
     const worseCard = screen.getByTestId('alternatives-card-alt_worse');
-    expect(within(worseCard).getAllByText('기준선보다 낮아요').length).toBeGreaterThan(0);
-    expect(within(worseCard).getByText('기준선보다 길어요')).toBeTruthy();
+    expect(within(worseCard).getByText('-1,000,000원')).toBeTruthy();
+    expect(within(worseCard).getByText('50만원')).toBeTruthy();
+    expect(within(worseCard).getAllByText('현재보다 1,000,000원 덜 남아요').length).toBe(2);
+    expect(within(worseCard).getByText('현재보다 3일 길어요')).toBeTruthy();
 
     const betterCard = screen.getByTestId('alternatives-card-alt_better');
-    expect(within(betterCard).queryByText('기준선보다 낮아요')).toBeNull();
-    expect(within(betterCard).queryByText('기준선보다 길어요')).toBeNull();
+    expect(within(betterCard).getByText('+500,000원')).toBeTruthy();
+    expect(within(betterCard).getAllByText('현재보다 500,000원 더 남아요').length).toBe(2);
+    expect(within(betterCard).getByText('현재와 같아요')).toBeTruthy();
   });
 
   it('근거 보기를 누르면 trace id를 담아 근거 화면으로 이동한다', async () => {

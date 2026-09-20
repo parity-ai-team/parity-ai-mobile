@@ -50,6 +50,7 @@ describe('HouseholdScreen — 직접 입력', () => {
   it('빈 폼으로 시작해 필수값을 채우지 않으면 다음으로 넘어가지 않는다', async () => {
     await renderManual();
 
+    expect(screen.queryByTestId('demo-prefill-notice')).toBeNull();
     await fireEvent.press(screen.getByRole('button', { name: '다음' }));
 
     expect(await screen.findByText('오류: 예정월을 입력해 주세요.')).toBeTruthy();
@@ -67,12 +68,29 @@ describe('HouseholdScreen — 직접 입력', () => {
 
     expect(router.push).toHaveBeenCalledWith('/financial');
   });
+
+  it('과거 출산 예정월이면 다음으로 넘어가지 않는다', async () => {
+    await renderManual();
+
+    await fireEvent.changeText(screen.getByLabelText('출산 예정월'), '2020-01');
+    await fireEvent.changeText(screen.getByLabelText('출산 순서'), '1');
+    await fireEvent.press(screen.getByRole('radio', { name: '두 성인(맞벌이·외벌이)' }));
+    await fireEvent.changeText(screen.getByLabelText('부양가족 수'), '0');
+    await fireEvent.press(screen.getByRole('button', { name: '다음' }));
+
+    expect(
+      await screen.findByText('오류: 출산 예정월은 이번 달 또는 이후로 입력해 주세요.'),
+    ).toBeTruthy();
+    expect(router.push).not.toHaveBeenCalled();
+  });
 });
 
 describe('HouseholdScreen — 데모 선택', () => {
   it('데모를 고르면 default_analysis 값으로 폼이 미리 채워진다', async () => {
     await renderWithDemo();
 
+    expect(screen.getByText('데모 데이터로 미리 채웠어요')).toBeTruthy();
+    expect(screen.getByText(/실제 서비스에서는 처음 동의한 범위 안에서/)).toBeTruthy();
     expect(screen.getByLabelText('출산 예정월').props.value).toBe('2027-03');
     expect(screen.getByLabelText('출산 순서').props.value).toBe('1');
     expect(screen.getByLabelText('부양가족 수').props.value).toBe('0');

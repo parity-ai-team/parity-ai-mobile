@@ -2,15 +2,19 @@ import { z } from 'zod';
 
 import type { FinancialInput } from '@/shared/types';
 
-import { optionalKrwString, requiredKrwString } from './fields';
+import { requiredKrwString } from './fields';
 
 export const financialFormSchema = z.object({
   financial: z.object({
     current_cash_krw: requiredKrwString('가용 현금을 입력해 주세요.'),
-    emergency_floor_krw: optionalKrwString(),
+    emergency_floor_krw: requiredKrwString(
+      '꼭 남겨둘 비상금을 입력해 주세요. 없으면 0을 입력해요.',
+    ),
     monthly_income_krw: requiredKrwString('월 수입을 입력해 주세요.'),
     fixed_obligations_krw: requiredKrwString('카드·대출·보험 등 고정 지급 의무를 입력해 주세요.'),
-    monthly_discretionary_krw: optionalKrwString(),
+    monthly_discretionary_krw: requiredKrwString(
+      '월 선택 지출을 입력해 주세요. 없으면 0을 입력해요.',
+    ),
   }),
 });
 
@@ -26,19 +30,15 @@ export const EMPTY_FINANCIAL_FORM_VALUES: FinancialFormValues = {
   },
 };
 
-// 반환 타입 주석(FinancialInput)이 생성 타입과 어긋나면 여기서 컴파일 오류가
-// 난다. emergency_floor_krw를 비우면 null, monthly_discretionary_krw를
-// 비우면 0 — 둘 다 서버 기본값과 같다(docs/api/openapi-1.5.0.json FinancialInput).
+// 직접 입력에서는 선택 금액도 0을 명시하게 해 서버의 숨은 기본값이 결과에
+// 섞이지 않게 한다.
 export function toFinancialInput(values: FinancialFormValues['financial']): FinancialInput {
-  const emergencyFloor = values.emergency_floor_krw.trim();
-  const monthlyDiscretionary = values.monthly_discretionary_krw.trim();
-
   return {
     current_cash_krw: Number(values.current_cash_krw),
-    emergency_floor_krw: emergencyFloor === '' ? null : Number(emergencyFloor),
+    emergency_floor_krw: Number(values.emergency_floor_krw),
     monthly_income_krw: Number(values.monthly_income_krw),
     fixed_obligations_krw: Number(values.fixed_obligations_krw),
-    monthly_discretionary_krw: monthlyDiscretionary === '' ? 0 : Number(monthlyDiscretionary),
+    monthly_discretionary_krw: Number(values.monthly_discretionary_krw),
   };
 }
 

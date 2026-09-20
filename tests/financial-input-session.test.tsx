@@ -59,8 +59,8 @@ describe('FinancialInputSessionProvider — 직접 입력', () => {
     expect(screen.getByTestId('origin').props.children).toBe('manual');
     expect(screen.getByTestId('scenario-id').props.children).toBe('none');
     expect(screen.getByTestId('expected-month').props.children).toBe('undefined');
-    // 선택 필드는 서버 기본값(null)으로 미리 채워진다.
-    expect(screen.getByTestId('emergency-floor').props.children).toBe('null');
+    expect(screen.getByTestId('emergency-floor').props.children).toBe('undefined');
+    expect(screen.getByTestId('dependents-assumed').props.children).toBe('false');
   });
 });
 

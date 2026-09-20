@@ -4,30 +4,64 @@ import type { Theme } from '@/shared/ui';
 
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
-    summary: { backgroundColor: theme.colors.surface, borderColor: theme.colors.brand },
+    summary: {
+      backgroundColor: theme.colors.surface,
+      borderColor: theme.colors.transparent,
+      boxShadow: theme.layout.shadowNone,
+    },
     summaryPeriod: {
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       ...theme.typography.numeric,
       color: theme.colors.deepGreen,
     },
     summaryAmount: {
-      ...theme.typography.display,
+      ...theme.typography.chartAmount,
       ...theme.typography.numeric,
       color: theme.colors.textPrimary,
     },
     content: {
       flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.xl,
-      gap: theme.spacing.lg,
+      paddingVertical: theme.spacing.lg,
+      gap: theme.spacing.md,
     },
     title: {
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
     sectionTitle: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
+    },
+    chartCard: {
+      padding: theme.spacing.md,
+      boxShadow: theme.layout.shadowNone,
+    },
+    summaryMetricRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'flex-end',
+      justifyContent: 'space-between',
+      gap: theme.spacing.md,
+    },
+    summaryMetric: {
+      minWidth: theme.layout.zero,
+      gap: theme.spacing.xs,
+    },
+    summaryAmountMetric: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.summaryAmountMinWidth,
+      alignItems: 'flex-end',
+      gap: theme.spacing.xs,
+    },
+    metricLabel: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
     },
     body: {
       ...theme.typography.bodyMedium,
@@ -39,8 +73,8 @@ export function createStyles(theme: Theme) {
     },
     actionRow: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
-      gap: theme.spacing.md,
+      gap: theme.spacing.sm,
     },
+    actionButton: { flex: theme.layout.flex, paddingHorizontal: theme.spacing.sm },
   });
 }

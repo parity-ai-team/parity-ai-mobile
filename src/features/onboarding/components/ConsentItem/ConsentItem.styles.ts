@@ -7,7 +7,8 @@ export function createStyles(theme: Theme) {
     container: {
       backgroundColor: theme.colors.surface,
       borderRadius: theme.radii.lg,
-      padding: theme.spacing.xl,
+      paddingVertical: theme.spacing.md,
+      paddingHorizontal: theme.spacing.lg,
       boxShadow: theme.layout.cardShadow,
       gap: theme.spacing.xs,
     },

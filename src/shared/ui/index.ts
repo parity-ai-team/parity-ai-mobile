@@ -1,5 +1,7 @@
 export { Button } from './Button';
 export type { ButtonProps } from './Button';
+export { AppIcon } from './AppIcon';
+export type { AppIconName, AppIconProps } from './AppIcon';
 export {
   buildAxisTicks,
   CashFlowChart,

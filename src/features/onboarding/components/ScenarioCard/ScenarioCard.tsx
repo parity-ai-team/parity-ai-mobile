@@ -33,7 +33,7 @@ export function ScenarioCard({
   return (
     <Pressable
       accessibilityRole="radio"
-      accessibilityState={{ selected, disabled }}
+      accessibilityState={{ selected, checked: selected, disabled }}
       accessibilityLabel={title}
       accessibilityHint={description}
       onPress={disabled ? undefined : onPress}

@@ -11,7 +11,7 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.md,
     },
     title: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.headingLarge,
       color: theme.colors.textPrimary,
     },
     intro: {

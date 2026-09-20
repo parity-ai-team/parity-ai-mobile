@@ -74,8 +74,11 @@ export function formatKrwCompactAxis(amountKrw: number): string {
   return `${COMPACT_KRW_FORMAT.format(manwon)}만원`;
 }
 
-// 세로축 눈금값. 0을 항상 포함하고(도메인 계산에서 이미 보장) min·max와
-// 함께 3개만 쓴다 — 12개월치 좁은 차트에 눈금이 많으면 오히려 읽기 어렵다.
+// 양수 데이터에서도 중간 눈금이 있어야 선의 높이를 금액으로 읽을 수 있다.
+// 0과 양 끝을 유지하면서 네 구간으로 나누고, 겹치는 눈금은 합친다.
 export function buildAxisTicks(domain: ValueDomain): number[] {
-  return Array.from(new Set([domain.min, 0, domain.max])).sort((a, b) => a - b);
+  const step = (domain.max - domain.min) / 4;
+  return Array.from(
+    new Set([0, ...Array.from({ length: 5 }, (_, i) => domain.min + step * i)]),
+  ).sort((a, b) => a - b);
 }

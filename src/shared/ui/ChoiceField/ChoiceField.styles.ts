@@ -21,18 +21,18 @@ export function createStyles(theme: Theme) {
       paddingVertical: theme.spacing.sm,
       flexShrink: theme.layout.flex,
       // docs/frontend.md 접근성 기준: 터치 영역 최소 44×44pt
-      minHeight: theme.accessibility.minTouchTarget,
+      minHeight: theme.layout.controlHeight,
       justifyContent: 'center',
       paddingHorizontal: theme.spacing.md,
       borderRadius: theme.radii.md,
-      borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
-      backgroundColor: theme.colors.surface,
+      borderWidth: theme.layout.zero,
+      borderColor: theme.colors.transparent,
+      backgroundColor: theme.colors.surfaceMuted,
     },
     optionSelected: {
       backgroundColor: theme.colors.brandSoft,
       borderColor: theme.colors.brand,
-      borderWidth: theme.layout.strongStroke,
+      borderWidth: theme.layout.zero,
     },
     optionLabel: {
       flexShrink: theme.layout.flex,

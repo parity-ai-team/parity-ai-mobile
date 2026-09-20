@@ -2,7 +2,7 @@ import { Page } from '@/shared/ui/Page/Page';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { Text } from 'react-native';
 
 import {
@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@/shared/ui';
 
+import { DemoPrefillNotice } from '../../components/DemoPrefillNotice/DemoPrefillNotice';
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
   BOOLEAN_CHOICE_OPTIONS,
@@ -31,11 +32,11 @@ import { createStyles } from './PlanScreen.styles';
 
 // S06 계획 화면. docs/api/openapi-1.5.0.json EmploymentPlanInput(leave_start,
 // leave_months)과 StressInput(income_delay_weeks, child_support_missed)
-// 필드 그대로 받는다 — 전부 서버 기본값이 있는 선택 입력이다.
+// 필드 그대로 받되, 직접 입력에서는 없음·0도 사용자가 명시적으로 확인한다.
 export default function PlanScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const { draft, updatePlan, updateStress } = useFinancialInputSession();
+  const { draft, origin, updatePlan, updateStress } = useFinancialInputSession();
 
   const {
     control,
@@ -55,6 +56,7 @@ export default function PlanScreen() {
           : EMPTY_PLAN_FORM_VALUES.stress,
     },
   });
+  const hasLeavePlan = useWatch({ control, name: 'plan.has_leave_plan' });
 
   // HouseholdScreen과 같은 이유의 안전망 — draft.plan/draft.stress가 마운트
   // 이후 (재)채워지면 폼도 같이 맞춘다.
@@ -92,46 +94,63 @@ export default function PlanScreen() {
         </Column>
         <Column>
           <Text style={styles.title}>휴직·소득 계획</Text>
-          <Text style={styles.intro}>
-            계획이 아직 없다면 비워두어도 괜찮아요. 서버가 기본값으로 계산해요.
-          </Text>
+          <Text style={styles.intro}>해당 사항이 없어도 0 또는 아니오를 직접 선택해 주세요.</Text>
+          {origin === 'demo' ? <DemoPrefillNotice /> : null}
 
           <Card>
             <Text style={styles.sectionTitle}>휴직 계획</Text>
             <Controller
               control={control}
-              name="plan.leave_start"
+              name="plan.has_leave_plan"
               render={({ field }) => (
-                <TextField
-                  label="휴직 시작월 (선택)"
+                <ChoiceField
+                  label="휴직 계획이 있나요?"
+                  options={BOOLEAN_CHOICE_OPTIONS}
                   value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  placeholder="예: 2027-01"
-                  hint="연도-월 형식. 비워두면 휴직 없음으로 처리해요."
-                  error={errors.plan?.leave_start?.message}
-                  testID="plan-leave-start"
+                  onChange={field.onChange}
+                  error={errors.plan?.has_leave_plan?.message}
+                  testID="plan-has-leave-plan"
                 />
               )}
             />
-            <Controller
-              control={control}
-              name="plan.leave_months"
-              render={({ field }) => (
-                <TextField
-                  label="휴직 개월 수 (선택)"
-                  unit="개월"
-                  value={field.value}
-                  onChangeText={field.onChange}
-                  onBlur={field.onBlur}
-                  placeholder="0~12"
-                  keyboardType="number-pad"
-                  hint="비워두면 0개월로 처리해요."
-                  error={errors.plan?.leave_months?.message}
-                  testID="plan-leave-months"
+            {hasLeavePlan === 'true' ? (
+              <>
+                <Controller
+                  control={control}
+                  name="plan.leave_start"
+                  render={({ field }) => (
+                    <TextField
+                      label="휴직 시작월"
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onBlur={field.onBlur}
+                      placeholder="예: 2027-01"
+                      hint="연도-월 형식으로 입력해요."
+                      error={errors.plan?.leave_start?.message}
+                      testID="plan-leave-start"
+                    />
+                  )}
                 />
-              )}
-            />
+                <Controller
+                  control={control}
+                  name="plan.leave_months"
+                  render={({ field }) => (
+                    <TextField
+                      label="휴직 개월 수"
+                      unit="개월"
+                      value={field.value}
+                      onChangeText={field.onChange}
+                      onBlur={field.onBlur}
+                      placeholder="1~12"
+                      keyboardType="number-pad"
+                      hint="1~12개월 사이로 입력해요."
+                      error={errors.plan?.leave_months?.message}
+                      testID="plan-leave-months"
+                    />
+                  )}
+                />
+              </>
+            ) : null}
           </Card>
           <Card>
             <Text style={styles.sectionTitle}>소득·지원금 변수</Text>
@@ -140,14 +159,14 @@ export default function PlanScreen() {
               name="stress.income_delay_weeks"
               render={({ field }) => (
                 <TextField
-                  label="예상 소득 지연 주 수 (선택)"
+                  label="예상 소득 지연 주 수"
                   unit="주"
                   value={field.value}
                   onChangeText={field.onChange}
                   onBlur={field.onBlur}
                   placeholder="0~52"
                   keyboardType="number-pad"
-                  hint="비워두면 지연 없음으로 처리해요."
+                  hint="지연 가능성이 없으면 0을 입력해요."
                   error={errors.stress?.income_delay_weeks?.message}
                   testID="stress-income-delay-weeks"
                 />
@@ -162,6 +181,7 @@ export default function PlanScreen() {
                   options={BOOLEAN_CHOICE_OPTIONS}
                   value={field.value}
                   onChange={field.onChange}
+                  error={errors.stress?.child_support_missed?.message}
                   testID="stress-child-support-missed"
                 />
               )}

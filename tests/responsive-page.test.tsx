@@ -101,3 +101,14 @@ it('단위가 추가되어도 필드 이름·오류·입력 이벤트는 유지�
   expect(screen.getByText('원')).toBeTruthy();
   expect(screen.getByRole('alert')).toBeTruthy();
 });
+
+it('원 단위 금액은 천 단위 쉼표로 보이고 폼에는 숫자만 전달한다', async () => {
+  const onChange = jest.fn();
+  await render(<TextField label="가용 현금" value="12000000" onChangeText={onChange} unit="원" />);
+
+  const input = screen.getByLabelText('가용 현금');
+  expect(input.props.value).toBe('12,000,000');
+
+  await fireEvent.changeText(input, '12,345,678');
+  expect(onChange).toHaveBeenCalledWith('12345678');
+});

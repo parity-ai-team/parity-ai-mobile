@@ -1,11 +1,12 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { router } from 'expo-router';
 import type { ReactElement } from 'react';
+import { Text } from 'react-native';
 
 import ConsentScreenRoute from '@/app/consent';
 import StartScreenRoute from '@/app/index';
 import ScenarioScreenRoute from '@/app/scenario';
-import { OnboardingSessionProvider } from '@/features/onboarding';
+import { OnboardingSessionProvider, useOnboardingSession } from '@/features/onboarding';
 
 // expo-router의 실제 네비게이션 컨테이너 없이도 각 화면이 어느 경로로
 // 이동을 시도하는지 검증하기 위해 router.push를 스파이로 바꾼다.
@@ -15,6 +16,17 @@ jest.mock('expo-router', () => ({
 
 function renderScreen(element: ReactElement) {
   return render(<OnboardingSessionProvider>{element}</OnboardingSessionProvider>);
+}
+
+function SelectionProbe() {
+  const { scenarioSelection } = useOnboardingSession();
+  return (
+    <Text testID="scenario-selection">
+      {scenarioSelection?.type === 'demo'
+        ? `demo:${scenarioSelection.scenarioId}`
+        : (scenarioSelection?.type ?? 'none')}
+    </Text>
+  );
 }
 
 async function agreeToAllConsents() {
@@ -29,19 +41,33 @@ describe('온보딩 라우팅 (S01 → S02 → S03 → S04)', () => {
   });
 
   it('S01 "시작" 버튼은 /consent로 이동한다', async () => {
-    await renderScreen(<StartScreenRoute />);
+    await renderScreen(
+      <>
+        <StartScreenRoute />
+        <SelectionProbe />
+      </>,
+    );
 
     await fireEvent.press(screen.getByRole('button', { name: '시작' }));
 
     expect(router.push).toHaveBeenCalledWith('/consent');
+    expect(screen.getByTestId('scenario-selection').props.children).toBe('manual');
   });
 
   it('S01 "데모로 보기" 버튼도 /consent로 이동한다', async () => {
-    await renderScreen(<StartScreenRoute />);
+    await renderScreen(
+      <>
+        <StartScreenRoute />
+        <SelectionProbe />
+      </>,
+    );
 
     await fireEvent.press(screen.getByRole('button', { name: '데모로 보기' }));
 
     expect(router.push).toHaveBeenCalledWith('/consent');
+    expect(screen.getByTestId('scenario-selection').props.children).toBe(
+      'demo:first_birth_dual_income',
+    );
   });
 
   it('S02는 동의를 모두 마쳐야 /scenario로 이동한다', async () => {

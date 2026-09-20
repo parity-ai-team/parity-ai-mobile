@@ -56,7 +56,10 @@ export function createStyles(theme: Theme) {
     brandLogo: {
       width: theme.layout.brandLogoWidth,
       height: theme.layout.brandLogoHeight,
-      transform: [{ scale: theme.layout.brandLogoScale }],
+      transform: [
+        { translateX: theme.layout.brandLogoTranslateX },
+        { scale: theme.layout.brandLogoScale },
+      ],
     },
     brand: {
       position: 'absolute',

@@ -35,6 +35,7 @@ export const layout = {
   brandLogoWidth: 80,
   brandLogoHeight: 56,
   brandLogoScale: 1.65,
+  brandLogoTranslateX: -8,
   mascotSize: 216,
   visuallyHiddenSize: 1,
   deviceWidth: 390,

@@ -22,7 +22,7 @@ export const colors = {
   success: '#27633F',
   disabledSurface: '#E9EEEC',
   disabledText: '#596562',
-  dataModeSynthetic: '#245BB0',
+  dataModeSynthetic: '#0B7B69',
   dataModeVerified: '#27633F',
   dataModeAssumed: '#865000',
   deviceFrame: '#242722',

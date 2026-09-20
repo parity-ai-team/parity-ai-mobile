@@ -77,5 +77,16 @@ export function Column({
     width !== undefined && windowWidth >= theme.layout.desktop
       ? { width, flexGrow: theme.layout.zero, flexShrink: theme.layout.zero }
       : undefined;
-  return <View style={[styles.column, fixed, style]}>{children}</View>;
+  return (
+    <View
+      style={[
+        styles.column,
+        windowWidth >= theme.layout.desktop && styles.columnWide,
+        fixed,
+        style,
+      ]}
+    >
+      {children}
+    </View>
+  );
 }

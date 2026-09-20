@@ -33,6 +33,7 @@ export function createStyles(theme: Theme) {
     },
     columns: { gap: theme.spacing.xl },
     columnsWide: { flexDirection: 'row', alignItems: 'flex-start' },
-    column: { flex: theme.layout.flex, minWidth: theme.layout.zero, gap: theme.spacing.lg },
+    column: { minWidth: theme.layout.zero, gap: theme.spacing.lg },
+    columnWide: { flex: theme.layout.flex },
   });
 }

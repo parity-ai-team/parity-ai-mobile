@@ -16,6 +16,9 @@ export function createStyles(theme: Theme) {
       borderColor: theme.colors.brand,
       borderWidth: 2,
     },
+    selectionArea: {
+      gap: theme.spacing.sm,
+    },
     headerRow: {
       flexDirection: 'row',
       alignItems: 'center',

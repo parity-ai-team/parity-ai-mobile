@@ -33,9 +33,10 @@ function formatProbabilityPercent(probability: number): string {
 
 // docs/frontend.md "핵심 UI 컴포넌트": severity를 색+텍스트로, 원인은 최대
 // 3개까지 사람이 읽는 문구로 보여준다. probability가 null이면(계약상 선택
-// 값) 표시하지 않는다 — 화면에서 값을 만들어내지 않는다. onPress를 주면 카드
-// 전체가 눌림 대상이 된다(S09 결과 화면의 차트-카드 선택 동기화용) — 안의
-// "근거 보기" 버튼은 별개의 Pressable이라 눌러도 이 onPress로 전파되지 않는다.
+// 값) 표시하지 않는다 — 화면에서 값을 만들어내지 않는다. onPress를 주면
+// 제목·원인 태그·금액 영역만 눌림 대상이 된다(S09 결과 화면의 차트-카드 선택
+// 동기화용). "근거 보기" Button도 내부적으로 Pressable이라, 그 안에 두면 웹에서
+// <button> 중첩 오류가 난다 — 그래서 evidenceRow를 이 Pressable의 형제로 뺐다.
 export function RiskCauseCard({
   risk,
   selected = false,
@@ -56,44 +57,46 @@ export function RiskCauseCard({
   const traceIds = risk.trace_ids ?? [];
 
   return (
-    <Pressable
-      style={[styles.card, selected && styles.cardSelected]}
-      onPress={onPress}
-      accessibilityRole={onPress ? 'button' : undefined}
-      accessibilityState={onPress ? { selected } : undefined}
-      testID={testID}
-    >
-      <View style={styles.headerRow}>
-        <Text style={styles.period}>
-          {risk.period}
-          {selected ? ' · 선택됨' : ''}
-        </Text>
-        <View style={[styles.severityChip, severityStyle]} testID={testID && `${testID}-severity`}>
-          <Text style={styles.severityLabel}>{SEVERITY_LABEL[risk.severity]}</Text>
-        </View>
-      </View>
-
-      <View style={styles.causeRow}>
-        {visibleCauses.map((code) => (
-          <View key={code} style={styles.causeChip}>
-            <Text style={styles.causeLabel}>{getCauseCodeLabel(code)}</Text>
+    <View style={[styles.card, selected && styles.cardSelected]}>
+      <Pressable
+        style={styles.selectionArea}
+        onPress={onPress}
+        accessibilityRole={onPress ? 'button' : undefined}
+        accessibilityState={onPress ? { selected } : undefined}
+        testID={testID}
+      >
+        <View style={styles.headerRow}>
+          <Text style={styles.period}>
+            {risk.period}
+            {selected ? ' · 선택됨' : ''}
+          </Text>
+          <View style={[styles.severityChip, severityStyle]} testID={testID && `${testID}-severity`}>
+            <Text style={styles.severityLabel}>{SEVERITY_LABEL[risk.severity]}</Text>
           </View>
-        ))}
-      </View>
+        </View>
 
-      <Text style={styles.gap}>{formatKrw(risk.expected_gap_krw)}</Text>
+        <View style={styles.causeRow}>
+          {visibleCauses.map((code) => (
+            <View key={code} style={styles.causeChip}>
+              <Text style={styles.causeLabel}>{getCauseCodeLabel(code)}</Text>
+            </View>
+          ))}
+        </View>
 
-      {risk.probability !== null && risk.probability !== undefined ? (
-        <Text style={styles.probability}>
-          부족 확률 {formatProbabilityPercent(risk.probability)}
-        </Text>
-      ) : null}
+        <Text style={styles.gap}>{formatKrw(risk.expected_gap_krw)}</Text>
 
-      <ConfidenceTag
-        level={risk.confidence}
-        source={risk.source}
-        testID={testID && `${testID}-confidence`}
-      />
+        {risk.probability !== null && risk.probability !== undefined ? (
+          <Text style={styles.probability}>
+            부족 확률 {formatProbabilityPercent(risk.probability)}
+          </Text>
+        ) : null}
+
+        <ConfidenceTag
+          level={risk.confidence}
+          source={risk.source}
+          testID={testID && `${testID}-confidence`}
+        />
+      </Pressable>
 
       {onPressEvidence && traceIds.length > 0 ? (
         <View style={styles.evidenceRow}>
@@ -107,6 +110,6 @@ export function RiskCauseCard({
           ))}
         </View>
       ) : null}
-    </Pressable>
+    </View>
   );
 }

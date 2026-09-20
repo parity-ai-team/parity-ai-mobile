@@ -21,7 +21,7 @@ jest.mock('@/shared/api', () => {
 // eslint-disable-next-line @typescript-eslint/no-require-imports
 const { router } = require('expo-router');
 // eslint-disable-next-line @typescript-eslint/no-require-imports
-const { apiRequest } = require('@/shared/api');
+const { apiRequest, ApiError } = require('@/shared/api');
 
 function buildAnalysisResponse(overrides: Partial<AnalysisResponse> = {}): AnalysisResponse {
   return {
@@ -226,5 +226,27 @@ describe('AlternativesScreen — 기준선과 대안 비교', () => {
     await renderAlternativesScreen(buildAnalysisResponse());
 
     await waitFor(() => expect(screen.getByText('대안을 불러오지 못했어요')).toBeTruthy());
+  });
+
+  // 2026-09-20 백엔드 팀 확인: 무료 플랜은 재시작되면 analysis_id가 사라질
+  // 수 있다 — 이 경우는 결과 화면으로 돌아가도 소용없으니 시작으로 보낸다.
+  it('분석을 찾을 수 없으면(ANALYSIS_NOT_FOUND) 시작으로 돌아가는 안내를 보여준다', async () => {
+    (apiRequest as jest.Mock).mockRejectedValue(
+      new ApiError(
+        {
+          request_id: 'req_err',
+          error: { code: 'ANALYSIS_NOT_FOUND', message: '존재하지 않습니다.', retryable: false },
+        },
+        404,
+      ),
+    );
+
+    await renderAlternativesScreen(buildAnalysisResponse());
+
+    await waitFor(() =>
+      expect(screen.getByText('분석을 찾을 수 없어요. 다시 시작해 주세요.')).toBeTruthy(),
+    );
+    await fireEvent.press(screen.getByRole('button', { name: '시작으로' }));
+    expect(router.push).toHaveBeenCalledWith('/');
   });
 });

@@ -36,6 +36,10 @@ export default function AlternativesScreen() {
   // setState를 동기 호출"을 피하기 위해 초기값을 true로만 둔다.
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // 서버가 무료 플랜이라 재시작되면 analysis_id가 사라질 수 있다(2026-09-20
+  // 백엔드 팀 확인) — 이 경우는 결과 화면으로 돌아가도 소용없으니 시작으로
+  // 보낸다.
+  const [analysisMissing, setAnalysisMissing] = useState(false);
 
   const analysisId = analysisResponse?.analysis_id ?? null;
   const usable = analysisResponse ? isResultUsable(analysisResponse.status) : false;
@@ -60,11 +64,16 @@ export default function AlternativesScreen() {
         if (cancelled) {
           return;
         }
-        setError(
-          caught instanceof ApiError
-            ? caught.message
-            : '대안을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
-        );
+        if (caught instanceof ApiError && caught.code === 'ANALYSIS_NOT_FOUND') {
+          setAnalysisMissing(true);
+          setError('분석을 찾을 수 없어요. 다시 시작해 주세요.');
+        } else {
+          setError(
+            caught instanceof ApiError
+              ? caught.message
+              : '대안을 불러오지 못했어요. 잠시 후 다시 시도해 주세요.',
+          );
+        }
       })
       .finally(() => {
         if (!cancelled) {
@@ -94,6 +103,16 @@ export default function AlternativesScreen() {
       <Page wide contentContainerStyle={styles.content}>
         <LoadingCards testID="alternatives-loading" />
         <Text style={styles.body}>대안을 불러오는 중이에요…</Text>
+      </Page>
+    );
+  }
+
+  if (analysisMissing) {
+    return (
+      <Page wide contentContainerStyle={styles.content}>
+        <Text style={styles.title}>분석을 찾을 수 없어요</Text>
+        <Text style={styles.body}>분석을 찾을 수 없어요. 다시 시작해 주세요.</Text>
+        <Button label="시작으로" onPress={() => router.push('/')} />
       </Page>
     );
   }

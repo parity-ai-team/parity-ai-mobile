@@ -16,6 +16,7 @@ import {
   useTheme,
 } from '@/shared/ui';
 
+import { DemoPrefillNotice } from '../../components/DemoPrefillNotice/DemoPrefillNotice';
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
   BOOLEAN_CHOICE_OPTIONS,
@@ -35,7 +36,7 @@ import { createStyles } from './PlanScreen.styles';
 export default function PlanScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const { draft, updatePlan, updateStress } = useFinancialInputSession();
+  const { draft, origin, updatePlan, updateStress } = useFinancialInputSession();
 
   const {
     control,
@@ -94,6 +95,7 @@ export default function PlanScreen() {
         <Column>
           <Text style={styles.title}>휴직·소득 계획</Text>
           <Text style={styles.intro}>해당 사항이 없어도 0 또는 아니오를 직접 선택해 주세요.</Text>
+          {origin === 'demo' ? <DemoPrefillNotice /> : null}
 
           <Card>
             <Text style={styles.sectionTitle}>휴직 계획</Text>

@@ -7,6 +7,7 @@ import { Text } from 'react-native';
 
 import { Card, Columns, Column, StepProgress, Button, TextField, useTheme } from '@/shared/ui';
 
+import { DemoPrefillNotice } from '../../components/DemoPrefillNotice/DemoPrefillNotice';
 import { useFinancialInputSession } from '../../FinancialInputSessionContext';
 import {
   EMPTY_FINANCIAL_FORM_VALUES,
@@ -23,7 +24,7 @@ import { createStyles } from './FinancialScreen.styles';
 export default function FinancialScreen() {
   const theme = useTheme();
   const styles = createStyles(theme);
-  const { draft, updateFinancial } = useFinancialInputSession();
+  const { draft, origin, updateFinancial } = useFinancialInputSession();
 
   const {
     control,
@@ -69,6 +70,7 @@ export default function FinancialScreen() {
           <Text style={styles.intro}>
             가용 현금과 매달 들어오고 나가는 금액을 원 단위로 입력해요.
           </Text>
+          {origin === 'demo' ? <DemoPrefillNotice /> : null}
 
           <Card>
             <Controller

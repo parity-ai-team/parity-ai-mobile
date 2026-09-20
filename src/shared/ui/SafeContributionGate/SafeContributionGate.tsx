@@ -43,7 +43,7 @@ export function SafeContributionGate({
       ) : (
         <>
           <Text style={styles.body}>
-            아직 비상금·부족확률 기준을 통과하지 못해 적립을 시작하기 이른 시점이에요.
+            아직 비상금·부족확률 기준을 통과하지 못해 안전한 적립 금액을 제시하지 않아요.
           </Text>
           {reasonCodes.length > 0 ? (
             <View style={styles.reasonRow}>

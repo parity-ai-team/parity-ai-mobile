@@ -222,4 +222,12 @@ describe('ResultScreen — 근거·화면 이동', () => {
 
     expect(router.push).toHaveBeenCalledWith('/alternatives');
   });
+
+  it('안전 적립을 누르면 /asset-start로 이동한다', async () => {
+    await renderResultScreen(buildAnalysisResponse());
+
+    await fireEvent.press(screen.getByRole('button', { name: '안전 적립' }));
+
+    expect(router.push).toHaveBeenCalledWith('/asset-start');
+  });
 });

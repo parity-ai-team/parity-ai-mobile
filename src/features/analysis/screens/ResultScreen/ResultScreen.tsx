@@ -97,6 +97,7 @@ export default function ResultScreen() {
       <View style={styles.actionRow}>
         <Button label="입력 수정" variant="secondary" onPress={() => router.push('/plan')} />
         <Button label="대안 비교" onPress={() => router.push('/alternatives')} />
+        <Button label="안전 적립" onPress={() => router.push('/asset-start')} />
       </View>
     </ScrollView>
   );

@@ -1,8 +1,9 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { Button, ChoiceField, TextField, useTheme } from '@/shared/ui';
 
@@ -71,7 +72,7 @@ export default function PlanScreen() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <Text style={styles.title}>휴직·소득 계획</Text>
       <Text style={styles.intro}>
         계획이 아직 없다면 비워두어도 괜찮아요. 서버가 기본값으로 계산해요.
@@ -145,6 +146,6 @@ export default function PlanScreen() {
       />
 
       <Button label="다음" onPress={onSubmit} />
-    </ScrollView>
+    </Page>
   );
 }

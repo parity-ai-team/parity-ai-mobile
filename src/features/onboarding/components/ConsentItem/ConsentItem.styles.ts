@@ -14,10 +14,10 @@ export function createStyles(theme: Theme) {
       gap: theme.spacing.sm,
     },
     box: {
-      width: 24,
-      height: 24,
+      width: theme.spacing.xl,
+      minHeight: theme.spacing.xl,
       borderRadius: theme.radii.sm,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       alignItems: 'center',
       justifyContent: 'center',
@@ -28,19 +28,18 @@ export function createStyles(theme: Theme) {
     },
     checkMark: {
       color: theme.colors.textInverse,
-      fontSize: 14,
-      fontWeight: '700',
+      ...theme.typography.labelMedium,
     },
     label: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
-      flexShrink: 1,
+      flexShrink: theme.layout.flex,
       // 동적 글꼴 확대 시에도 잘리지 않도록 numberOfLines로 자르지 않는다.
     },
     description: {
       ...theme.typography.bodySmall,
       color: theme.colors.textSecondary,
-      paddingLeft: 24 + theme.spacing.sm,
+      paddingLeft: theme.spacing.xl + theme.spacing.sm,
     },
   });
 }

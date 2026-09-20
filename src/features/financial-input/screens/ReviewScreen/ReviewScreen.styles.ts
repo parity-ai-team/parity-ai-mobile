@@ -5,7 +5,7 @@ import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     content: {
-      flexGrow: 1,
+      flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
       paddingBottom: theme.spacing.xl,
       gap: theme.spacing.md,
@@ -27,7 +27,7 @@ export function createStyles(theme: Theme) {
     row: {
       padding: theme.spacing.md,
       borderRadius: theme.radii.md,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,

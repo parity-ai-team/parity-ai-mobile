@@ -1,6 +1,7 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
@@ -76,39 +77,39 @@ export default function AlternativesScreen() {
 
   if (!analysisResponse || !usable) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <Text style={styles.title}>대안 비교</Text>
         <Text style={styles.body}>
           결과가 준비돼야 대안을 비교할 수 있어요. 먼저 결과 화면에서 분석 상태를 확인해 주세요.
         </Text>
         <Button label="결과 화면으로" onPress={() => router.push('/analysis/result')} />
-      </ScrollView>
+      </Page>
     );
   }
 
   if (loading) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <ActivityIndicator size="large" color={theme.colors.brand} testID="alternatives-loading" />
         <Text style={styles.body}>대안을 불러오는 중이에요…</Text>
-      </ScrollView>
+      </Page>
     );
   }
 
   if (error || !comparison) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <Text style={styles.title}>대안을 불러오지 못했어요</Text>
         <Text style={styles.body}>{error ?? '잠시 후 다시 시도해 주세요.'}</Text>
         <Button label="결과 화면으로" onPress={() => router.push('/analysis/result')} />
-      </ScrollView>
+      </Page>
     );
   }
 
   const { current_state: baseline, alternatives } = comparison;
 
   return (
-    <ScrollView contentContainerStyle={styles.content} testID="alternatives-screen">
+    <Page contentContainerStyle={styles.content} testID="alternatives-screen">
       <DataModeBadge mode="synthetic" dataVersion={analysisResponse.versions.data} />
 
       <Text style={styles.title}>대안 비교</Text>
@@ -144,7 +145,11 @@ export default function AlternativesScreen() {
         ))}
       </View>
 
-      <Button label="결과 화면으로" variant="secondary" onPress={() => router.push('/analysis/result')} />
-    </ScrollView>
+      <Button
+        label="결과 화면으로"
+        variant="secondary"
+        onPress={() => router.push('/analysis/result')}
+      />
+    </Page>
   );
 }

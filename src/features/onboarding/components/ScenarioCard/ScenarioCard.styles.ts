@@ -8,14 +8,14 @@ export function createStyles(theme: Theme) {
       minHeight: theme.accessibility.minTouchTarget,
       padding: theme.spacing.md,
       borderRadius: theme.radii.md,
-      borderWidth: 1,
+      borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,
     },
     cardSelected: {
       borderColor: theme.colors.brand,
-      borderWidth: 2,
+      borderWidth: theme.layout.strongStroke,
     },
     title: {
       ...theme.typography.labelMedium,

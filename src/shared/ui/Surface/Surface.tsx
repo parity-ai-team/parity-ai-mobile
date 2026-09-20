@@ -30,10 +30,10 @@ export function LoadingCards({ testID }: { testID?: string }) {
     <View
       style={styles.card}
       accessibilityRole="progressbar"
-      accessibilityLabel="??? ???? ???"
+      accessibilityLabel="결과를 준비하고 있어요"
       testID={testID}
     >
-      <Text style={styles.label}>?? ?? ? ???? ?? ? ?? ??</Text>
+      <Text style={styles.label}>입력 확인 → 현금흐름 계산 → 결과 준비</Text>
       <View style={styles.skeleton} />
       <View style={styles.skeleton} />
     </View>

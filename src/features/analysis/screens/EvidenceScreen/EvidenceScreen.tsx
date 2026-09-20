@@ -1,6 +1,7 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
@@ -73,35 +74,35 @@ export default function EvidenceScreen() {
 
   if (!analysisResponse || !analysisId) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <Text style={styles.title}>근거</Text>
         <Text style={styles.body}>세션이 만료됐어요. 검토 화면에서 다시 시작해 주세요.</Text>
         <Button label="검토 화면으로" onPress={() => router.push('/review')} />
-      </ScrollView>
+      </Page>
     );
   }
 
   if (loading) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <ActivityIndicator size="large" color={theme.colors.brand} testID="evidence-loading" />
         <Text style={styles.body}>근거를 불러오는 중이에요…</Text>
-      </ScrollView>
+      </Page>
     );
   }
 
   if (error || !evidence) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <Text style={styles.title}>근거를 표시할 수 없어요</Text>
         <Text style={styles.body}>{error ?? '요청한 근거를 찾을 수 없어요.'}</Text>
         <Button label="뒤로 가기" onPress={() => router.back()} />
-      </ScrollView>
+      </Page>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.content} testID="evidence-screen">
+    <Page contentContainerStyle={styles.content} testID="evidence-screen">
       <Text style={styles.title}>근거</Text>
       <Text style={styles.subtitle}>{`추적 ID: ${evidence.trace_id}`}</Text>
 
@@ -144,7 +145,11 @@ export default function EvidenceScreen() {
         {EXPLANATION_SOURCE_LABEL[evidence.explanation.source]}
       </Text>
 
-      <Button label="결과 화면으로" variant="secondary" onPress={() => router.push('/analysis/result')} />
-    </ScrollView>
+      <Button
+        label="결과 화면으로"
+        variant="secondary"
+        onPress={() => router.push('/analysis/result')}
+      />
+    </Page>
   );
 }

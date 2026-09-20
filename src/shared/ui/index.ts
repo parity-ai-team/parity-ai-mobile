@@ -27,3 +27,5 @@ export type { TextFieldProps } from './TextField';
 export * from './theme';
 
 export { Card, Chip, LoadingCards } from './Surface/Surface';
+export { Page, Columns, Column } from './Page/Page';
+export { StepProgress } from './StepProgress/StepProgress';

@@ -1,5 +1,6 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { isResultUsable } from '@/shared/types';
@@ -23,11 +24,11 @@ export default function AssetStartScreen() {
 
   if (!analysisResponse) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <Text style={styles.title}>안전 적립</Text>
         <Text style={styles.body}>세션이 만료됐어요. 검토 화면에서 다시 시작해 주세요.</Text>
         <Button label="검토 화면으로" onPress={() => router.push('/review')} />
-      </ScrollView>
+      </Page>
     );
   }
 
@@ -35,19 +36,17 @@ export default function AssetStartScreen() {
 
   if (!isResultUsable(status) || !result) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <DataModeBadge mode="synthetic" dataVersion={versions.data} />
         <Text style={styles.title}>아직 안전 적립을 판단할 수 없어요</Text>
-        <Text style={styles.body}>
-          현재 상태: {status}. 결과가 준비된 뒤 다시 확인해 주세요.
-        </Text>
+        <Text style={styles.body}>현재 상태: {status}. 결과가 준비된 뒤 다시 확인해 주세요.</Text>
         <Button label="결과 화면으로" onPress={() => router.push('/analysis/result')} />
-      </ScrollView>
+      </Page>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.content} testID="asset-start-screen">
+    <Page contentContainerStyle={styles.content} testID="asset-start-screen">
       <DataModeBadge mode="synthetic" dataVersion={versions.data} />
 
       <Text style={styles.title}>안전 적립</Text>
@@ -61,7 +60,11 @@ export default function AssetStartScreen() {
         testID="asset-start-safe-contribution"
       />
 
-      <Button label="결과 화면으로" variant="secondary" onPress={() => router.push('/analysis/result')} />
-    </ScrollView>
+      <Button
+        label="결과 화면으로"
+        variant="secondary"
+        onPress={() => router.push('/analysis/result')}
+      />
+    </Page>
   );
 }

@@ -1,5 +1,6 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { Button, useTheme } from '@/shared/ui';
 
@@ -17,7 +18,7 @@ export default function ConsentScreen() {
   const goToScenario = () => router.push('/scenario');
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <Text style={styles.title}>동의</Text>
       <Text style={styles.intro}>
         다음 정보를 12개월 현금흐름 비교에 사용하려면 각 항목에 동의해 주세요.
@@ -51,6 +52,6 @@ export default function ConsentScreen() {
       </Text>
 
       <Button label="다음" onPress={goToScenario} disabled={!allConsentsGranted} />
-    </ScrollView>
+    </Page>
   );
 }

@@ -1,6 +1,7 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { isResultUsable } from '@/shared/types';
@@ -32,11 +33,11 @@ export default function ResultScreen() {
 
   if (!analysisResponse) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <Text style={styles.title}>결과를 찾을 수 없어요</Text>
         <Text style={styles.body}>세션이 만료됐어요. 검토 화면에서 다시 시작해 주세요.</Text>
         <Button label="검토 화면으로" onPress={() => router.push('/review')} />
-      </ScrollView>
+      </Page>
     );
   }
 
@@ -44,19 +45,19 @@ export default function ResultScreen() {
 
   if (!isResultUsable(status) || !result) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <DataModeBadge mode="synthetic" dataVersion={versions.data} />
         <Text style={styles.title}>아직 결과를 보여드릴 수 없어요</Text>
         <Text style={styles.body}>
           현재 상태: {status}. 입력을 다시 확인하거나 잠시 후 다시 시도해 주세요.
         </Text>
         <Button label="입력 수정" onPress={() => router.push('/plan')} />
-      </ScrollView>
+      </Page>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <DataModeBadge mode="synthetic" dataVersion={versions.data} />
       <LimitationsNotice limitations={limitations ?? []} testID="result-limitations" />
 
@@ -99,6 +100,6 @@ export default function ResultScreen() {
         <Button label="대안 비교" onPress={() => router.push('/alternatives')} />
         <Button label="안전 적립" onPress={() => router.push('/asset-start')} />
       </View>
-    </ScrollView>
+    </Page>
   );
 }

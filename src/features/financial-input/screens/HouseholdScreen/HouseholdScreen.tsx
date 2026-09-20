@@ -1,8 +1,9 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { Button, ChoiceField, TextField, useTheme } from '@/shared/ui';
 
@@ -56,7 +57,7 @@ export default function HouseholdScreen() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <Text style={styles.title}>가구 정보</Text>
       <Text style={styles.intro}>출산 예정과 가족 구성을 알려주세요.</Text>
 
@@ -127,6 +128,6 @@ export default function HouseholdScreen() {
       />
 
       <Button label="다음" onPress={onSubmit} />
-    </ScrollView>
+    </Page>
   );
 }

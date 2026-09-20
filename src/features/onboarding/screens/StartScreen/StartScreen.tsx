@@ -1,5 +1,6 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { Button, useTheme } from '@/shared/ui';
 
@@ -16,7 +17,7 @@ export default function StartScreen() {
   const goToConsent = () => router.push('/consent');
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <Text style={styles.title}>PARITY AI</Text>
       <Text style={styles.body}>
         PARITY AI는 출산 전후 12개월의 가용 현금 흐름을 비교해 보여주는 안내 서비스예요. 의료나 금융
@@ -27,6 +28,6 @@ export default function StartScreen() {
       </Text>
       <Button label="시작" onPress={goToConsent} />
       <Button label="데모로 보기" onPress={goToConsent} variant="secondary" />
-    </ScrollView>
+    </Page>
   );
 }

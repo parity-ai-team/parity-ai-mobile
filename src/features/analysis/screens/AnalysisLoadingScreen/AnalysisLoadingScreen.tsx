@@ -1,6 +1,7 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
-import { ActivityIndicator, ScrollView, Text } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native';
 
 import { useFinancialInputSession } from '@/features/financial-input';
 import { Button, useTheme } from '@/shared/ui';
@@ -25,20 +26,20 @@ export default function AnalysisLoadingScreen() {
 
   if (analysisResponse) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <ActivityIndicator size="large" color={theme.colors.brand} />
         <Text style={styles.title}>분석 중이에요…</Text>
-      </ScrollView>
+      </Page>
     );
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <Text style={styles.title}>분석 결과를 찾을 수 없어요</Text>
       <Text style={styles.body}>
         세션이 만료되었거나 아직 분석을 시작하지 않았어요. 검토 화면에서 다시 시도해 주세요.
       </Text>
       <Button label="다시 시도" onPress={() => router.push('/review')} />
-    </ScrollView>
+    </Page>
   );
 }

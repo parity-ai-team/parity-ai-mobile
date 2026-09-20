@@ -1,6 +1,7 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 
 import { apiRequest, ApiError, endpoints } from '@/shared/api';
 import { formatKrw } from '@/shared/format';
@@ -47,13 +48,13 @@ export default function ReviewScreen() {
 
   if (incomplete) {
     return (
-      <ScrollView contentContainerStyle={styles.content}>
+      <Page contentContainerStyle={styles.content}>
         <Text style={styles.title}>검토</Text>
         <Text style={styles.incompleteNotice}>
           아직 채우지 않은 입력이 있어요. 가구 정보부터 다시 확인해 주세요.
         </Text>
         <Button label="가구 정보로 이동" onPress={() => router.push('/household')} />
-      </ScrollView>
+      </Page>
     );
   }
 
@@ -93,7 +94,7 @@ export default function ReviewScreen() {
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <Text style={styles.title}>검토</Text>
       <Text style={styles.intro}>
         입력한 값을 확인해 주세요. 가정값은 비워두어 서버 기본값이 적용될 값이에요.
@@ -211,7 +212,7 @@ export default function ReviewScreen() {
         onPress={onSubmit}
         disabled={submitting}
       />
-    </ScrollView>
+    </Page>
   );
 }
 

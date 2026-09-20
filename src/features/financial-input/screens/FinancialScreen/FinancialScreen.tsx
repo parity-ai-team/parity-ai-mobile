@@ -1,8 +1,9 @@
+import { Page } from '@/shared/ui/Page/Page';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { router } from 'expo-router';
 import { useEffect } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ScrollView, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { Button, TextField, useTheme } from '@/shared/ui';
 
@@ -54,7 +55,7 @@ export default function FinancialScreen() {
   });
 
   return (
-    <ScrollView contentContainerStyle={styles.content}>
+    <Page contentContainerStyle={styles.content}>
       <Text style={styles.title}>금융 정보</Text>
       <Text style={styles.intro}>가용 현금과 매달 들어오고 나가는 금액을 원 단위로 입력해요.</Text>
 
@@ -147,6 +148,6 @@ export default function FinancialScreen() {
       />
 
       <Button label="다음" onPress={onSubmit} />
-    </ScrollView>
+    </Page>
   );
 }

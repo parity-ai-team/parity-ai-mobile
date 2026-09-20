@@ -4,11 +4,7 @@ import { formatKrw } from '@/shared/format';
 import type { AlternativeDetail, AlternativeOutcome } from '@/shared/types';
 import { Button, useTheme } from '@/shared/ui';
 
-import {
-  getActionBurdenLabel,
-  getActionTypeLabel,
-  getAlternativeKindLabel,
-} from '../../labels';
+import { getActionBurdenLabel, getActionTypeLabel, getAlternativeKindLabel } from '../../labels';
 import { createStyles } from './AlternativesScreen.styles';
 
 export interface AlternativeCardProps {
@@ -33,7 +29,12 @@ function isWorseThanBaseline(
   return outcome[metric] < baseline[metric];
 }
 
-export function AlternativeCard({ detail, baseline, onPressEvidence, testID }: AlternativeCardProps) {
+export function AlternativeCard({
+  detail,
+  baseline,
+  onPressEvidence,
+  testID,
+}: AlternativeCardProps) {
   const theme = useTheme();
   const styles = createStyles(theme);
   const traceIds = detail.trace_ids ?? [];
@@ -93,9 +94,7 @@ export function AlternativeCard({ detail, baseline, onPressEvidence, testID }: A
           {detail.actions.map((action, index) => (
             <Text key={`${action.action_type}-${index}`} style={styles.actionRow}>
               {`${getActionTypeLabel(action.action_type)} · ${formatKrw(action.amount_krw)}`}
-              {action.affected_periods.length > 0
-                ? ` · ${action.affected_periods.join(', ')}`
-                : ''}
+              {action.affected_periods.length > 0 ? ` · ${action.affected_periods.join(', ')}` : ''}
             </Text>
           ))}
         </View>

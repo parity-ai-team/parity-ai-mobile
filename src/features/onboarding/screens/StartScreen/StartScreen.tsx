@@ -1,8 +1,10 @@
 import { Page } from '@/shared/ui/Page/Page';
 import { router } from 'expo-router';
-import { Text } from 'react-native';
+import { Text, View } from 'react-native';
 
-import { Button, useTheme } from '@/shared/ui';
+import Svg, { Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
+
+import { Button, Card, Chip, useTheme } from '@/shared/ui';
 
 import { createStyles } from './StartScreen.styles';
 
@@ -18,14 +20,49 @@ export default function StartScreen() {
 
   return (
     <Page contentContainerStyle={styles.content}>
-      <Text style={styles.title}>PARITY AI</Text>
-      <Text style={styles.body}>
-        PARITY AI는 출산 전후 12개월의 가용 현금 흐름을 비교해 보여주는 안내 서비스예요. 의료나 금융
-        상담을 대신하지 않고, 계산에 필요한 근거와 가정을 함께 보여줘요.
-      </Text>
-      <Text style={styles.notice}>
-        지금 보시는 화면과 예시 데이터는 실제 정보가 아닌 합성 데이터예요.
-      </Text>
+      <View style={styles.hero}>
+        <Svg
+          width={theme.layout.full}
+          height={theme.layout.full}
+          style={styles.gradient}
+          accessible={false}
+        >
+          <Defs>
+            <LinearGradient
+              id="parity-hero"
+              x1={theme.layout.gradientStart}
+              y1={theme.layout.gradientStart}
+              x2={theme.layout.gradientEnd}
+              y2={theme.layout.gradientEnd}
+            >
+              <Stop offset={theme.layout.gradientStart} stopColor={theme.colors.mint} />
+              <Stop offset={theme.layout.gradientMid} stopColor={theme.colors.brandBright} />
+              <Stop offset={theme.layout.gradientEnd} stopColor={theme.colors.deepGreen} />
+            </LinearGradient>
+          </Defs>
+          <Rect width={theme.layout.full} height={theme.layout.full} fill="url(#parity-hero)" />
+        </Svg>
+        <View style={styles.heroIntro}>
+          <Text style={styles.eyebrow}>PARITY AI</Text>
+          <Text style={styles.title}>가족의 새로운 시작,{'\n'}현금흐름부터 차분하게</Text>
+          <Chip label="출산 전후 12개월 · 비교와 안내" tone="brand" />
+        </View>
+        <View style={styles.heroBottom}>
+          <Text style={styles.heroNumber}>12개월</Text>
+          <Text style={styles.heroCaption}>변화하는 수입과 지출을 한눈에</Text>
+          <Text style={styles.heroCaption}>현금흐름 · 대안 비교 · 계산 근거</Text>
+        </View>
+      </View>
+      <Card>
+        <Text style={styles.sectionTitle}>내일의 계획을 위한 오늘의 확인</Text>
+        <Text style={styles.body}>
+          PARITY AI는 출산 전후 12개월의 가용 현금 흐름을 비교해 보여주는 안내 서비스예요. 의료나
+          금융 상담을 대신하지 않고, 계산에 필요한 근거와 가정을 함께 보여줘요.
+        </Text>
+        <Text style={styles.notice}>
+          지금 보시는 화면과 예시 데이터는 실제 정보가 아닌 합성 데이터예요.
+        </Text>
+      </Card>
       <Button label="시작" onPress={goToConsent} />
       <Button label="데모로 보기" onPress={goToConsent} variant="secondary" />
     </Page>

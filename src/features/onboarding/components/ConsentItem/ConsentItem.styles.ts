@@ -5,6 +5,10 @@ import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     container: {
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.lg,
+      padding: theme.spacing.xl,
+      boxShadow: theme.layout.cardShadow,
       gap: theme.spacing.xs,
     },
     row: {
@@ -18,7 +22,7 @@ export function createStyles(theme: Theme) {
       minHeight: theme.spacing.xl,
       borderRadius: theme.radii.sm,
       borderWidth: theme.layout.stroke,
-      borderColor: theme.colors.border,
+      borderColor: theme.colors.inputBorder,
       alignItems: 'center',
       justifyContent: 'center',
     },

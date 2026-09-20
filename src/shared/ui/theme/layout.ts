@@ -14,6 +14,9 @@ export const layout = {
   transition: 'background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease',
   cardShadow: '0px 8px 28px rgba(14, 58, 49, 0.06)',
   heroHeight: 280,
+  gradientStart: '0%',
+  gradientEnd: '100%',
+  gradientMid: '48%',
   skeletonHeight: 96,
   metricColumn: '48%' as const,
 } as const;

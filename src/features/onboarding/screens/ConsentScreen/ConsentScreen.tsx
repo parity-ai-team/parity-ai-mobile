@@ -18,7 +18,10 @@ export default function ConsentScreen() {
   const goToScenario = () => router.push('/scenario');
 
   return (
-    <Page contentContainerStyle={styles.content}>
+    <Page
+      contentContainerStyle={styles.content}
+      footer={<Button label="다음" onPress={goToScenario} disabled={!allConsentsGranted} />}
+    >
       <Text style={styles.title}>동의</Text>
       <Text style={styles.intro}>
         다음 정보를 12개월 현금흐름 비교에 사용하려면 각 항목에 동의해 주세요.
@@ -50,8 +53,6 @@ export default function ConsentScreen() {
         동의는 언제든 철회할 수 있어요. 철회하면 해당 정보 처리를 중단하고, 근거 화면에서 삭제를
         요청할 수 있어요.
       </Text>
-
-      <Button label="다음" onPress={goToScenario} disabled={!allConsentsGranted} />
     </Page>
   );
 }

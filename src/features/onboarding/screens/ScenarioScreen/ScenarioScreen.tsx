@@ -23,7 +23,10 @@ export default function ScenarioScreen() {
   const goToHousehold = () => router.push('/household');
 
   return (
-    <Page contentContainerStyle={styles.content}>
+    <Page
+      contentContainerStyle={styles.content}
+      footer={<Button label="다음" onPress={goToHousehold} disabled={scenarioSelection === null} />}
+    >
       <Text style={styles.title}>시나리오 선택</Text>
       <Text style={styles.intro}>내 상황과 가까운 데모를 선택하거나, 직접 입력해 비교해요.</Text>
 
@@ -48,8 +51,6 @@ export default function ScenarioScreen() {
           testID={`scenario-card-demo-${scenario.scenario_id}`}
         />
       ))}
-
-      <Button label="다음" onPress={goToHousehold} disabled={scenarioSelection === null} />
     </Page>
   );
 }

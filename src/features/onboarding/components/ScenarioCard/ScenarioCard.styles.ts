@@ -5,15 +5,17 @@ import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     card: {
+      boxShadow: theme.layout.cardShadow,
       minHeight: theme.accessibility.minTouchTarget,
-      padding: theme.spacing.md,
-      borderRadius: theme.radii.md,
+      padding: theme.spacing.xl,
+      borderRadius: theme.radii.lg,
       borderWidth: theme.layout.stroke,
       borderColor: theme.colors.border,
       backgroundColor: theme.colors.surface,
       gap: theme.spacing.xs,
     },
     cardSelected: {
+      backgroundColor: theme.colors.brandSoft,
       borderColor: theme.colors.brand,
       borderWidth: theme.layout.strongStroke,
     },

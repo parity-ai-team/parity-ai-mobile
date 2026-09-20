@@ -45,6 +45,7 @@ export default function ReviewScreen() {
   const { draft, origin, scenarioId, isFieldAssumed, setAnalysisResponse } = session;
 
   const [submitting, setSubmitting] = useState(false);
+  const [wakingServer, setWakingServer] = useState(false);
   const [generalError, setGeneralError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
@@ -69,6 +70,7 @@ export default function ReviewScreen() {
 
   const onSubmit = async () => {
     setSubmitting(true);
+    setWakingServer(false);
     setGeneralError(null);
     setFieldErrors({});
 
@@ -85,6 +87,10 @@ export default function ReviewScreen() {
         method: 'POST',
         path: endpoints.analyses(),
         body,
+        // api 모드의 무료 서버는 잠들어 있다가 첫 요청에서 깨는 데 50초
+        // 이상 걸릴 수 있다 — 5초가 지나도 응답이 없으면 그 안내를 보여준다
+        // (mock 모드는 네트워크를 안 타서 이 콜백이 호출되지 않는다).
+        onSlowRequest: () => setWakingServer(true),
       });
       setAnalysisResponse(data);
       // 중첩 index 라우트(src/app/analysis/index.tsx)는 파일 경로가 아니라
@@ -94,11 +100,14 @@ export default function ReviewScreen() {
       if (error instanceof ApiError) {
         setGeneralError(error.message);
         setFieldErrors(mapFieldErrorsByPath(error.envelope.error.field_errors ?? []));
+      } else if (error instanceof Error) {
+        setGeneralError(error.message);
       } else {
         setGeneralError('분석을 시작하지 못했어요. 잠시 후 다시 시도해 주세요.');
       }
     } finally {
       setSubmitting(false);
+      setWakingServer(false);
     }
   };
 
@@ -107,11 +116,18 @@ export default function ReviewScreen() {
       wide
       contentContainerStyle={styles.content}
       footer={
-        <Button
-          label={submitting ? '분석 시작 중...' : '분석 시작'}
-          onPress={onSubmit}
-          disabled={submitting}
-        />
+        <>
+          {wakingServer ? (
+            <Text style={styles.intro} accessibilityRole="alert">
+              서버를 깨우는 중이에요. 처음에는 1분 정도 걸릴 수 있어요.
+            </Text>
+          ) : null}
+          <Button
+            label={submitting ? '분석 시작 중...' : '분석 시작'}
+            onPress={onSubmit}
+            disabled={submitting}
+          />
+        </>
       }
     >
       <Columns>

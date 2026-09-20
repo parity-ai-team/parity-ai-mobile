@@ -129,7 +129,7 @@ describe('EvidenceScreen — 정상 표시', () => {
     expect(screen.queryByText('INCOME_DROP')).toBeNull();
   });
 
-  it('입력값의 출처를 ConfidenceTag(신뢰도 없이 출처만)로 보여준다', async () => {
+  it('입력값이 분석에 반영됐음을 쉽게 보여준다', async () => {
     (apiRequest as jest.Mock).mockResolvedValue({
       data: buildEvidenceResponse(),
       meta: { requestId: 'req', revision: '1', apiVersion: null },
@@ -140,7 +140,7 @@ describe('EvidenceScreen — 정상 표시', () => {
     await waitFor(() => expect(screen.getByTestId('evidence-screen')).toBeTruthy());
     const inputRow = screen.getByTestId('evidence-input-cause_code_1');
     expect(inputRow).toBeTruthy();
-    expect(screen.getByText('계산값')).toBeTruthy();
+    expect(screen.getByText('분석에 반영됨')).toBeTruthy();
   });
 });
 

@@ -12,7 +12,6 @@ import {
   LoadingCards,
   Card,
   Button,
-  ConfidenceTag,
   getCauseCodeLabel,
   useTheme,
 } from '@/shared/ui';
@@ -195,27 +194,37 @@ export default function EvidenceScreen() {
       <Text style={styles.subtitle}>입력한 정보가 결과로 이어진 과정을 쉽게 보여드려요.</Text>
 
       <View style={styles.timelineStep}>
-        <Text style={styles.timelineNumber}>01</Text>
         <Card style={styles.timelineCard}>
-          <Text style={styles.sectionTitle}>무엇을 반영했나요?</Text>
+          <View style={styles.sectionHeader}>
+            <View style={styles.timelineBadge}>
+              <Text style={styles.timelineNumber}>01</Text>
+            </View>
+            <Text style={styles.sectionTitle}>무엇을 반영했나요?</Text>
+          </View>
           <View style={styles.factList}>
             {evidence.inputs.map((input) => (
               <View key={input.name} style={styles.row} testID={`evidence-input-${input.name}`}>
-                <Text style={styles.rowLabel}>{getInputLabel(input.name)}</Text>
-                <Text style={styles.rowValue}>{getInputValue(input.name, input.value)}</Text>
-                <ConfidenceTag source={input.source} />
+                <View style={styles.rowCopy}>
+                  <Text style={styles.rowLabel}>{getInputLabel(input.name)}</Text>
+                  <Text style={styles.rowValue}>{getInputValue(input.name, input.value)}</Text>
+                </View>
+                <Text style={styles.sourceLabel}>분석에 반영됨</Text>
               </View>
             ))}
           </View>
         </Card>
       </View>
       <View style={styles.timelineStep}>
-        <Text style={styles.timelineNumber}>02</Text>
         <Card style={styles.timelineCard}>
-          <Text style={styles.sectionTitle}>어떤 기준을 적용했나요?</Text>
+          <View style={styles.sectionHeader}>
+            <View style={styles.timelineBadge}>
+              <Text style={styles.timelineNumber}>02</Text>
+            </View>
+            <Text style={styles.sectionTitle}>어떤 기준을 적용했나요?</Text>
+          </View>
           <View style={styles.factList}>
             {evidence.rules.map((rule) => (
-              <View key={rule.rule_id} style={styles.row}>
+              <View key={rule.rule_id} style={styles.ruleRow}>
                 <Text style={styles.rowValue}>{getRuleExplanation(rule.rule_id, rule.description)}</Text>
               </View>
             ))}
@@ -223,25 +232,38 @@ export default function EvidenceScreen() {
         </Card>
       </View>
       <View style={styles.timelineStep}>
-        <Text style={styles.timelineNumber}>03</Text>
         <Card style={styles.timelineCard}>
-          <Text style={styles.sectionTitle}>그래서 어떤 값이 나왔나요?</Text>
+          <View style={styles.sectionHeader}>
+            <View style={styles.timelineBadge}>
+              <Text style={styles.timelineNumber}>03</Text>
+            </View>
+            <Text style={styles.sectionTitle}>그래서 어떤 값이 나왔나요?</Text>
+          </View>
           <View style={styles.factList}>
             {evidence.outputs.map((output) => (
-              <View key={output.name} style={styles.row}>
+              <View key={output.name} style={styles.resultRow}>
                 <Text style={styles.rowLabel}>{OUTPUT_LABEL[output.name] ?? '계산 결과'}</Text>
-                <Text style={styles.rowValue}>{getOutputValue(output.name, output.value, output.unit)}</Text>
+                <Text
+                  style={[
+                    styles.resultValue,
+                    output.name === 'expected_gap_krw' && styles.resultValueCritical,
+                  ]}
+                >
+                  {getOutputValue(output.name, output.value, output.unit)}
+                </Text>
               </View>
             ))}
           </View>
         </Card>
       </View>
-      <Card>
-        <Text style={styles.sectionTitle}>쉽게 설명하면</Text>
+      <Card style={styles.explanationCard}>
+        <Text style={styles.explanationTitle}>한 줄로 정리하면</Text>
         <Text style={styles.body}>{humanizeExplanation(evidence.explanation.text)}</Text>
-        <Text style={styles.explanationSource}>
-          {EXPLANATION_SOURCE_LABEL[evidence.explanation.source]}
-        </Text>
+        <View style={styles.explanationSourceBadge}>
+          <Text style={styles.explanationSource}>
+            {EXPLANATION_SOURCE_LABEL[evidence.explanation.source]}
+          </Text>
+        </View>
       </Card>
       <Button
         label="결과 화면으로"

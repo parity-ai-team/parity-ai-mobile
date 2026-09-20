@@ -5,32 +5,39 @@ import type { Theme } from '@/shared/ui';
 export function createStyles(theme: Theme) {
   return StyleSheet.create({
     timelineStep: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: theme.spacing.sm,
+      width: theme.layout.full,
     },
-    timelineNumber: {
-      ...theme.typography.labelMedium,
-      color: theme.colors.brand,
+    timelineBadge: {
       backgroundColor: theme.colors.brandSoft,
       borderRadius: theme.radii.full,
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
     },
+    timelineNumber: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.brand,
+      fontWeight: theme.typography.labelMedium.fontWeight,
+    },
     timelineCard: {
-      flex: theme.layout.flex,
-      minWidth: theme.layout.zero,
-      gap: theme.spacing.md,
+      width: theme.layout.full,
+      padding: theme.spacing.md,
+      borderRadius: theme.radii.md,
+      gap: theme.spacing.sm,
       boxShadow: theme.layout.shadowNone,
+    },
+    sectionHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: theme.spacing.sm,
     },
     content: {
       flexGrow: theme.layout.flex,
       paddingHorizontal: theme.spacing.lg,
-      paddingVertical: theme.spacing.xl,
+      paddingVertical: theme.spacing.lg,
       gap: theme.spacing.md,
     },
     title: {
-      ...theme.typography.headingLarge,
+      ...theme.typography.headingSmall,
       color: theme.colors.textPrimary,
     },
     subtitle: {
@@ -38,35 +45,87 @@ export function createStyles(theme: Theme) {
       color: theme.colors.textSecondary,
     },
     sectionTitle: {
-      ...theme.typography.headingSmall,
+      ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
+      flexShrink: theme.layout.flex,
     },
     body: {
       ...theme.typography.bodyMedium,
       color: theme.colors.textSecondary,
     },
     factList: {
-      gap: theme.spacing.sm,
+      gap: theme.spacing.xs,
     },
     row: {
-      padding: theme.spacing.sm,
-      borderRadius: theme.radii.sm,
-      borderWidth: theme.layout.zero,
-      borderColor: theme.colors.transparent,
-      backgroundColor: theme.colors.surfaceMuted,
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: theme.layout.stroke,
+      borderBottomColor: theme.colors.border,
+      gap: theme.spacing.sm,
+    },
+    rowCopy: {
+      flex: theme.layout.flex,
+      minWidth: theme.layout.zero,
       gap: theme.spacing.xs,
     },
     rowLabel: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.textSecondary,
+    },
+    rowValue: {
       ...theme.typography.labelMedium,
       color: theme.colors.textPrimary,
     },
-    rowValue: {
-      ...theme.typography.bodyMedium,
-      color: theme.colors.textSecondary,
+    sourceLabel: {
+      ...theme.typography.bodySmall,
+      color: theme.colors.brand,
+    },
+    ruleRow: {
+      backgroundColor: theme.colors.brandSoft,
+      borderRadius: theme.radii.sm,
+      padding: theme.spacing.sm,
+    },
+    resultRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: theme.spacing.sm,
+      borderBottomWidth: theme.layout.stroke,
+      borderBottomColor: theme.colors.border,
+      gap: theme.spacing.sm,
+    },
+    resultValue: {
+      ...theme.typography.labelMedium,
+      ...theme.typography.numeric,
+      color: theme.colors.brand,
+      textAlign: 'right',
+    },
+    resultValueCritical: {
+      color: theme.colors.severityCritical,
+    },
+    explanationCard: {
+      backgroundColor: theme.colors.brandSoft,
+      borderRadius: theme.radii.md,
+      padding: theme.spacing.md,
+      gap: theme.spacing.sm,
+      boxShadow: theme.layout.shadowNone,
+    },
+    explanationTitle: {
+      ...theme.typography.labelMedium,
+      color: theme.colors.deepGreen,
+    },
+    explanationSourceBadge: {
+      alignSelf: 'flex-start',
+      backgroundColor: theme.colors.surface,
+      borderRadius: theme.radii.full,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
     },
     explanationSource: {
       ...theme.typography.bodySmall,
-      color: theme.colors.textSecondary,
+      color: theme.colors.brand,
     },
   });
 }

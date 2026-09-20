@@ -1,7 +1,6 @@
 // docs/integration.md "공통 헤더"
 import { randomUUID } from 'expo-crypto';
 
-export const AUTHORIZATION_HEADER = 'Authorization';
 export const REQUEST_ID_HEADER = 'X-Request-ID';
 export const IDEMPOTENCY_KEY_HEADER = 'Idempotency-Key';
 export const IF_MATCH_HEADER = 'If-Match';
@@ -19,31 +18,34 @@ export function generateIdempotencyKey(): string {
 }
 
 export interface RequestHeaderOptions {
-  /** MVP 데모 토큰. Authorization: Bearer {token}으로 전송하고 로그에 남기지 않는다. */
-  authToken?: string;
   /** 지정하지 않으면 변경 요청에서만 자동 생성한다. */
   requestId?: string;
   /** POST 요청에서만 사용. 지정하지 않으면 자동 생성한다. */
   idempotencyKey?: string;
-  /** PATCH 요청에서만 사용하는 analysis revision. */
-  ifMatchRevision?: number;
+  /**
+   * PATCH/DELETE 요청에서만 사용하는 If-Match 값. 서버가 응답 ETag로 내려준
+   * 문자열을 가공 없이 그대로 넣는다(W/"ana_xxx:1"처럼 약한 ETag 접두사가
+   * 붙을 수 있고, 그 형태 그대로 보내야 한다 — revision 숫자로 재구성하면
+   * 안 된다).
+   */
+  ifMatch?: string;
 }
 
+// 백엔드는 인증을 쓰지 않는다(2026-09-20 백엔드 팀 확인: "Authorization
+// 헤더를 보내지 않는다") — 그래서 이 함수는 Authorization을 만들 방법 자체를
+// 제공하지 않는다.
 export function buildRequestHeaders(options: RequestHeaderOptions = {}): Headers {
   const headers = new Headers();
   headers.set('Content-Type', 'application/json');
 
-  if (options.authToken) {
-    headers.set(AUTHORIZATION_HEADER, `Bearer ${options.authToken}`);
-  }
   if (options.requestId) {
     headers.set(REQUEST_ID_HEADER, options.requestId);
   }
   if (options.idempotencyKey) {
     headers.set(IDEMPOTENCY_KEY_HEADER, options.idempotencyKey);
   }
-  if (options.ifMatchRevision !== undefined) {
-    headers.set(IF_MATCH_HEADER, String(options.ifMatchRevision));
+  if (options.ifMatch !== undefined) {
+    headers.set(IF_MATCH_HEADER, options.ifMatch);
   }
 
   return headers;
@@ -51,7 +53,7 @@ export function buildRequestHeaders(options: RequestHeaderOptions = {}): Headers
 
 export interface ResponseMeta {
   requestId: string | null;
-  /** 서버가 ETag로 내려주는 현재 revision. */
+  /** 서버가 ETag로 내려주는 값 그대로(W/"ana_xxx:1" 형태일 수 있다). 이후 If-Match에 그대로 재사용한다. */
   revision: string | null;
   apiVersion: string | null;
 }

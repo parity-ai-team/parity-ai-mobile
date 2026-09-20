@@ -1,5 +1,4 @@
 import {
-  AUTHORIZATION_HEADER,
   buildRequestHeaders,
   generateIdempotencyKey,
   generateRequestId,
@@ -31,41 +30,58 @@ describe('buildRequestHeaders', () => {
   it('sets no optional headers by default', () => {
     const headers = buildRequestHeaders();
 
-    expect(headers.get(AUTHORIZATION_HEADER)).toBeNull();
     expect(headers.get(REQUEST_ID_HEADER)).toBeNull();
     expect(headers.get(IDEMPOTENCY_KEY_HEADER)).toBeNull();
     expect(headers.get(IF_MATCH_HEADER)).toBeNull();
   });
 
-  it('attaches the bearer token, request id, idempotency key, and if-match revision', () => {
+  it('attaches the request id and idempotency key', () => {
     const headers = buildRequestHeaders({
-      authToken: 'demo-token',
       requestId: 'req_abc',
       idempotencyKey: 'idem_abc',
-      ifMatchRevision: 3,
     });
 
-    expect(headers.get(AUTHORIZATION_HEADER)).toBe('Bearer demo-token');
     expect(headers.get(REQUEST_ID_HEADER)).toBe('req_abc');
     expect(headers.get(IDEMPOTENCY_KEY_HEADER)).toBe('idem_abc');
-    expect(headers.get(IF_MATCH_HEADER)).toBe('3');
+  });
+
+  // 백엔드는 인증이 없다(2026-09-20 백엔드 팀 확인) — RequestHeaderOptions에
+  // authToken 같은 옵션 자체가 없으니, 무엇을 넘겨도 Authorization은 절대
+  // 안 실린다는 걸 남아있는 모든 옵션으로 다시 확인한다.
+  it('never sets an Authorization header, no matter what options are given', () => {
+    const headers = buildRequestHeaders({
+      requestId: 'req_abc',
+      idempotencyKey: 'idem_abc',
+      ifMatch: 'W/"ana_abc:1"',
+    });
+
+    expect(headers.get('Authorization')).toBeNull();
+  });
+
+  // 서버 ETag는 W/"ana_xxx:1" 형태의 약한 ETag일 수 있고, If-Match에는 그
+  // 문자열을 가공 없이 그대로 넣어야 한다(2026-09-20 실서버로 확인) —
+  // revision 숫자만 뽑아 재구성하면 서버가 거부한다.
+  it('sends the ifMatch value to If-Match verbatim, including a weak ETag prefix', () => {
+    const headers = buildRequestHeaders({ ifMatch: 'W/"ana_01JABCDEF:3"' });
+
+    expect(headers.get(IF_MATCH_HEADER)).toBe('W/"ana_01JABCDEF:3"');
   });
 });
 
 describe('readResponseMeta', () => {
-  it('reads request id, revision (ETag), and api version from response headers', () => {
+  it('reads request id, the raw ETag string, and api version from response headers', () => {
     const response = new Response(null, {
       headers: {
         [REQUEST_ID_HEADER]: 'req_xyz',
-        ETag: '5',
-        'X-API-Version': '1.0',
+        ETag: 'W/"ana_xyz:5"',
+        'X-API-Version': '1.7.0',
       },
     });
 
     expect(readResponseMeta(response)).toEqual({
       requestId: 'req_xyz',
-      revision: '5',
-      apiVersion: '1.0',
+      revision: 'W/"ana_xyz:5"',
+      apiVersion: '1.7.0',
     });
   });
 });

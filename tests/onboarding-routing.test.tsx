@@ -59,9 +59,9 @@ describe('온보딩 라우팅 (S01 → S02 → S03 → S04)', () => {
   it('S03은 시나리오 카드를 3개 보여준다(직접 입력 제외)', async () => {
     await renderScreen(<ScenarioScreenRoute />);
 
-    expect(screen.getByText('초산 · 맞벌이')).toBeTruthy();
-    expect(screen.getByText('경산 · 외벌이 전환')).toBeTruthy();
-    expect(screen.getByText('경산 · 한부모')).toBeTruthy();
+    expect(screen.getByText('초산 맞벌이')).toBeTruthy();
+    expect(screen.getByText('경산 외벌이 전환')).toBeTruthy();
+    expect(screen.getByText('경산 한부모 불규칙소득')).toBeTruthy();
   });
 
   it('S03은 선택 전에는 다음 버튼이 비활성 상태다', async () => {
@@ -75,7 +75,7 @@ describe('온보딩 라우팅 (S01 → S02 → S03 → S04)', () => {
   it('S03에서 데모를 고르고 다음을 누르면 /household로 이동한다', async () => {
     await renderScreen(<ScenarioScreenRoute />);
 
-    await fireEvent.press(screen.getByRole('radio', { name: '초산 · 맞벌이' }));
+    await fireEvent.press(screen.getByRole('radio', { name: '초산 맞벌이' }));
     await fireEvent.press(screen.getByRole('button', { name: '다음' }));
 
     expect(router.push).toHaveBeenCalledWith('/household');

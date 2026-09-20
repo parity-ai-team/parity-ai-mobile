@@ -63,6 +63,12 @@ it('터치 영역과 간격은 접근성·4pt 기준을 유지한다', () => {
   ).toBe(4);
 });
 
+it('웹 기기 프레임은 화면 크기와 관계없이 아이폰 비율을 유지한다', () => {
+  expect(theme.layout.deviceAspectRatio).toBeCloseTo(
+    theme.layout.deviceWidth / theme.layout.deviceHeight,
+  );
+});
+
 function styleFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);

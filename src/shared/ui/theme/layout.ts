@@ -1,6 +1,8 @@
 import { Platform } from 'react-native';
 
 const webMobileBreakpoint = 100_000;
+const deviceWidth = 390;
+const deviceHeight = 844;
 
 export const layout = {
   tableMinWidth: 640,
@@ -44,9 +46,9 @@ export const layout = {
   brandLogoTranslateX: -8,
   mascotSize: 216,
   visuallyHiddenSize: 1,
-  deviceWidth: 390,
-  deviceHeight: 844,
-  deviceViewportHeight: 'calc(100dvh - 40px)',
+  deviceWidth,
+  deviceHeight,
+  deviceAspectRatio: deviceWidth / deviceHeight,
   metricMinWidth: 88,
   summaryAmountMinWidth: 170,
   deviceBorderWidth: 8,
